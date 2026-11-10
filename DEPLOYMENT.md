@@ -6,7 +6,7 @@ This repository retains the working demo. The Clerk account bar is enabled only 
 
 ## GitHub
 
-Repository destination requested: indigomate/mono (private). The current GitHub credential cannot create repositories. After an empty repository exists and the connection has write access, push the local main branch. The GitHub Actions workflow validates build, formatting, and Chromium journeys on pushes and pull requests.
+Source is pushed to https://github.com/indigomate/Mono on main. The user-created repository is public. Environment files and credentials are excluded. The GitHub Actions workflow validates build, formatting, and Chromium journeys on pushes and pull requests.
 
 ## Vercel
 
@@ -38,3 +38,7 @@ Before production persistence, create versioned migrations with ownership polici
 ## Selected Supabase project
 
 MONO was created in QuattroCape in eu-west-1 (Ireland). Project reference: vgotgieufkctvhtgsdnt. Dashboard: https://supabase.com/dashboard/project/vgotgieufkctvhtgsdnt. Its database health query succeeded. The public URL and publishable key are saved in the ignored local environment file; they have not been configured in Vercel. Clerk registration, RLS/schema migrations, and live persistence are pending. No database tables have been created by this repository.
+
+## Vercel access status
+
+Project creation through the connected Vercel account returns HTTP 403 (no project-creation permission), including when importing the GitHub repository. No deployment URL exists yet. Import indigomate/Mono through the Vercel dashboard using the authorized owner account, or correct the connected team permissions before retrying.

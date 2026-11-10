@@ -240,6 +240,9 @@ test("provider can add, edit and preview a listing from the same chat", async ({
     .click();
   await expect(tool(page)).toContainText("BMW 320i");
   await page.getByRole("button", { name: "Edit listing", exact: true }).click();
+  await expect(page.locator(".turn-user").last()).toContainText(
+    "Edit BMW 320i",
+  );
   await say(page, "Make it R800 per hour with 4 seats");
   await expect(
     page.getByLabel("Reference rate (ZAR)", { exact: true }),

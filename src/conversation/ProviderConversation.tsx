@@ -484,7 +484,16 @@ export function ProviderConversation({ view }: { view: ProviderView }) {
           <FleetCards
             drafts={drafts}
             onAdd={() => send("Add a listing")}
-            onEdit={(id) => send(`Edit listing ${id}`)}
+            onEdit={(id) => {
+              const item = drafts.find((d) => d.id === id);
+              if (!item) return;
+              setWorking(item);
+              respond(
+                `Edit ${item.name}`,
+                `Let’s review ${item.name}. Tell me what to change, or edit the fields below.`,
+                { kind: "listing" },
+              );
+            }}
             onPreview={(id) => {
               const item = drafts.find((d) => d.id === id);
               if (!item) return;

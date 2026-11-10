@@ -944,3 +944,12 @@ input:focus-visible {
 .account-bar ~ div .main {
   height: calc(100dvh - 56px);
 }
+
+.conversation-loading {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: #031b15;
+  color: #d8eddb;
+  font-size: 14px;
+}

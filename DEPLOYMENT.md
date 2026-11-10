@@ -34,3 +34,7 @@ Before production persistence, create versioned migrations with ownership polici
 2. Sign in/out through Clerk, reload, and check session handling.
 3. Verify Supabase accepts Clerk session tokens; test unauthorized and cross-user queries before connecting production screens.
 4. Confirm errors never silently fall back to sample availability or claim a confirmed booking.
+
+## Selected Supabase project
+
+MONO was created in QuattroCape in eu-west-1 (Ireland). Project reference: vgotgieufkctvhtgsdnt. Dashboard: https://supabase.com/dashboard/project/vgotgieufkctvhtgsdnt. Its database health query succeeded. The public URL and publishable key are saved in the ignored local environment file; they have not been configured in Vercel. Clerk registration, RLS/schema migrations, and live persistence are pending. No database tables have been created by this repository.

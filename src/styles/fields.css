@@ -1,0 +1,225 @@
+/* MONO-specific integration skin; source primitives remain reusable. */
+.mono-field {
+  min-width: 0;
+  font-family: inherit;
+}
+.workspace .mono-field input,
+.vehicle-dialog .mono-field input,
+.mono-field input {
+  border: 0;
+  background: transparent;
+  border-radius: inherit;
+  color: #21432c;
+  box-shadow: none;
+  outline: none;
+  width: 100%;
+  min-width: 0;
+  font-family: inherit;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.mono-field [data-label] {
+  font-size: 12px;
+  line-height: 1.8;
+  font-weight: 600;
+  color: #3c5d41;
+}
+.mono-field [slot="description"],
+.mono-field [slot="errorMessage"] {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.mono-field-error {
+  font-size: 11px;
+  color: #b54731;
+  line-height: 1.7;
+  margin-top: 4px;
+}
+.mono-field [data-disabled] {
+  cursor: not-allowed;
+}
+.mono-field svg {
+  flex-shrink: 0;
+}
+.chat-composer > .mono-field {
+  flex: 1;
+  min-width: 0;
+}
+.chat-composer > .mono-field [role="group"] {
+  background: transparent;
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+}
+.chat-composer > .mono-field input {
+  font-size: 14px;
+  padding: 10px 0;
+}
+.chat-tool .mono-field {
+  margin: 0;
+}
+.chat-tool .mono-field [slot="description"] {
+  margin: 0;
+}
+.mono-field [data-input-size] section {
+  display: flex;
+  align-items: stretch;
+}
+.mono-field [data-input-size] > span > p {
+  margin: 0;
+  font-size: 13px;
+}
+.mono-field [data-input-size] > [role="group"] {
+  min-width: 0;
+  flex: 1;
+}
+.mono-field [data-input-size] > span {
+  flex-shrink: 0;
+}
+.chat-tool .mono-field [data-label] {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  align-items: center;
+}
+.mono-field [data-label] > span {
+  font-size: 11px;
+}
+.mono-field [slot="errorMessage"] {
+  color: #b54731;
+}
+.mono-field input[type="number"] {
+  appearance: auto;
+}
+.mono-field input:focus-visible {
+  outline: none;
+}
+@media (max-width: 520px) {
+  .workspace .mono-field input,
+  .vehicle-dialog .mono-field input,
+  .mono-field input,
+  .chat-composer > .mono-field input {
+    font-size: 16px;
+  }
+  .mono-field [data-label] {
+    font-size: 12px;
+  }
+}
+.mono-select {
+  min-width: 0;
+}
+.workspace .mono-select select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  padding: 10px 36px 10px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #21432c;
+}
+.mono-select [data-label] {
+  font-size: 12px;
+  color: #3c5d41;
+  font-weight: 600;
+  line-height: 1.8;
+  margin-bottom: 6px;
+}
+.mono-textarea {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.workspace .mono-textarea textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid #cddcc1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #21432c;
+  background: white;
+  resize: vertical;
+}
+.mono-textarea textarea:focus {
+  outline: 2px solid #21855f;
+  outline-offset: 1px;
+}
+.mono-textarea textarea[data-invalid] {
+  border-color: #b54731;
+}
+.mono-textarea textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mono-select svg {
+  width: 16px;
+  height: 16px;
+}
+.mono-field [data-label] [aria-hidden="true"] {
+  pointer-events: none;
+}
+@media (max-width: 520px) {
+  .workspace .mono-select select,
+  .workspace .mono-textarea textarea {
+    font-size: 16px;
+  }
+}
+.workspace .mono-field[data-mono-icon="true"] input,
+.vehicle-dialog .mono-field[data-mono-icon="true"] input {
+  padding-left: 40px;
+}
+.workspace .mono-field[data-input-kind="password"] input,
+.mono-field input[aria-invalid="true"],
+.workspace .mono-field[data-mono-tooltip="true"] input {
+  padding-right: 38px;
+}
+.mono-field[data-input-size="sm"] input {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 13px;
+}
+.mono-field[data-input-size="lg"] input {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.mono-field [data-label] button {
+  margin-left: 3px;
+}
+.mono-field [data-required-indicator]::after,
+.mono-select [data-required-indicator]::after {
+  content: "*";
+}
+.workspace .mono-select [data-label] {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.mono-field[data-mono-prefix] > div[data-input-size] {
+  border: 1px solid #ccdcc1;
+  border-radius: 8px;
+  background: white;
+}
+.mono-field[data-mono-prefix] > div[data-input-size]:focus-within {
+  border-color: #21855f;
+  box-shadow: 0 0 0 1px #21855f;
+}
+.mono-field[data-mono-prefix] > div[data-input-size] > [class~="group/input"] {
+  box-shadow: none;
+  background: transparent;
+}
+.mono-field[data-mono-prefix][data-invalid] > div[data-input-size] {
+  border-color: #d15c42;
+}
+.mono-field[data-mono-prefix] input {
+  border-radius: 0 8px 8px 0;
+}
+.mono-select select[aria-invalid="true"] {
+  --tw-ring-color: #c34d35;
+}
+.mono-select:has(select[aria-invalid="true"]) [slot="description"] {
+  color: #b54731;
+}
+.mono-field [data-disabled] input {
+  cursor: not-allowed;
+}

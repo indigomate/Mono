@@ -1,16 +1,11 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { FieldInput } from "../components/ui/FieldInput";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { type View, type Navigate } from "./navigation";
 const customerLinks = [
-  { view: "customer", label: "My dashboard", icon: "◇" },
-  { view: "chat", label: "Find a vehicle", icon: "✧" },
-  { view: "bookings", label: "My requests", icon: "▤" },
+  { view: "customer", label: "Customer conversation", icon: "✧" },
 ] as const;
 const providerLinks = [
-  { view: "provider", label: "Overview", icon: "◇" },
-  { view: "provider-profile", label: "Provider profile", icon: "○" },
-  { view: "owner", label: "Vehicles & services", icon: "▦" },
-  { view: "provider-requests", label: "Incoming requests", icon: "▤" },
-  { view: "store", label: "Storefront preview", icon: "✧" },
+  { view: "provider", label: "Provider conversation", icon: "✧" },
 ] as const;
 export function WorkspaceShell({
   role,
@@ -27,12 +22,12 @@ export function WorkspaceShell({
   const provider = role === "provider";
   const links = provider ? providerLinks : customerLinks;
   const active = links.find((l) => l.view === view);
-  const label = active?.label || "Service enquiry";
+  const label = provider ? "Provider assistant" : "Customer concierge";
   useEffect(() => {
     title.current?.focus();
   }, [view]);
   return (
-    <div className={`workspace role-${role}`}>
+    <div className={`workspace chat-layout role-${role}`}>
       <aside className="workspace-sidebar">
         <button className="logo home-brand" onClick={() => navigate("home")}>
           MONO.
@@ -52,8 +47,8 @@ export function WorkspaceShell({
             <button
               key={l.view}
               id={`nav-${l.view}`}
-              aria-current={view === l.view ? "page" : undefined}
-              className={view === l.view ? "ws-nav active" : "ws-nav"}
+              aria-current="page"
+              className="ws-nav active"
               onClick={() => navigate(l.view)}
             >
               <span aria-hidden="true">{l.icon}</span>
@@ -108,7 +103,7 @@ export function WorkspaceShell({
           {links.map((l) => (
             <button
               key={l.view}
-              aria-current={view === l.view ? "page" : undefined}
+              aria-current="page"
               onClick={() => navigate(l.view)}
             >
               {l.label}
@@ -138,42 +133,67 @@ export function WorkspaceShell({
   );
 }
 export function WorkspaceChooser({ navigate }: { navigate: Navigate }) {
+  const [input, setInput] = useState("");
+  const [reply, setReply] = useState(
+    "Are you looking for a rental or transport service, or do you provide vehicles and services?",
+  );
   return (
-    <main className="workspace-chooser">
+    <main className="workspace-chooser conversation-chooser">
       <button className="logo" onClick={() => navigate("home")}>
         MONO.
       </button>
-      <div className="eyebrow">ONE MARKETPLACE. TWO PURPOSES.</div>
-      <h1>
-        What brings you
-        <br />
-        to MONO?
-      </h1>
-      <p>Choose the workspace that fits what you want to do.</p>
-      <div className="workspace-choice-grid">
-        <button onClick={() => navigate("customer")}>
-          <span>01 / CUSTOMER</span>
-          <h2>I want to rent or ride.</h2>
-          <p>
-            Find a self-drive vehicle, book a chauffeur, or plan transport for
-            any occasion.
-          </p>
-          <b>Enter Rent & Ride →</b>
-        </button>
-        <button onClick={() => navigate("provider")}>
-          <span>02 / PROVIDER</span>
-          <h2>I have vehicles or services.</h2>
-          <p>
-            Manage your private vehicle, fleet or chauffeur business in one
-            dedicated studio.
-          </p>
-          <b>Enter Provider Studio →</b>
-        </button>
+      <div className="chooser-chat">
+        <span className="eyebrow">ONE MARKETPLACE. TWO CONVERSATIONS.</span>
+        <h1>
+          Let’s start
+          <br />
+          with you.
+        </h1>
+        <div className="chooser-message" role="log">
+          <span className="turn-role">MONO</span>
+          <p>{reply}</p>
+          <div className="inline-actions">
+            <button onClick={() => navigate("customer")}>
+              I want to rent or ride
+            </button>
+            <button onClick={() => navigate("provider")}>
+              I provide vehicles or services
+            </button>
+          </div>
+        </div>
+        <form
+          className="chat-composer"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (/provider|owner|list|fleet|offer|rent out|my car/i.test(input))
+              navigate("provider");
+            else if (/rent|ride|book|customer|chauffeur|transfer/i.test(input))
+              navigate("customer");
+            else
+              setReply(
+                "Choose the customer conversation to rent or ride, or the provider conversation to manage vehicles and services. Which one fits you?",
+              );
+          }}
+        >
+          <FieldInput
+            aria-label="Choose your conversation"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            maxLength={300}
+            placeholder="Tell me what brings you to MONO…"
+          />
+          <button
+            aria-label="Continue to conversation"
+            disabled={!input.trim()}
+          >
+            ↑
+          </button>
+        </form>
+        <p className="chooser-note">
+          Your customer and provider conversations stay separate. You can change
+          between them explicitly.
+        </p>
       </div>
-      <p className="chooser-note">
-        You can use both workspaces. Demo switching does not create an account
-        or grant access to another provider’s data.
-      </p>
     </main>
   );
 }

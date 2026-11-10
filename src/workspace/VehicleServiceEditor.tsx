@@ -1,3 +1,6 @@
+import { FieldSelect } from "../components/ui/FieldSelect";
+import { FieldTextarea } from "../components/ui/FieldTextarea";
+import { FieldInput } from "../components/ui/FieldInput";
 import { useState } from "react";
 import { type Draft } from "../demo/marketplace";
 import { services, vehicleTypes, type ServiceType } from "../demo/services";
@@ -55,89 +58,75 @@ export function VehicleServiceEditor({
         </button>
       </div>
       <div className="fields-grid">
-        <label>
-          Listing name
-          <input
-            name="name"
-            required
-            maxLength={100}
-            defaultValue={draft?.name}
-            placeholder="e.g. Mercedes C-Class or executive transfers"
-          />
-        </label>
-        <label>
-          Vehicle category
-          <select
-            aria-label="Vehicle category"
-            name="vehicleType"
-            defaultValue={draft?.vehicleType || "Sedan"}
-          >
-            {vehicleTypes.map((v) => (
-              <option key={v}>{v}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Service area
-          <input
-            name="area"
-            required
-            maxLength={100}
-            defaultValue={draft?.area}
-            placeholder="e.g. Cape Town / Waterfront"
-          />
-        </label>
-        <label>
-          Seats / passenger capacity
-          <input
-            name="seats"
-            type="number"
-            min="1"
-            max="100"
-            required
-            defaultValue={draft?.seats || 5}
-          />
-        </label>
-        <label>
-          Transmission
-          <select
-            aria-label="Transmission"
-            name="transmission"
-            defaultValue={draft?.transmission || "Automatic"}
-          >
-            <option>Automatic</option>
-            <option>Manual</option>
-            <option>Not applicable</option>
-          </select>
-        </label>
-        <label>
-          Pricing basis
-          <select
-            aria-label="Pricing basis"
-            value={rateUnit}
-            onChange={(e) => setRateUnit(e.target.value as Draft["rateUnit"])}
-          >
-            <option value="day">Per day</option>
-            <option value="hour">Per hour</option>
-            <option value="trip">Per trip / transfer</option>
-            <option value="month">Per month</option>
-            <option value="quote">Custom quote only</option>
-          </select>
-        </label>
+        <FieldInput
+          name="name"
+          required
+          maxLength={100}
+          defaultValue={draft?.name}
+          placeholder="e.g. Mercedes C-Class or executive transfers"
+          label="Listing name"
+        />
+        <FieldSelect
+          aria-label="Vehicle category"
+          name="vehicleType"
+          defaultValue={draft?.vehicleType || "Sedan"}
+          label="Vehicle category"
+          options={[...vehicleTypes.map((v) => ({ label: v, value: v }))]}
+        />
+        <FieldInput
+          name="area"
+          required
+          maxLength={100}
+          defaultValue={draft?.area}
+          placeholder="e.g. Cape Town / Waterfront"
+          label="Service area"
+        />
+        <FieldInput
+          name="seats"
+          type="number"
+          min="1"
+          max="100"
+          required
+          defaultValue={draft?.seats || 5}
+          label="Seats / passenger capacity"
+        />
+        <FieldSelect
+          aria-label="Transmission"
+          name="transmission"
+          defaultValue={draft?.transmission || "Automatic"}
+          label="Transmission"
+          options={[
+            { label: "Automatic", value: "Automatic" },
+            { label: "Manual", value: "Manual" },
+            { label: "Not applicable", value: "Not applicable" },
+          ]}
+        />
+        <FieldSelect
+          aria-label="Pricing basis"
+          value={rateUnit}
+          onChange={(e) => setRateUnit(e.target.value as Draft["rateUnit"])}
+          label="Pricing basis"
+          options={[
+            { label: "Per day", value: "day" },
+            { label: "Per hour", value: "hour" },
+            { label: "Per trip / transfer", value: "trip" },
+            { label: "Per month", value: "month" },
+            { label: "Custom quote only", value: "quote" },
+          ]}
+        />
         {rateUnit !== "quote" && (
-          <label>
-            Reference rate (ZAR)
-            <input
-              name="price"
-              type="number"
-              required
-              min="1"
-              max="10000000"
-              step="1"
-              defaultValue={draft?.price || undefined}
-              placeholder="1200"
-            />
-          </label>
+          <FieldInput
+            name="price"
+            type="number"
+            required
+            min="1"
+            max="10000000"
+            step="1"
+            defaultValue={draft?.price || undefined}
+            placeholder="1200"
+            label="Reference rate (ZAR)"
+            prefix="R"
+          />
         )}
       </div>
       <fieldset className="service-checkboxes">
@@ -156,15 +145,13 @@ export function VehicleServiceEditor({
           </label>
         ))}
       </fieldset>
-      <label>
-        Vehicle & service notes
-        <textarea
-          name="notes"
-          maxLength={1000}
-          defaultValue={draft?.notes}
-          placeholder="Driver arrangements, service limits, luggage, pickup instructions…"
-        />
-      </label>
+      <FieldTextarea
+        name="notes"
+        maxLength={1000}
+        defaultValue={draft?.notes}
+        placeholder="Driver arrangements, service limits, luggage, pickup instructions…"
+        label="Vehicle & service notes"
+      />
       <p className="notice">
         A reference rate is not a binding quote for every service. Driver
         credentials, photos, availability and verification must be confirmed

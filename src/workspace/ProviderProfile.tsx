@@ -1,3 +1,6 @@
+import { FieldTextarea } from "../components/ui/FieldTextarea";
+import { FieldInput } from "../components/ui/FieldInput";
+import { FieldSelect } from "../components/ui/FieldSelect";
 import { useState } from "react";
 import {
   services,
@@ -58,40 +61,36 @@ export function ProviderProfile({
       >
         <h3>Who is providing the service?</h3>
         <div className="fields-grid">
-          <label>
-            Provider or business name
-            <input
-              name="name"
-              required
-              maxLength={120}
-              defaultValue={profile.name}
-              placeholder="Your name or registered business"
-            />
-          </label>
-          <label>
-            Provider type
-            <select
-              aria-label="Provider type"
-              name="kind"
-              defaultValue={profile.kind}
-            >
-              <option value="private-owner">Private owner</option>
-              <option value="fleet-business">Rental / fleet business</option>
-              <option value="chauffeur-operator">
-                Chauffeur / transport operator
-              </option>
-              <option value="mixed">Multi-service provider</option>
-            </select>
-          </label>
-          <label>
-            Service area
-            <input
-              name="area"
-              required
-              maxLength={120}
-              defaultValue={profile.area}
-            />
-          </label>
+          <FieldInput
+            name="name"
+            required
+            maxLength={120}
+            defaultValue={profile.name}
+            placeholder="Your name or registered business"
+            label="Provider or business name"
+          />
+          <FieldSelect
+            aria-label="Provider type"
+            name="kind"
+            defaultValue={profile.kind}
+            label="Provider type"
+            options={[
+              { label: "Private owner", value: "private-owner" },
+              { label: "Rental / fleet business", value: "fleet-business" },
+              {
+                label: "Chauffeur / transport operator",
+                value: "chauffeur-operator",
+              },
+              { label: "Multi-service provider", value: "mixed" },
+            ]}
+          />
+          <FieldInput
+            name="area"
+            required
+            maxLength={120}
+            defaultValue={profile.area}
+            label="Service area"
+          />
         </div>
         <fieldset className="service-checkboxes">
           <legend>Which services do you offer?</legend>
@@ -111,15 +110,13 @@ export function ProviderProfile({
             </label>
           ))}
         </fieldset>
-        <label>
-          About your business
-          <textarea
-            name="description"
-            maxLength={1200}
-            defaultValue={profile.description}
-            placeholder="Describe your vehicles, transport services and service area."
-          />
-        </label>
+        <FieldTextarea
+          name="description"
+          maxLength={1200}
+          defaultValue={profile.description}
+          placeholder="Describe your vehicles, transport services and service area."
+          label="About your business"
+        />
         {error && (
           <p className="form-error" role="alert">
             {error}

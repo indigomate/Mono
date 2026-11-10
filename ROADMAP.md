@@ -37,3 +37,7 @@ Typed React workspace, persistent structured trip brief and conversation, daily/
 The shared mixed menu is replaced with independent Rent & Ride and Provider Studio dashboards, menus, state ownership and forms. Eight transport-service paths and broader vehicle categories are defined. Driver-led and custom services use saved enquiry briefs with no invented prices. Provider identity, multi-service listings and reference-rate units are separate from customer demand.
 
 Next, develop each side independently: customer comparison/request tracking and provider verification/availability/quote response. Connect the two through authenticated, addressed requests only after Supabase ownership policies and service delivery are verified. Quote, availability, notifications, payments and public publishing remain future live-service milestones.
+
+## Current architecture: conversation first
+
+The dashboard-first milestone has been superseded. The active customer and provider experiences use separate persisted transcripts, inline typed tools and an always-available composer. All future inventory, identity, availability, quote, payment, upload and notification integrations must extend this architecture. AGENTS.md and CONVERSATION_ARCHITECTURE.md define the permanent product contract. The bounded demo interpreter can later be replaced by a server-side LLM adapter without redesigning task screens.

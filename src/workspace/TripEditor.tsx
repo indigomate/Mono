@@ -1,3 +1,5 @@
+import { FieldSelect } from "../components/ui/FieldSelect";
+import { FieldInput } from "../components/ui/FieldInput";
 import { useState } from "react";
 import { type Trip, today } from "../demo/marketplace";
 import { vehicleTypes } from "../demo/services";
@@ -51,105 +53,103 @@ export function TripEditor({
         </button>
       </div>
       <div className="fields-grid">
-        <label>
-          Pickup city
-          <input
-            name="location"
-            defaultValue={trip.location}
-            required
-            maxLength={80}
-          />
-        </label>
-        <label>
-          Vehicle type
-          <select name="category" defaultValue={trip.category}>
-            <option value="">Any type</option>
-            {vehicleTypes.map((type) => (
-              <option key={type}>{type}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Make
-          <select name="make" defaultValue={trip.make}>
-            <option value="">Any make</option>
-            <option>Audi</option>
-            <option>BMW</option>
-            <option>Toyota</option>
-            <option>Range Rover</option>
-          </select>
-        </label>
-        <label>
-          Vehicle class
-          <select name="tier" defaultValue={trip.tier}>
-            <option value="">Any class</option>
-            <option>Economy</option>
-            <option>Premium</option>
-          </select>
-        </label>
-        <label>
-          Pickup date
-          <input
-            name="start"
-            type="date"
-            min={today()}
-            defaultValue={trip.start}
-          />
-        </label>
-        <label>
-          Return date
-          <input
-            name="end"
-            type="date"
-            min={trip.start || today()}
-            defaultValue={trip.end}
-          />
-        </label>
-        <label>
-          Rental days if dates unknown
-          <input
-            type="number"
-            name="days"
-            min="0"
-            max="365"
-            defaultValue={trip.days}
-          />
-        </label>
-        <label>
-          Budget (ZAR)
-          <input
-            type="number"
-            name="budget"
-            min="0"
-            max="10000000"
-            defaultValue={trip.budget}
-          />
-        </label>
-        <label>
-          Budget applies to
-          <select name="budgetMode" defaultValue={trip.budgetMode}>
-            <option value="daily">Per day</option>
-            <option value="total">Whole rental</option>
-          </select>
-        </label>
-        <label>
-          Transmission
-          <select name="transmission" defaultValue={trip.transmission}>
-            <option value="">Any transmission</option>
-            <option>Automatic</option>
-            <option>Manual</option>
-          </select>
-        </label>
-        <label>
-          Passengers
-          <input
-            type="number"
-            name="passengers"
-            min="0"
-            max="20"
-            defaultValue={trip.passengers}
-          />
-        </label>
+        <FieldInput
+          name="location"
+          defaultValue={trip.location}
+          required
+          maxLength={80}
+          label="Pickup city"
+        />
+        <FieldSelect
+          name="category"
+          defaultValue={trip.category}
+          label="Vehicle type"
+          options={[
+            { label: "Any type", value: "" },
+            ...vehicleTypes.map((type) => ({ label: type, value: type })),
+          ]}
+        />
+        <FieldSelect
+          name="make"
+          defaultValue={trip.make}
+          label="Make"
+          options={[
+            { label: "Any make", value: "" },
+            { label: "Audi", value: "Audi" },
+            { label: "BMW", value: "BMW" },
+            { label: "Toyota", value: "Toyota" },
+            { label: "Range Rover", value: "Range Rover" },
+          ]}
+        />
+        <FieldSelect
+          name="tier"
+          defaultValue={trip.tier}
+          label="Vehicle class"
+          options={[
+            { label: "Any class", value: "" },
+            { label: "Economy", value: "Economy" },
+            { label: "Premium", value: "Premium" },
+          ]}
+        />
+        <FieldInput
+          name="start"
+          type="date"
+          min={today()}
+          defaultValue={trip.start}
+          label="Pickup date"
+        />
+        <FieldInput
+          name="end"
+          type="date"
+          min={trip.start || today()}
+          defaultValue={trip.end}
+          label="Return date"
+        />
+        <FieldInput
+          type="number"
+          name="days"
+          min="0"
+          max="365"
+          defaultValue={trip.days}
+          label="Rental days if dates unknown"
+        />
+        <FieldInput
+          type="number"
+          name="budget"
+          min="0"
+          max="10000000"
+          defaultValue={trip.budget}
+          label="Budget (ZAR)"
+          hint="Base rental only; fees and deposit are not quoted."
+          prefix="R"
+        />
+        <FieldSelect
+          name="budgetMode"
+          defaultValue={trip.budgetMode}
+          label="Budget applies to"
+          options={[
+            { label: "Per day", value: "daily" },
+            { label: "Whole rental", value: "total" },
+          ]}
+        />
+        <FieldSelect
+          name="transmission"
+          defaultValue={trip.transmission}
+          label="Transmission"
+          options={[
+            { label: "Any transmission", value: "" },
+            { label: "Automatic", value: "Automatic" },
+            { label: "Manual", value: "Manual" },
+          ]}
+        />
+        <FieldInput
+          type="number"
+          name="passengers"
+          min="0"
+          max="20"
+          defaultValue={trip.passengers}
+          label="Passengers"
+        />
       </div>
       <p className="muted">
         Cape Town demo only. Budget filtering covers base rental; fees and

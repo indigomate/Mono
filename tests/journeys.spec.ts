@@ -1,299 +1,176 @@
 import { test, expect, type Page } from "@playwright/test";
 async function say(page: Page, text: string) {
-  await page.getByLabel("Message your concierge").fill(text);
-  await page.getByRole("button", { name: "Send message" }).click();
+  await page.getByLabel("Message MONO", { exact: true }).fill(text);
+  await page.getByRole("button", { name: "Send message", exact: true }).click();
 }
-async function quote(page: Page) {
-  await page.getByRole("button", { name: "View car" }).first().click();
-  await page.getByRole("button", { name: "Review rental estimate" }).click();
-}
-test("renter reviews estimate, saves request and resumes after reload", async ({
+const tool = (page: Page) => page.locator(".chat-tool");
+test("primary actions open distinct customer and provider conversations with no dashboards", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Book a Car" }).click();
+  await expect(
+    page.getByRole("region", { name: "Customer conversation", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Message MONO")).toBeVisible();
+  await expect(
+    page.locator(".service-grid,.customer-overview,.provider-checklist"),
+  ).toHaveCount(0);
+  await expect(
+    page
+      .getByRole("navigation", { name: "Customer navigation", exact: true })
+      .getByRole("button"),
+  ).toHaveCount(1);
+  await page
+    .getByRole("button", { name: "Change workspace", exact: true })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "I provide vehicles or services",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Provider conversation", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByRole("navigation", { name: "Provider navigation", exact: true })
+      .getByRole("button"),
+  ).toHaveCount(1);
+  await expect(page.locator("#nav-bookings,#nav-owner")).toHaveCount(0);
+});
+test("self-drive conversation preserves preferences and shows details and estimate inside chat", async ({
   page,
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
-  await page.getByRole("button", { name: "Book a Car" }).click();
-  await page.locator(".service-self-drive").click();
-  await expect(
-    page.getByRole("heading", { name: /Where can we/ }),
-  ).toBeVisible();
+  await page.goto("/#customer");
   await say(page, "An affordable automatic car for 3 days");
   await expect(page.locator(".match-card")).toHaveCount(1);
-  await quote(page);
+  await expect(tool(page)).toContainText("Toyota Corolla");
+  await page.getByRole("button", { name: "View car", exact: true }).click();
+  await expect(page.locator("dialog")).toHaveCount(0);
+  await expect(tool(page)).toContainText("Toyota Corolla");
+  await page.getByRole("button", { name: "Review rental estimate" }).click();
   await page.getByLabel("Pickup date", { exact: true }).fill("2027-02-10");
   await page.getByLabel("Return date", { exact: true }).fill("2027-02-13");
   await expect(page.locator(".quote-total")).toContainText(/1[\s,]950/);
+  await page.reload();
+  await expect(page.getByLabel("Pickup date", { exact: true })).toHaveValue(
+    "2027-02-10",
+  );
   await page.getByLabel("Your email", { exact: true }).fill("demo@example.com");
   await page.getByRole("checkbox").check();
   await page
     .getByRole("button", { name: "Save demo request", exact: true })
     .click();
-  await expect(page.locator(".success-note[role=status]")).toContainText(
-    "Demo request saved",
-  );
-  await page.getByRole("button", { name: "View my requests" }).click();
-  await expect(page.locator(".request-card")).toContainText("Toyota Corolla");
-  await expect(page.locator(".request-card")).toContainText("Not sent");
+  await expect(tool(page)).toContainText("Toyota Corolla");
+  await expect(tool(page)).toContainText("not submitted");
+  await expect(page).toHaveURL(/#customer$/);
+  await expect(page.getByLabel("Message MONO")).toBeVisible();
   await page.reload();
-  await expect(page.locator(".request-card")).toContainText(/1[\s,]950/);
-  await page.locator("#nav-chat").click();
-  await expect(page.locator(".chat-message.user")).toContainText(
-    "affordable automatic",
-  );
-  await expect(page.locator(".trip-card")).toContainText("2027-02-10");
+  await expect(tool(page)).toContainText("Toyota Corolla");
   expect(errors).toEqual([]);
 });
-test("follow-ups preserve vehicle and transmission and duration is not interpreted as budget", async ({
+test("conversation context handles duration without turning it into a price", async ({
   page,
 }) => {
-  await page.goto("/#chat");
+  await page.goto("/#customer");
   await say(page, "I need an SUV");
   await say(page, "Automatic please");
   await say(page, "For 3 days");
   await expect(page.locator(".match-card")).toHaveCount(1);
-  await expect(page.locator(".match-card")).toContainText("Range Rover");
-  await expect(page.locator(".trip-card")).toContainText("3 days");
-  await expect(page.locator(".trip-card")).toContainText("Not set");
+  await expect(tool(page)).toContainText("Range Rover");
+  await expect(tool(page)).toContainText(/6[\s,]300/);
   await page.reload();
-  await expect(page.locator(".match-card")).toHaveCount(1);
-  await expect(page.locator(".trip-card")).toContainText("Automatic");
+  await expect(tool(page)).toContainText("Range Rover");
 });
-test("total rental budget filters trip price and empty search recovers via editable brief", async ({
-  page,
-}) => {
-  await page.goto("/#chat");
-  await say(page, "I can spend R1500 for the whole 3 days");
-  await expect(page.locator(".match-card")).toHaveCount(0);
-  await expect(page.locator(".trip-card")).toContainText("total");
-  await page.getByRole("button", { name: "Adjust trip" }).click();
-  await page.getByLabel("Budget (ZAR)", { exact: true }).fill("2000");
-  await page.getByRole("button", { name: "Update trip" }).click();
-  await expect(page.locator(".match-card")).toHaveCount(1);
-  await expect(page.locator(".match-card")).toContainText("Toyota Corolla");
-  await expect(page.locator(".match-card")).toContainText(/1[\s,]950/);
-});
-test("quote rejects invalid dates and budget overruns", async ({ page }) => {
-  await page.goto("/#chat");
-  await say(page, "An affordable car under R2000 total for 3 days");
-  await quote(page);
-  await page.getByLabel("Pickup date", { exact: true }).fill("2027-02-13");
-  await page.getByLabel("Return date", { exact: true }).fill("2027-02-10");
-  await expect(
-    page.getByRole("button", { name: "Save demo request", exact: true }),
-  ).toBeDisabled();
-  await page.getByLabel("Return date", { exact: true }).fill("2027-02-17");
-  await expect(page.getByRole("alert")).toContainText(
-    "Over your saved whole-rental budget",
-  );
-  await expect(
-    page.getByRole("button", { name: "Save demo request", exact: true }),
-  ).toBeDisabled();
-  await page.getByRole("button", { name: "Close vehicle review" }).click();
-  await expect(page.locator("dialog")).toHaveCount(0);
-});
-test("owner creates, edits and controls local storefront preview", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await page.getByRole("button", { name: "List Your Car" }).last().click();
-  await page.locator("#nav-owner").click();
-  await page.getByRole("button", { name: "Create first listing" }).click();
-  await page
-    .getByLabel("Listing name", { exact: true })
-    .fill("Mercedes C-Class");
-  await page.getByLabel("Reference rate (ZAR)", { exact: true }).fill("1200");
-  await page.getByLabel("Service area", { exact: true }).fill("Waterfront");
-  await page.getByRole("button", { name: "Save listing draft" }).click();
-  await expect(page.locator(".draft-card")).toContainText("Mercedes C-Class");
-  await page.getByRole("button", { name: "Edit listing", exact: true }).click();
-  await page.getByLabel("Listing name", { exact: true }).fill("Mercedes C200");
-  await page.getByRole("button", { name: "Save listing draft" }).click();
-  await page
-    .getByRole("button", { name: "Add to preview", exact: true })
-    .click();
-  await page.getByRole("button", { name: "Preview storefront" }).click();
-  await expect(page.locator(".store-item")).toContainText("Mercedes C200");
-  await page.reload();
-  await expect(page.locator(".store-item")).toContainText("Mercedes C200");
-  await page.locator("#nav-owner").click();
-  await page.getByRole("button", { name: "Remove from preview" }).click();
-  await page.locator("#nav-store").click();
-  await expect(page.locator(".store-item")).toHaveCount(0);
-  await expect(
-    page.getByText("Your collection starts with a draft."),
-  ).toBeVisible();
-});
-for (const width of [375, 768, 1440])
-  test(`responsive workflow at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 900 });
-    await page.goto("/");
-    await expect(
-      page.getByRole("heading", { name: "RENT SMARTER." }),
-    ).toBeVisible();
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBeTruthy();
-    await page.getByRole("button", { name: "Book a Car" }).click();
-    await page.locator(".service-self-drive").click();
-    await say(page, "An SUV for 3 days");
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBeTruthy();
-    await quote(page);
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBeTruthy();
-    await page.getByRole("button", { name: "Close vehicle review" }).click();
-    await page
-      .getByRole("button", { name: "Change workspace", exact: true })
-      .click();
-    await page.locator(".workspace-choice-grid button").nth(1).click();
-    if (width < 520) {
-      const nav = page.getByRole("navigation", {
-        name: "Mobile provider navigation",
-      });
-      await nav
-        .getByRole("button", { name: "Vehicles & services", exact: true })
-        .click();
-      await expect(
-        nav.getByRole("button", { name: "Vehicles & services", exact: true }),
-      ).toHaveAttribute("aria-current", "page");
-    } else await page.locator("#nav-owner").click();
-    await expect(
-      page.getByRole("heading", { name: "Your vehicles & services." }),
-    ).toBeVisible();
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBeTruthy();
-  });
-test("corrupt storage and legacy owner listings recover safely", async ({
-  page,
-}) => {
-  await page.addInitScript(() => {
-    localStorage.setItem("mono-journey-v1", "{bad");
-    localStorage.setItem("mono-requests", "{bad");
-    localStorage.setItem(
-      "mono-listings",
-      '[null,{"name":"Legacy BMW","price":1000,"area":"Sea Point"}]',
-    );
-  });
-  await page.goto("/#owner");
-  await expect(page.locator(".draft-card")).toContainText("Legacy BMW");
-  await page.goto("/#bookings");
-  await expect(
-    page.getByRole("heading", { name: "Your next trip is waiting." }),
-  ).toBeVisible();
-});
-test("new trip clears context and browser back restores view", async ({
-  page,
-}) => {
-  await page.goto("/#chat");
-  await say(page, "An SUV under R7000 total for 3 days");
-  await page.getByRole("button", { name: "Start a new trip" }).click();
-  await expect(page.locator(".chat-message")).toHaveCount(0);
-  await expect(page.locator(".trip-card")).toContainText("Not set");
-  await page.locator("#nav-customer").click();
-  await page.goBack();
-  await expect(
-    page.getByRole("heading", { name: /Where can we/ }),
-  ).toBeVisible();
-});
-
-test("make preferences survive follow-ups and modal supports Escape", async ({
-  page,
-}) => {
-  await page.goto("/#chat");
-  await say(page, "Show me BMW cars");
-  await say(page, "For 2 days");
-  await expect(page.locator(".match-card")).toHaveCount(1);
-  await expect(page.locator(".match-card")).toContainText("BMW");
-  await page.getByRole("button", { name: "View car" }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "View car" })).toBeFocused();
-});
-test("total budget without duration asks for missing detail and unsupported location shows no cars", async ({
-  page,
-}) => {
-  await page.goto("/#chat");
-  await say(page, "My total budget is R5000");
-  await expect(page.locator(".match-card")).toHaveCount(0);
-  await expect(page.getByRole("log")).toContainText(
-    "Add your dates or number of days",
-  );
-  await page.getByRole("button", { name: "Edit trip", exact: true }).click();
-  await page.getByLabel("Pickup city").fill("Johannesburg");
-  await page.getByRole("button", { name: "Update trip" }).click();
-  await expect(page.locator(".match-card")).toHaveCount(0);
-  await expect(page.getByRole("log")).toContainText("Cape Town only");
-});
-
-test("unavailable storage warns and retains progress while navigating in the same session", async ({
-  page,
-}) => {
-  await page.addInitScript(() => {
-    Storage.prototype.setItem = () => {
-      throw new DOMException("Quota exceeded", "QuotaExceededError");
-    };
-  });
-  await page.goto("/#chat");
-  await say(page, "I need an SUV for 3 days");
-  await expect(page.locator("#storage-status")).toContainText(
-    "storage is unavailable",
-  );
-  await page
-    .getByRole("button", { name: "Back to website", exact: true })
-    .click();
-  await page.getByRole("button", { name: "Book a Car" }).click();
-  await page.locator(".service-self-drive").click();
-  await expect(page.locator(".trip-card")).toContainText("SUV");
-  await expect(page.locator(".chat-message.user")).toContainText("3 days");
-});
-
-test("customer and provider dashboards have separate navigation and preserve data across explicit switching", async ({
+test("whole-rental budget and inline trip edits recover an empty result", async ({
   page,
 }) => {
   await page.goto("/#customer");
-  await expect(page.locator(".service-card")).toHaveCount(8);
-  await expect(
-    page.getByRole("navigation", { name: "Customer navigation", exact: true }),
-  ).toContainText("My requests");
-  await expect(page.locator("#nav-owner")).toHaveCount(0);
+  await say(page, "I can spend R1500 for the whole 3 days");
+  await expect(page.locator(".match-card")).toHaveCount(0);
   await page
-    .getByRole("button", { name: "Change workspace", exact: true })
+    .getByRole("button", { name: "Edit trip details", exact: true })
     .click();
-  await page.locator(".workspace-choice-grid button").nth(1).click();
-  await expect(
-    page.getByRole("navigation", { name: "Provider navigation", exact: true }),
-  ).toContainText("Incoming requests");
-  await expect(page.locator("#nav-chat")).toHaveCount(0);
-  await expect(page.locator("#nav-bookings")).toHaveCount(0);
-  await expect(page.locator(".provider-checklist")).toBeVisible();
+  await page.getByLabel("Budget (ZAR)", { exact: true }).fill("2000");
+  await page.getByRole("button", { name: "Update trip", exact: true }).click();
+  await expect(tool(page)).toContainText("Toyota Corolla");
+  await expect(tool(page)).toContainText(/1[\s,]950/);
+  await expect(page).toHaveURL(/#customer$/);
 });
-for (const mode of [
-  "chauffeur",
-  "airport",
-  "events",
-  "group",
-  "tours",
-  "long-term",
-  "custom",
+test("over-budget dates cannot be saved as a rental request", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(page, "An affordable car under R2000 total for 3 days");
+  await page.getByRole("button", { name: "View car" }).click();
+  await page.getByRole("button", { name: "Review rental estimate" }).click();
+  await page.getByLabel("Pickup date", { exact: true }).fill("2027-02-10");
+  await page.getByLabel("Return date", { exact: true }).fill("2027-02-14");
+  await expect(page.getByRole("alert")).toContainText("Over your saved");
+  await expect(
+    page.getByRole("button", { name: "Save demo request", exact: true }),
+  ).toBeDisabled();
+});
+test("airport details can be collected through messages and reviewed in embedded Untitled UI fields", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(
+    page,
+    "I need an airport transfer from Cape Town Airport to Waterfront for 4 passengers",
+  );
+  await expect(page.getByLabel("Pickup location", { exact: true })).toHaveValue(
+    "Cape Town Airport",
+  );
+  await expect(page.getByLabel("Destination", { exact: true })).toHaveValue(
+    "Waterfront",
+  );
+  await expect(page.getByLabel("Passengers", { exact: true })).toHaveValue("4");
+  await say(page, "2027-02-10");
+  await say(page, "10:30");
+  await say(page, "demo@example.com");
+  await expect(page.getByLabel("Service date", { exact: true })).toHaveValue(
+    "2027-02-10",
+  );
+  await expect(page.getByLabel("Your email", { exact: true })).toHaveValue(
+    "demo@example.com",
+  );
+  await expect(
+    page.locator(".service-enquiry-form .mono-field"),
+  ).not.toHaveCount(0);
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Save demo enquiry" }).click();
+  await expect(tool(page)).toContainText("Airport transfer");
+  await expect(tool(page)).toContainText("not sent");
+  await expect(page).toHaveURL(/#customer$/);
+});
+for (const [mode, label] of [
+  ["chauffeur", "Chauffeur service"],
+  ["events", "Weddings & events"],
+  ["group", "Group transport"],
+  ["tours", "Tours & day trips"],
+  ["long-term", "Long-term & subscriptions"],
+  ["custom", "Something else"],
 ])
-  test(`${mode} service enquiry uses the correct fields and saves only in customer workspace`, async ({
+  test(`${label} is available and saves inside the customer conversation`, async ({
     page,
   }) => {
-    await page.goto(`/#${mode}`);
-    await expect(page.locator(".service-enquiry-form")).toBeVisible();
+    await page.goto("/#customer");
+    await page
+      .getByRole("button", { name: "Explore services", exact: true })
+      .click();
+    await expect(page.locator(".chat-service-options button")).toHaveCount(8);
+    await page
+      .locator(".chat-service-options button")
+      .filter({ hasText: label })
+      .click();
+    await expect(
+      tool(page).getByRole("heading", { name: label + ".", exact: true }),
+    ).toBeVisible();
     await page
       .getByLabel("Vehicle preference", { exact: true })
       .selectOption(
@@ -308,185 +185,271 @@ for (const mode of [
         exact: true,
       })
       .fill("2027-02-10");
-    if (mode === "long-term") {
-      await expect(
-        page.getByLabel("Pickup time (Cape Town)", { exact: true }),
-      ).toHaveCount(0);
+    if (mode === "long-term")
       await page.getByLabel("End date", { exact: true }).fill("2027-03-10");
-    } else
+    else
       await page
         .getByLabel("Pickup time (Cape Town)", { exact: true })
         .fill("10:30");
-    await page
-      .getByLabel("Pickup location", { exact: true })
-      .fill("Cape Town Airport");
-    await page
-      .getByLabel(
-        mode === "airport" || mode === "group"
-          ? "Destination"
-          : "Destination or itinerary (optional)",
-        { exact: true },
-      )
-      .fill("Waterfront");
-    if (mode === "chauffeur")
-      await page.getByLabel("Driver hours required", { exact: true }).fill("4");
+    await page.getByLabel("Pickup location", { exact: true }).fill("Sea Point");
+    if (mode === "group")
+      await page.getByLabel("Destination", { exact: true }).fill("Waterfront");
     await page
       .getByLabel("Your email", { exact: true })
       .fill("demo@example.com");
     await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Save demo enquiry" }).click();
-    await expect(page.locator(".success-note")).toContainText(
-      "Service enquiry saved",
-    );
-    await page.getByRole("button", { name: "View my requests" }).click();
-    await expect(
-      page.locator(".service-inquiry-list .request-card"),
-    ).toHaveCount(1);
+    await expect(tool(page)).toContainText("Saved locally");
+    await expect(page).toHaveURL(/#customer$/);
     await page.reload();
-    await expect(page.locator(".service-inquiry-list")).toContainText(
-      "Cape Town Airport",
-    );
-    await page.goto("/#provider-requests");
-    await expect(
-      page.getByRole("heading", { name: "No live requests yet." }),
-    ).toBeVisible();
-    await expect(page.locator(".service-inquiry-list")).toHaveCount(0);
+    await expect(tool(page)).toContainText(label);
+    await expect(page.getByLabel("Message MONO")).toBeVisible();
   });
-test("provider profile and chauffeur offering support hourly pricing and persist independently", async ({
+test("an airport address does not switch a chauffeur conversation to another service", async ({
   page,
 }) => {
-  await page.goto("/#provider-profile");
-  await page
-    .getByLabel("Provider or business name", { exact: true })
-    .fill("Cape Executive Transport");
-  await page
-    .getByLabel("Provider type", { exact: true })
-    .selectOption("chauffeur-operator");
-  await page.getByLabel("Self-drive rental", { exact: true }).uncheck();
-  await page.getByLabel("Chauffeur service", { exact: true }).check();
-  await page.getByLabel("Airport transfer", { exact: true }).check();
-  await page.getByRole("button", { name: "Save provider profile" }).click();
+  await page.goto("/#customer");
+  await say(page, "I need a chauffeur");
+  await say(page, "Cape Town Airport");
   await expect(
-    page.getByRole("status").filter({ hasText: "Provider profile saved" }),
+    tool(page).getByRole("heading", {
+      name: "Chauffeur service.",
+      exact: true,
+    }),
   ).toBeVisible();
-  await page.locator("#nav-owner").click();
-  await page.getByRole("button", { name: "Create first listing" }).click();
-  await page
-    .getByLabel("Listing name", { exact: true })
-    .fill("Executive Mercedes");
-  await page.getByLabel("Service area", { exact: true }).fill("Cape Town");
-  await expect(page.getByLabel("Pricing basis", { exact: true })).toHaveValue(
-    "hour",
+  await expect(page.getByLabel("Pickup location", { exact: true })).toHaveValue(
+    "Cape Town Airport",
   );
-  await page.getByLabel("Reference rate (ZAR)", { exact: true }).fill("650");
-  await page.getByRole("button", { name: "Save listing draft" }).click();
-  await expect(page.locator(".draft-card")).toContainText("/ hour");
-  await expect(page.locator(".draft-card")).toContainText("Chauffeur service");
+});
+test("provider can add, edit and preview a listing from the same chat", async ({
+  page,
+}) => {
+  await page.goto("/#provider");
+  await say(page, "Add my BMW 320i for chauffeur at R650 per hour");
+  await expect(page.getByLabel("Listing name", { exact: true })).toHaveValue(
+    "BMW 320i",
+  );
+  await expect(
+    page.getByLabel("Reference rate (ZAR)", { exact: true }),
+  ).toHaveValue("650");
+  await expect(
+    page.getByRole("combobox", { name: "Pricing basis", exact: true }),
+  ).toHaveValue("hour");
+  await page
+    .getByRole("button", { name: "Save listing draft", exact: true })
+    .click();
+  await expect(tool(page)).toContainText("BMW 320i");
+  await page.getByRole("button", { name: "Edit listing", exact: true }).click();
+  await say(page, "Make it R800 per hour with 4 seats");
+  await expect(
+    page.getByLabel("Reference rate (ZAR)", { exact: true }),
+  ).toHaveValue("800");
+  await expect(
+    page.getByLabel("Seats / passenger capacity", { exact: true }),
+  ).toHaveValue("4");
+  await page
+    .getByRole("button", { name: "Save listing draft", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Add to preview", exact: true })
     .click();
-  await page.locator("#nav-store").click();
-  await expect(page.locator(".storefront-hero")).toContainText(
-    "Cape Executive Transport",
-  );
-  await expect(page.locator(".store-item")).toContainText("/ hour");
-  await page.reload();
-  await expect(page.locator(".store-item")).toContainText("Executive Mercedes");
-  await page.goto("/#customer");
-  await expect(page.locator(".customer-overview")).toContainText(
-    "Saved rental requests0",
-  );
-  await expect(page.locator(".draft-card")).toHaveCount(0);
-});
-test("service enquiry draft resumes without becoming a submitted request", async ({
-  page,
-}) => {
-  await page.goto("/#airport");
   await page
-    .getByLabel("Pickup location", { exact: true })
-    .fill("Airport terminal");
-  await page.getByLabel("Destination", { exact: true }).fill("Sea Point");
+    .getByRole("button", { name: "Storefront preview", exact: true })
+    .click();
+  await expect(tool(page).locator(".store-item")).toContainText("BMW 320i");
+  await expect(tool(page)).toContainText("/ hour");
+  await expect(page).toHaveURL(/#provider$/);
   await page.reload();
-  await expect(page.getByLabel("Pickup location", { exact: true })).toHaveValue(
-    "Airport terminal",
-  );
-  await expect(page.getByLabel("Destination", { exact: true })).toHaveValue(
-    "Sea Point",
-  );
-  await page.goto("/#bookings");
-  await expect(page.locator(".service-inquiry-list")).toHaveCount(0);
+  await expect(tool(page)).toContainText("BMW 320i");
 });
-test("explicit chauffeur intent goes to its dedicated enquiry, not daily car quotes", async ({
+test("provider profile fields and unfinished listing drafts resume without being silently saved", async ({
   page,
 }) => {
-  await page.goto("/#chat");
-  await say(page, "I need a chauffeur for the day");
-  await expect(page).toHaveURL(/#chauffeur$/);
-  await expect(page.locator(".service-enquiry-form")).toBeVisible();
-  await expect(page.locator(".match-card")).toHaveCount(0);
+  await page.goto("/#provider");
+  await page
+    .getByRole("button", { name: "Business profile", exact: true })
+    .click();
+  await page
+    .getByLabel("Provider or business name", { exact: true })
+    .fill("Cape Executive");
+  await page
+    .getByRole("combobox", { name: "Provider type", exact: true })
+    .selectOption("chauffeur-operator");
+  await page.reload();
+  await expect(
+    page.getByLabel("Provider or business name", { exact: true }),
+  ).toHaveValue("Cape Executive");
+  await page
+    .getByRole("button", { name: "Save provider profile", exact: true })
+    .click();
+  await expect(tool(page)).toContainText("Cape Executive");
+  await page
+    .getByRole("button", { name: "Add a listing", exact: true })
+    .first()
+    .click();
+  await page
+    .getByLabel("Listing name", { exact: true })
+    .fill("Unfinished Mercedes");
+  await page.reload();
+  await expect(page.getByLabel("Listing name", { exact: true })).toHaveValue(
+    "Unfinished Mercedes",
+  );
+  await page.getByRole("button", { name: "My fleet", exact: true }).click();
+  await expect(tool(page)).not.toContainText("Unfinished Mercedes");
+  await say(page, "resume my draft");
+  await expect(page.getByLabel("Listing name", { exact: true })).toHaveValue(
+    "Unfinished Mercedes",
+  );
+});
+test("quote-only provider rates remain quotes, and publishing is never simulated", async ({
+  page,
+}) => {
+  await page.goto("/#provider");
+  await say(page, "Add my Group shuttle as a custom quote only service");
+  await page
+    .getByRole("combobox", { name: "Pricing basis", exact: true })
+    .selectOption("quote");
+  await page
+    .getByRole("button", { name: "Save listing draft", exact: true })
+    .click();
+  await expect(tool(page)).toContainText("Quote on request");
+  await say(page, "Publish my listing");
+  await expect(page.locator(".turn-text").last()).toContainText(
+    "not connected",
+  );
+  await expect(tool(page)).toContainText("SAVED DRAFT");
+});
+test("customer records never appear in provider inbox and transcripts remain separate", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(page, "I need an SUV for 3 days");
+  await page
+    .getByRole("button", { name: "Change workspace", exact: true })
+    .click();
+  await page
+    .getByRole("button", {
+      name: "I provide vehicles or services",
+      exact: true,
+    })
+    .click();
+  await expect(page.locator(".chat-transcript")).not.toContainText(
+    "I need an SUV",
+  );
+  await page
+    .getByRole("button", { name: "Incoming requests", exact: true })
+    .click();
+  await expect(tool(page)).toContainText("No live requests yet.");
+  await page
+    .getByRole("button", { name: "Change workspace", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "I want to rent or ride", exact: true })
+    .click();
+  await expect(page.locator(".chat-transcript")).toContainText("I need an SUV");
+});
+test("new chat requires confirmation and preserves saved trip context", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(page, "I need an SUV for 3 days");
+  await page.getByRole("button", { name: "New chat", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Keep chatting", exact: true })
+    .click();
+  await expect(page.locator(".turn-user")).toHaveCount(1);
+  await page.getByRole("button", { name: "New chat", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Start new chat", exact: true })
+    .click();
+  await expect(page.locator(".turn-user")).toHaveCount(0);
+  await page.getByRole("button", { name: "Edit my trip", exact: true }).click();
+  await expect(
+    page.getByRole("combobox", { name: "Vehicle type", exact: true }),
+  ).toHaveValue("SUV");
+});
+test("earlier tools can be reopened in conversation", async ({ page }) => {
+  await page.goto("/#customer");
+  await say(page, "I need a BMW for 2 days");
+  await page.getByRole("button", { name: "My requests", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Reopen in chat", exact: false })
+    .last()
+    .click();
+  await expect(tool(page)).toContainText("BMW 3 Series");
 });
 for (const width of [375, 768, 1440])
-  test(`separate dashboards and service forms fit ${width}px`, async ({
+  test(`chat, embedded fields and composer remain usable at ${width}px`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height: 900 });
-    for (const view of [
-      "customer",
-      "provider",
-      "provider-profile",
-      "chauffeur",
-      "long-term",
-    ]) {
-      await page.goto(`/#${view}`);
-      expect(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= innerWidth,
-        ),
-        view,
-      ).toBeTruthy();
-    }
-    await page.goto("/#workspaces");
-    await expect(page.locator(".workspace-choice-grid button")).toHaveCount(2);
+    await page.goto("/#customer");
+    await say(page, "I need an airport transfer");
+    await expect(page.getByLabel("Message MONO")).toBeInViewport();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBeTruthy();
+    await page.goto("/#provider");
+    await page
+      .getByRole("button", { name: "Add a listing", exact: true })
+      .click();
+    await expect(page.getByLabel("Message MONO")).toBeInViewport();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBeTruthy();
+    await page.getByLabel("Listing name", { exact: true }).fill("Cape shuttle");
+    await page
+      .getByRole("combobox", { name: "Pricing basis", exact: true })
+      .selectOption("quote");
+    await page
+      .getByRole("button", { name: "Save listing draft", exact: true })
+      .click();
+    await expect(tool(page)).toContainText("Cape shuttle");
   });
-
-test("unsupported vehicle preference carries into a custom enquiry", async ({
+test("legacy links and malformed browser data recover into chat", async ({
   page,
 }) => {
-  await page.goto("/#chat");
-  await say(page, "I need a motorcycle");
-  await expect(page.locator(".match-card")).toHaveCount(0);
-  await page.getByRole("button", { name: "Prepare a custom enquiry" }).click();
-  await expect(page).toHaveURL(/#custom$/);
-  await expect(
-    page.getByLabel("Vehicle preference", { exact: true }),
-  ).toHaveValue("Motorcycle");
-  await expect(
-    page.getByLabel("Driver arrangement", { exact: true }),
-  ).toHaveValue("flexible");
-});
-test("quote-only provider listing persists without inventing a zero-price rental", async ({
-  page,
-}) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("mono-customer-chat-v1", "{bad");
+    localStorage.setItem("mono-provider-chat-v1", "[null,{}]");
+    localStorage.setItem(
+      "mono-listings",
+      '[null,{"name":"Legacy BMW","price":1000,"area":"Sea Point"}]',
+    );
+  });
   await page.goto("/#owner");
-  await page.getByRole("button", { name: "Create first listing" }).click();
-  await page.getByLabel("Listing name", { exact: true }).fill("Group charter");
+  await expect(page.getByLabel("Message MONO")).toBeVisible();
+  await expect(tool(page)).toContainText("Legacy BMW");
+  await page.goto("/#airport");
+  await expect(
+    page.getByLabel("Pickup location", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Message MONO")).toBeVisible();
+});
+test("Untitled UI inputs expose labels, currency prefixes, keyboard focus and invalid states", async ({
+  page,
+}) => {
+  await page.goto("/#provider");
   await page
-    .getByLabel("Vehicle category", { exact: true })
-    .selectOption("Van / minibus");
-  await page.getByLabel("Service area", { exact: true }).fill("Cape Town");
-  await page.getByLabel("Pricing basis", { exact: true }).selectOption("quote");
-  await page.getByLabel("Group transport", { exact: true }).check();
+    .getByRole("button", { name: "Add a listing", exact: true })
+    .click();
+  await expect(tool(page).locator(".mono-field")).not.toHaveCount(0);
+  await expect(tool(page).locator(".mono-select")).not.toHaveCount(0);
   await expect(
     page.getByLabel("Reference rate (ZAR)", { exact: true }),
-  ).toHaveCount(0);
-  await page.getByRole("button", { name: "Save listing draft" }).click();
-  await expect(page.locator(".draft-card")).toContainText("Quote on request");
-  await page.reload();
-  await expect(page.locator(".draft-card")).toContainText("Quote on request");
-  await expect(page.locator(".draft-card")).not.toContainText("/ day");
+  ).toBeVisible();
+  await expect(tool(page).getByText("R", { exact: true })).toBeVisible();
+  await page.getByLabel("Listing name", { exact: true }).focus();
+  await expect(page.getByLabel("Listing name", { exact: true })).toBeFocused();
+  await page
+    .getByRole("button", { name: "Save listing draft", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Listing name", { exact: true }),
+  ).toHaveAttribute("aria-invalid", "true");
+  await expect(tool(page).locator(".mono-field-error").first()).not.toBeEmpty();
 });

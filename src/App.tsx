@@ -1,5 +1,10 @@
-import { useEffect, useState } from "react";
-import { Workspace, type View } from "./workspace/Workspace";
+import { useEffect, useState, lazy, Suspense } from "react";
+import type { View } from "./workspace/navigation";
+const Workspace = lazy(() =>
+  import("./workspace/Workspace").then((module) => ({
+    default: module.Workspace,
+  })),
+);
 import { validViews } from "./workspace/navigation";
 function currentView(): View | "home" {
   const hash = location.hash.slice(1);
@@ -22,7 +27,11 @@ export default function App() {
     window.scrollTo(0, 0);
   }
   return (
-    <div>
+    <div
+      className={
+        view === "home" ? "app-root" : "app-root app-conversation-root"
+      }
+    >
       <div id="storage-status" role="status" />
       <div id="landing" className="landing" hidden={view !== "home"}>
         <header className="nav">
@@ -151,7 +160,17 @@ export default function App() {
           only.
         </footer>
       </div>
-      {view !== "home" && <Workspace view={view} navigate={navigate} />}
+      {view !== "home" && (
+        <Suspense
+          fallback={
+            <div className="conversation-loading" role="status">
+              Opening your MONO conversation…
+            </div>
+          }
+        >
+          <Workspace view={view} navigate={navigate} />
+        </Suspense>
+      )}
     </div>
   );
 }

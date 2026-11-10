@@ -29,3 +29,7 @@ The cinematic landing page is retained. The application workspace pairs a deep e
 ## Distinct customer and provider experiences
 
 Rent & Ride uses a service-first dashboard and customer-only navigation. Provider Studio uses a business overview, setup checklist and provider-only navigation. Both retain the MONO emerald/ivory identity but have explicit workspace labels and slightly distinct sidebar treatments. Moving between roles requires the Change workspace chooser. Service enquiry forms emphasize the appropriate route/timing requirements and quote-required status; they do not resemble instant self-drive checkout. Provider reference rates always show their unit.
+
+## Chat-first correction
+
+The active UI now treats the conversation as the workspace on both sides. Dashboard navigation is replaced with one conversation entry per role. Tool cards appear within assistant messages, and a persistent composer allows follow-ups during any workflow. Service choices are conversational options, not a separate service dashboard. Untitled UI fields use MONO's emerald semantic theme, consistent labels, focus/error states, hints, icons and currency prefixes. See CONVERSATION_ARCHITECTURE.md; older dashboard descriptions above record earlier milestones only.

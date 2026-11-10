@@ -1,3 +1,7 @@
+import { Mail01 } from "@untitledui/icons";
+import { FieldSelect } from "../components/ui/FieldSelect";
+import { FieldTextarea } from "../components/ui/FieldTextarea";
+import { FieldInput } from "../components/ui/FieldInput";
 import { useEffect, useState, type FormEvent } from "react";
 import {
   services,
@@ -9,7 +13,10 @@ import {
 import { saveDemo, today, money } from "../demo/marketplace";
 import { read } from "../demo/storage";
 import { type Navigate } from "./navigation";
-type EnquiryFields = Omit<ServiceInquiry, "id" | "createdAt" | "service">;
+export type EnquiryFields = Omit<
+  ServiceInquiry,
+  "id" | "createdAt" | "service"
+>;
 const emptyFields: EnquiryFields = {
   vehicleType: "Any suitable vehicle",
   driver: "flexible",
@@ -24,7 +31,7 @@ const emptyFields: EnquiryFields = {
   notes: "",
   email: "",
 };
-function loadFields(service: string): EnquiryFields {
+export function loadFields(service: string): EnquiryFields {
   const initialDriver: EnquiryFields["driver"] = [
     "chauffeur",
     "airport",
@@ -71,19 +78,24 @@ export function ServiceEnquiry({
   navigate,
   onSave,
   vehiclePreference,
+  controlledFields,
+  onFieldsChange,
 }: {
   service: Exclude<ServiceType, "self-drive">;
   navigate: Navigate;
   onSave: (enquiry: ServiceInquiry) => void;
   vehiclePreference?: string;
+  controlledFields?: EnquiryFields;
+  onFieldsChange?: (fields: EnquiryFields) => void;
 }) {
   const definition = services.find((s) => s.id === service)!;
-  const [fields, setFields] = useState(() => {
+  const [internalFields, setFields] = useState(() => {
     const initial = loadFields(service);
     return vehiclePreference && initial.vehicleType === "Any suitable vehicle"
       ? { ...initial, vehicleType: vehiclePreference }
       : initial;
   });
+  const fields = controlledFields ?? internalFields;
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const longTerm = service === "long-term";
@@ -122,7 +134,8 @@ export function ServiceEnquiry({
     key: K,
     value: EnquiryFields[K],
   ) => {
-    setFields((f) => ({ ...f, [key]: value }));
+    if (onFieldsChange) onFieldsChange({ ...fields, [key]: value });
+    else setFields((f) => ({ ...f, [key]: value }));
     setSaved(false);
   };
   return (
@@ -142,164 +155,148 @@ export function ServiceEnquiry({
             <span className="status-badge">Quote required</span>
           </div>
           <div className="fields-grid">
-            <label>
-              Vehicle preference
-              <select
-                aria-label="Vehicle preference"
-                value={fields.vehicleType}
-                onChange={(e) => update("vehicleType", e.target.value)}
-              >
-                <option>Any suitable vehicle</option>
-                {vehicleTypes.map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Driver arrangement
-              <select
-                aria-label="Driver arrangement"
-                value={fields.driver}
-                onChange={(e) =>
-                  update("driver", e.target.value as EnquiryFields["driver"])
-                }
-              >
-                {["chauffeur", "airport"].includes(service) ? (
-                  <option value="with-driver">With a driver</option>
-                ) : (
-                  <>
-                    <option value="with-driver">With a driver</option>
-                    <option value="self-drive">Without a driver</option>
-                    <option value="flexible">Open to either</option>
-                  </>
-                )}
-              </select>
-            </label>
-            <label>
-              Passengers
-              <input
-                type="number"
-                min="1"
-                max="100"
-                required
-                value={fields.passengers}
-                onChange={(e) => update("passengers", Number(e.target.value))}
-              />
-            </label>
-            <label>
-              {longTerm ? "Start date" : "Service date"}
-              <input
-                type="date"
-                min={today()}
-                required
-                value={fields.date}
-                onChange={(e) => update("date", e.target.value)}
-              />
-            </label>
+            <FieldSelect
+              aria-label="Vehicle preference"
+              value={fields.vehicleType}
+              onChange={(e) => update("vehicleType", e.target.value)}
+              label="Vehicle preference"
+              options={[
+                {
+                  label: "Any suitable vehicle",
+                  value: "Any suitable vehicle",
+                },
+                ...vehicleTypes.map((t) => ({ label: t, value: t })),
+              ]}
+            />
+            <FieldSelect
+              aria-label="Driver arrangement"
+              value={fields.driver}
+              onChange={(e) =>
+                update("driver", e.target.value as EnquiryFields["driver"])
+              }
+              label="Driver arrangement"
+              options={[
+                ...(["chauffeur", "airport"].includes(service)
+                  ? [{ label: "With a driver", value: "with-driver" }]
+                  : [
+                      { label: "With a driver", value: "with-driver" },
+                      { label: "Without a driver", value: "self-drive" },
+                      { label: "Open to either", value: "flexible" },
+                    ]),
+              ]}
+            />
+            <FieldInput
+              type="number"
+              min="1"
+              max="100"
+              required
+              value={fields.passengers}
+              onChange={(e) => update("passengers", Number(e.target.value))}
+              label="Passengers"
+            />
+            <FieldInput
+              type="date"
+              min={today()}
+              required
+              value={fields.date}
+              onChange={(e) => update("date", e.target.value)}
+              label={longTerm ? "Start date" : "Service date"}
+            />
             {longTerm ? (
-              <label>
-                End date
-                <input
-                  type="date"
-                  min={fields.date || today()}
-                  required
-                  value={fields.end}
-                  onChange={(e) => update("end", e.target.value)}
-                />
-              </label>
-            ) : (
-              <label>
-                Pickup time (Cape Town)
-                <input
-                  type="time"
-                  required
-                  value={fields.time}
-                  onChange={(e) => update("time", e.target.value)}
-                />
-              </label>
-            )}
-            <label>
-              Pickup location
-              <input
-                maxLength={200}
+              <FieldInput
+                type="date"
+                min={fields.date || today()}
                 required
-                value={fields.pickup}
-                onChange={(e) => update("pickup", e.target.value)}
-                placeholder={
-                  service === "airport"
-                    ? "Cape Town International Airport"
-                    : "Address or pickup area"
-                }
+                value={fields.end}
+                onChange={(e) => update("end", e.target.value)}
+                label="End date"
               />
-            </label>
-            <label>
-              {pointToPoint
-                ? "Destination"
-                : "Destination or itinerary (optional)"}
-              <input
-                maxLength={200}
-                required={pointToPoint}
-                value={fields.destination}
-                onChange={(e) => update("destination", e.target.value)}
-                placeholder={
-                  service === "airport"
-                    ? "Hotel, address or destination"
-                    : "Where would you like to go?"
-                }
+            ) : (
+              <FieldInput
+                type="time"
+                required
+                value={fields.time}
+                onChange={(e) => update("time", e.target.value)}
+                label="Pickup time (Cape Town)"
               />
-            </label>
-            {service === "chauffeur" && (
-              <label>
-                Driver hours required
-                <input
-                  type="number"
-                  min="1"
-                  max="168"
-                  required
-                  value={fields.hours}
-                  onChange={(e) => update("hours", Number(e.target.value))}
-                />
-              </label>
             )}
-            <label>
-              Target total budget (ZAR, optional)
-              <input
-                type="number"
-                min="0"
-                max="10000000"
-                value={fields.budget}
-                onChange={(e) => update("budget", Number(e.target.value))}
-              />
-            </label>
-          </div>
-          <label>
-            {service === "airport"
-              ? "Flight number, luggage & special requests (optional)"
-              : service === "events"
-                ? "Occasion, number of vehicles & arrangements (optional)"
-                : "Requirements & special arrangements (optional)"}
-            <textarea
-              maxLength={2000}
-              value={fields.notes}
-              onChange={(e) => update("notes", e.target.value)}
+            <FieldInput
+              maxLength={200}
+              required
+              value={fields.pickup}
+              onChange={(e) => update("pickup", e.target.value)}
               placeholder={
-                service === "custom"
-                  ? "Describe the rental or transport you need, including whether a driver is required."
-                  : "Vehicle size, luggage, accessibility, stops, driver requirements…"
+                service === "airport"
+                  ? "Cape Town International Airport"
+                  : "Address or pickup area"
+              }
+              label="Pickup location"
+            />
+            <FieldInput
+              maxLength={200}
+              required={pointToPoint}
+              value={fields.destination}
+              onChange={(e) => update("destination", e.target.value)}
+              placeholder={
+                service === "airport"
+                  ? "Hotel, address or destination"
+                  : "Where would you like to go?"
+              }
+              label={
+                pointToPoint
+                  ? "Destination"
+                  : "Destination or itinerary (optional)"
               }
             />
-          </label>
-          <label>
-            Your email
-            <input
-              type="email"
-              autoComplete="email"
-              required
-              maxLength={254}
-              value={fields.email}
-              onChange={(e) => update("email", e.target.value)}
+            {service === "chauffeur" && (
+              <FieldInput
+                type="number"
+                min="1"
+                max="168"
+                required
+                value={fields.hours}
+                onChange={(e) => update("hours", Number(e.target.value))}
+                label="Driver hours required"
+              />
+            )}
+            <FieldInput
+              type="number"
+              min="0"
+              max="10000000"
+              value={fields.budget}
+              onChange={(e) => update("budget", Number(e.target.value))}
+              label="Target total budget (ZAR, optional)"
+              hint="An optional target, not a confirmed provider quote."
+              prefix="R"
             />
-          </label>
+          </div>
+          <FieldTextarea
+            maxLength={2000}
+            value={fields.notes}
+            onChange={(e) => update("notes", e.target.value)}
+            placeholder={
+              service === "custom"
+                ? "Describe the rental or transport you need, including whether a driver is required."
+                : "Vehicle size, luggage, accessibility, stops, driver requirements…"
+            }
+            label={
+              service === "airport"
+                ? "Flight number, luggage & special requests (optional)"
+                : service === "events"
+                  ? "Occasion, number of vehicles & arrangements (optional)"
+                  : "Requirements & special arrangements (optional)"
+            }
+          />
+          <FieldInput
+            type="email"
+            icon={Mail01}
+            autoComplete="email"
+            required
+            maxLength={254}
+            value={fields.email}
+            onChange={(e) => update("email", e.target.value)}
+            label="Your email"
+          />
           <label className="check-field">
             <input type="checkbox" required />I understand this saves a demo
             enquiry on this device. It is not sent to a provider.

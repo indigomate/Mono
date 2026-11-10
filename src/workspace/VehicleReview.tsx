@@ -1,3 +1,5 @@
+import { Mail01 } from "@untitledui/icons";
+import { FieldInput } from "../components/ui/FieldInput";
 import { useEffect, useRef, useState } from "react";
 import {
   type Vehicle,
@@ -12,14 +14,22 @@ export function VehicleReview({
   trip,
   onClose,
   onSave,
+  inline = false,
+  initialStep = "details",
+  onStepChange,
+  onTripChange,
 }: {
   car: Vehicle;
   trip: Trip;
   onClose: () => void;
   onSave: (request: Request, trip: Trip) => void;
+  inline?: boolean;
+  initialStep?: "details" | "quote";
+  onStepChange?: (step: "details" | "quote") => void;
+  onTripChange?: (trip: Trip) => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [step, setStep] = useState<"details" | "quote">("details");
+  const [step, setStep] = useState<"details" | "quote">(initialStep);
   const [start, setStart] = useState(trip.start);
   const [end, setEnd] = useState(trip.end);
   const [error, setError] = useState("");
@@ -32,6 +42,7 @@ export function VehicleReview({
       ? total > trip.budget
       : car.price > trip.budget);
   useEffect(() => {
+    if (inline) return;
     const node = dialog.current!;
     const previous = document.activeElement as HTMLElement | null;
     node.showModal();
@@ -41,17 +52,9 @@ export function VehicleReview({
         if (previous?.isConnected) previous.focus();
       });
     };
-  }, []);
-  return (
-    <dialog
-      ref={dialog}
-      className="vehicle-dialog"
-      onCancel={(event) => {
-        event.preventDefault();
-        onClose();
-      }}
-      aria-labelledby="review-title"
-    >
+  }, [inline]);
+  const content = (
+    <>
       <div className="section-heading">
         <span className="eyebrow">
           {step === "details" ? "01 / YOUR MATCH" : "02 / REVIEW YOUR REQUEST"}
@@ -109,7 +112,13 @@ export function VehicleReview({
             <span>
               <b>{money(car.price)}</b> / day
             </span>
-            <button className="smallbtn" onClick={() => setStep("quote")}>
+            <button
+              className="smallbtn"
+              onClick={() => {
+                setStep("quote");
+                onStepChange?.("quote");
+              }}
+            >
               Review rental estimate →
             </button>
           </div>
@@ -151,26 +160,28 @@ export function VehicleReview({
             owner will be contacted.
           </p>
           <div className="fields-grid">
-            <label>
-              Pickup date
-              <input
-                type="date"
-                required
-                min={today()}
-                value={start}
-                onChange={(e) => setStart(e.target.value)}
-              />
-            </label>
-            <label>
-              Return date
-              <input
-                type="date"
-                required
-                min={start || today()}
-                value={end}
-                onChange={(e) => setEnd(e.target.value)}
-              />
-            </label>
+            <FieldInput
+              type="date"
+              required
+              min={today()}
+              value={start}
+              onChange={(e) => {
+                setStart(e.target.value);
+                onTripChange?.({ ...trip, start: e.target.value, end });
+              }}
+              label="Pickup date"
+            />
+            <FieldInput
+              type="date"
+              required
+              min={start || today()}
+              value={end}
+              onChange={(e) => {
+                setEnd(e.target.value);
+                onTripChange?.({ ...trip, start, end: e.target.value });
+              }}
+              label="Return date"
+            />
           </div>
           <dl className="quote-lines">
             <div>
@@ -201,16 +212,15 @@ export function VehicleReview({
               {money(trip.budget)}. Edit your trip to continue.
             </p>
           )}
-          <label>
-            Your email
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="you@example.com"
-              autoComplete="email"
-            />
-          </label>
+          <FieldInput
+            name="email"
+            type="email"
+            icon={Mail01}
+            required
+            placeholder="you@example.com"
+            autoComplete="email"
+            label="Your email"
+          />
           <label className="check-field">
             <input type="checkbox" required />I understand this saves a demo
             request on this device only.
@@ -224,7 +234,10 @@ export function VehicleReview({
             <button
               className="text-button"
               type="button"
-              onClick={() => setStep("details")}
+              onClick={() => {
+                setStep("details");
+                onStepChange?.("details");
+              }}
             >
               ← Vehicle details
             </button>
@@ -234,6 +247,26 @@ export function VehicleReview({
           </div>
         </form>
       )}
+    </>
+  );
+  return inline ? (
+    <section
+      className="vehicle-dialog inline-review"
+      aria-label="Vehicle details and estimate"
+    >
+      {content}
+    </section>
+  ) : (
+    <dialog
+      ref={dialog}
+      className="vehicle-dialog"
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      aria-labelledby="review-title"
+    >
+      {content}
     </dialog>
   );
 }

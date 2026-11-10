@@ -1,5 +1,5 @@
-import { CustomerWorkspace } from "./CustomerWorkspace";
-import { ProviderWorkspace } from "./ProviderWorkspace";
+import { CustomerConversation } from "../conversation/CustomerConversation";
+import { ProviderConversation } from "../conversation/ProviderConversation";
 import { WorkspaceShell, WorkspaceChooser } from "./WorkspaceShell";
 import {
   providerViews,
@@ -10,6 +10,7 @@ import {
 } from "./navigation";
 import "./workspace.css";
 import "./roles.css";
+import "../conversation/conversation.css";
 export type { View } from "./navigation";
 export function Workspace({
   view,
@@ -27,9 +28,9 @@ export function Workspace({
       navigate={navigate}
     >
       {provider ? (
-        <ProviderWorkspace view={view as ProviderView} navigate={navigate} />
+        <ProviderConversation view={view as ProviderView} />
       ) : (
-        <CustomerWorkspace view={view as CustomerView} navigate={navigate} />
+        <CustomerConversation view={view as CustomerView} navigate={navigate} />
       )}
     </WorkspaceShell>
   );

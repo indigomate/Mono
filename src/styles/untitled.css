@@ -1,0 +1,30 @@
+/* Tailwind utilities only: preflight is intentionally omitted to preserve MONO's landing page. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "./untitled-theme.css";
+@plugin "tailwindcss-react-aria-components";
+@source "../components";
+@source "../conversation";
+@theme {
+  --font-body: "DM Sans", sans-serif;
+  --font-display: "Manrope", sans-serif;
+  --color-brand-50: #eef8ef;
+  --color-brand-100: #d9eddf;
+  --color-brand-200: #b4d9c1;
+  --color-brand-300: #8dc4a5;
+  --color-brand-400: #4c9c76;
+  --color-brand-500: #21855f;
+  --color-brand-600: #075340;
+  --color-brand-700: #064632;
+  --color-brand-800: #043b2b;
+  --color-brand-900: #032b20;
+  --color-brand-950: #031b15;
+  --color-text-primary: #1c3d29;
+  --color-text-secondary: #3c5a40;
+  --color-text-tertiary: #708466;
+  --color-text-placeholder: #87957e;
+  --color-border-primary: #ccdcc1;
+  --color-bg-primary: #fff;
+  --color-bg-primary-solid: #04271e;
+}

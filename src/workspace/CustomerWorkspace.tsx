@@ -1,3 +1,4 @@
+import { FieldInput } from "../components/ui/FieldInput";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   type Trip,
@@ -34,7 +35,6 @@ export function CustomerWorkspace({
   const [prompt, setPrompt] = useState("");
   const [saved, setSaved] = useState("");
   const bottom = useRef<HTMLDivElement>(null);
-
   const results = matches(trip);
   const days = duration(trip);
   useEffect(() => saveDemo("mono-journey-v1", journey), [journey]);
@@ -168,7 +168,7 @@ export function CustomerWorkspace({
             </div>
             <form className="new-composer" onSubmit={submit}>
               <span aria-hidden="true">✧</span>
-              <input
+              <FieldInput
                 aria-label="Message your concierge"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}

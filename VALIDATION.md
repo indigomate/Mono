@@ -1,20 +1,20 @@
-# Validation
+# Validation: chat-first UI release
 
-## Separate-workspace release
+## Completed local checks
 
-- TypeScript validation and Vite production build pass.
-- 29 Chromium tests pass: renter detail/estimate/save journey; persisted messages and trip dates; SUV/transmission/make context; duration versus currency parsing; whole-rental budget filtering; editable brief recovery; invalid dates and over-budget quotes; owner create/edit/local-preview selection; 375/768/1440px layouts; malformed and legacy data; browser Back and trip reset; Escape/focus restoration; unknown-duration/location handling; storage-failure session fallback.
-- Added coverage includes distinct customer/provider navigation, all seven non-self-drive enquiry forms, enquiry draft resumption, customer/provider inbox separation, provider profile and hourly rates, explicit chauffeur-intent routing, unsupported-vehicle custom briefs, quote-only listing persistence, and both dashboards/forms at 375/768/1440px.
-- Formatting checks pass.
-- Desktop and mobile workspace screenshots inspected. The landing page visual identity is preserved.
-- Demo data, owner previews and requests remain browser-local. No owner notifications, real reservations, payments, public storefront publishing or identity verification are simulated.
+- TypeScript validation and Vite production build pass. Conversation code loads separately from the landing entry point.
+- 24 Chromium tests pass: distinct chat entry points and no active dashboards; inline self-drive detail/estimate/save; context and budget handling; estimate-date resumption; airport slot collection through messages; all other service paths saved in chat; no accidental service switch from an airport address; provider add/edit/preview; unfinished profile/listing persistence; quote-only rates; no simulated publishing; role transcript separation; new-chat confirmation; earlier-tool reopening; composer/field usability at 375/768/1440px; legacy links and malformed-data recovery; Untitled UI labels, prefixes, focus and invalid-field states.
+- Formatting checks pass and dependency audit reports zero vulnerabilities at validation time.
+- Desktop/mobile customer and provider chat screenshots inspected, with no browser runtime errors in smoke journeys.
 
-## Release boundary
+## Component provenance
 
-The production URL supplied by the user is https://mono-ochre-psi.vercel.app. Deployment uses GitHub/Vercel integration because the connected Vercel tool scope does not list that project. Verify the new screens on the live URL after pushing main; a successful Git push alone does not prove deployment.
+The active input layer uses the actual MIT-licensed Untitled UI React primitives pinned at 207c26b47595bf39d9467265055623e1c7082294. React Aria handles accessibility and field state; Tailwind provides the source styles, with MONO brand tokens. Label IDs, accessible required indicators and disabled select options have small documented fixes. No documentation-only demos, preview widgets or payment-card collection fields are shipped.
 
-The optional Clerk integration and Supabase client foundation are retained but live authentication and database persistence cannot be verified without complete provider configuration. Supabase project health was verified separately; no application schema was created by this release. External vehicle images and Google Fonts require network access. A full screen-reader/assistive-technology audit and real service integration tests remain future work.
+## Release and live verification
 
-## Product scope
+The application deploys from GitHub main to https://mono-ochre-psi.vercel.app. Verify the updated conversation UI and run the browser suite against that URL after pushing. A Git push alone is not deployment evidence.
 
-Rent & Ride and Provider Studio are separate frontend experiences with independent state ownership and role-specific menus. They share presentation and an explicit workspace switch, not a mixed dashboard. Existing self-drive requests and owner listings migrate without deletion. Customer rental requests, service enquiries, provider profile and listing drafts remain browser-local; provider inbox delivery, authenticated roles and production ownership enforcement remain unimplemented. This release does not claim live availability for newly added service or vehicle categories.
+## Limits
+
+The assistant uses bounded demo intent/slot handling, not a connected general-purpose LLM. Requests, profile/listing drafts, transcripts and preview flags remain local. No live availability, quote engine, provider delivery, payment, verification or public publishing is simulated. Clerk and Supabase foundations are retained but those production workflows are not connected. Role selection and separate UI scopes do not replace server-side authorization. A full assistive-technology audit and authenticated integration tests remain future work.

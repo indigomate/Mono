@@ -37,3 +37,15 @@ The active UI now treats the conversation as the workspace on both sides. Dashbo
 ### Conversation component language
 
 Inline action cards place a contextual next step inside the thread. Empty states explain what is missing and use existing chat actions for recovery. Vehicle comparisons use a manual, scrollable carousel with buttons and no autoplay. Date fields retain native entry and add optional React Aria calendars. Brief completeness counts entered details only. Provider metrics report saved local records and preview selections, never hypothetical revenue. Messaging retains role labels and an explicit device-local demo notice. Reset confirmation uses a focus-contained, dismissible dialog; vehicle and quote review remain inline. Loading respects reduced-motion preferences and appears only during actual workspace loading. Body text uses readable line spacing and bounded line length; the cinematic landing typography stays intact.
+
+### Visible customer and provider journeys
+
+The emerald conversation welcome offers role-specific starting points. Customer choices cover self-drive, chauffeur, groups and the complete service catalogue. Provider choices start a listing, business setup or inbox review. These dispatch chat commands without changing workspaces.
+
+A compact brief pocket sits above the customer composer. Its summary stays visible; expansion reveals editable route, dates/time, passenger count and budget. It reflects the current service form or self-drive trip state, survives reload through existing persistence, and opens the relevant inline editor. The journey strip derives planning/options/review from actual conversation tools. Payment and confirmed stages stay inactive in the demo. The provider pocket offers draft resumption, business details and incoming-request actions.
+
+Vehicle cards use larger illustrative images, prominent sample/verification labels, explicit daily base pricing and a side-by-side specification table. Quote review explains deposit and deposit-free options without quoting invented amounts or permitting selection. Cancellation, protection, payment timing and deposit-release disclosures sit at decision points for vehicle and transport service paths.
+
+Saved-request cards provide a reference, itinerary, payment/confirmation state and a useful continuation action. Service enquiries can be copied into an editable brief without overwriting history. Local records never become confirmed bookings based on their free-text status. Live booking cards will require authoritative provider, pickup, payment and support details from the future booking service.
+
+Provider summaries show concrete readiness actions and local supply counts. Listing/profile editors show entered-detail completeness. Supply cards disclose pending documents and availability; availability planning currently uses listing notes, not a verified calendar. Responsive brief expansion is bounded so the composer remains available; short-height screens simplify the journey strip.

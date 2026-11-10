@@ -1,3 +1,4 @@
+import { DecisionHelp } from "../conversation/JourneyContext";
 import { Mail01 } from "@untitledui/icons";
 import { FieldSelect } from "../components/ui/FieldSelect";
 import { FieldTextarea } from "../components/ui/FieldTextarea";
@@ -361,6 +362,7 @@ export function ServiceEnquiry({
               <dd>Not submitted</dd>
             </div>
           </dl>
+          <DecisionHelp />
           <p className="notice">
             No daily-car-rental estimate is applied to this service.
             Availability, inclusions, deposits and cancellation terms must be
@@ -374,15 +376,17 @@ export function ServiceEnquiry({
 }
 export function ServiceInquiryList({
   inquiries,
+  onReview,
 }: {
   inquiries: ServiceInquiry[];
+  onReview?: (inquiry: ServiceInquiry) => void;
 }) {
   if (!inquiries.length) return null;
   return (
     <section className="service-inquiry-list">
       <h3>Service enquiries</h3>
       {inquiries.map((i) => (
-        <article className="request-card" key={i.id}>
+        <article className="request-card journey-record" key={i.id}>
           <div className="section-heading">
             <div>
               <span className="eyebrow">{serviceLabel(i.service)}</span>
@@ -422,6 +426,21 @@ export function ServiceInquiryList({
               <b>Special requirements:</b> {i.notes || "None added"}
             </p>
           </details>
+          <dl>
+            <div>
+              <dt>Payment</dt>
+              <dd>No payment collected</dd>
+            </div>
+            <div>
+              <dt>Confirmation</dt>
+              <dd>No booking confirmed</dd>
+            </div>
+          </dl>
+          {onReview && (
+            <button className="smallbtn" onClick={() => onReview(i)}>
+              Revise this service brief in chat →
+            </button>
+          )}
           <p className="notice">
             Provider quote required. No driver, vehicle or availability is
             confirmed.

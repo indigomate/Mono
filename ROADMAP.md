@@ -41,3 +41,7 @@ Next, develop each side independently: customer comparison/request tracking and 
 ## Current architecture: conversation first
 
 The dashboard-first milestone has been superseded. The active customer and provider experiences use separate persisted transcripts, inline typed tools and an always-available composer. All future inventory, identity, availability, quote, payment, upload and notification integrations must extend this architecture. AGENTS.md and CONVERSATION_ARCHITECTURE.md define the permanent product contract. The bounded demo interpreter can later be replaced by a server-side LLM adapter without redesigning task screens.
+
+### Visible journey refinement — delivered
+
+Role-specific conversation welcome, persistent editable brief, honest journey strip, richer vehicle comparison, deposit/protection explanations, contextual terms, request records with continuation actions, and provider launch-readiness cards are implemented. Live availability calendars, verified provider badges, selectable financial quotes, confirmed booking fulfilment cards and real support delivery remain dependent on production services; local presentation does not imply those integrations exist.

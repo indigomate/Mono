@@ -34,3 +34,9 @@ The MONO Supabase project exists, but no application tables or RLS migrations we
 ## Validation and delivery
 
 npm run build performs TypeScript checking and Vite bundling. npm test covers whole conversation journeys in Chromium; PLAYWRIGHT_BASE_URL runs the same suite against the deployed demo. npm run format:check verifies source formatting. GitHub main deploys through Vercel to https://mono-ochre-psi.vercel.app.
+
+### Visible experience state
+
+`JourneyContext` reads existing customer domain state and typed tool context; it does not infer bookings from assistant prose. The latest service/vehicle/trip/service-choice tool establishes the active brief. `ProviderContext` reads saved provider records and the independent unfinished listing draft. Both are optional ChatSurface context slots beside the always-available composer. Welcome, readiness and comparison actions call the existing conversation handlers.
+
+`RequestRecord` presents local requests without trusting arbitrary legacy status text as a booking confirmation. Service history review creates an editable copy and preserves the original record. `PaymentChoices` is an explanatory, unavailable state: it persists no financial election and moves no money. Future quote/booking integrations must replace it with server-authorized prices, option eligibility, accepted terms, payment state and confirmed fulfilment details. A local request or viewed quote cannot advance the journey to paid or confirmed.

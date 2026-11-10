@@ -1,3 +1,4 @@
+import { ProviderContext } from "./JourneyContext";
 import {
   EmptyState,
   LocalMetrics,
@@ -549,6 +550,67 @@ export function ProviderConversation({ view }: { view: ProviderView }) {
               saved={drafts.length}
               preview={drafts.filter((d) => d.status === "preview").length}
             />
+            <section
+              className="provider-launch"
+              aria-label="Provider launch readiness"
+            >
+              <h4>Your next steps</h4>
+              <article>
+                <span className="record-status">
+                  {profile.name ? "Saved locally" : "To complete"}
+                </span>
+                <h5>Introduce your business</h5>
+                <p>
+                  A clear name, service area and offering help customers
+                  understand who they’re booking with.
+                </p>
+                <button onClick={() => send("Business profile")}>
+                  Review business details →
+                </button>
+              </article>
+              <article>
+                <span className="record-status">
+                  {drafts.length
+                    ? `${drafts.length} local listings`
+                    : "No saved supply"}
+                </span>
+                <h5>Prepare your supply</h5>
+                <p>
+                  Add rates and service notes. Plan availability in your draft
+                  notes; no live calendar is connected.
+                </p>
+                <button
+                  onClick={() =>
+                    send(drafts.length ? "My fleet" : "Add a listing")
+                  }
+                >
+                  {drafts.length
+                    ? "Review fleet & availability notes"
+                    : "Create your first listing"}{" "}
+                  →
+                </button>
+              </article>
+              <article>
+                <span className="record-status">Not connected</span>
+                <h5>Verification & payouts</h5>
+                <p>
+                  Identity, ownership or operating documents, protection terms
+                  and payout verification are required before live operation. No
+                  verification badge is issued in this demo.
+                </p>
+              </article>
+              <article>
+                <span className="record-status">Live delivery pending</span>
+                <h5>Be ready for enquiries</h5>
+                <p>
+                  Incoming requests will stay separate from customer drafts,
+                  with a clear response action for your business.
+                </p>
+                <button onClick={() => send("Incoming requests")}>
+                  Open provider inbox →
+                </button>
+              </article>
+            </section>
             <div className="inline-actions">
               <button onClick={() => send("Business profile")}>
                 Business profile
@@ -574,6 +636,15 @@ export function ProviderConversation({ view }: { view: ProviderView }) {
   return (
     <ChatSurface
       role="provider"
+      context={
+        <ProviderContext
+          name={profile.name}
+          saved={drafts.length}
+          preview={drafts.filter((d) => d.status === "preview").length}
+          unfinished={Boolean(working)}
+          onAction={handleSend}
+        />
+      }
       onReopen={(tool) => {
         respond(
           "Reopen this step",

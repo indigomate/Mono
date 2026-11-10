@@ -49,6 +49,10 @@ export function VehicleCards({
               <small className="photo-note">Illustrative image</small>
             </div>
             <div className="match-content">
+              <div className="vehicle-trust">
+                <span>Sample collection</span>
+                <span>Verification pending</span>
+              </div>
               <h3>{c.name}</h3>
               <p className="spec-line">
                 {c.area} · {c.transmission} · {c.seats} seats
@@ -66,6 +70,16 @@ export function VehicleCards({
                   View car
                 </button>
               </div>
+              <dl className="vehicle-cost-preview">
+                <div>
+                  <dt>Daily base</dt>
+                  <dd>{money(c.price)}</dd>
+                </div>
+                <div>
+                  <dt>Fees & protection</dt>
+                  <dd>Quote pending</dd>
+                </div>
+              </dl>
               <p className="availability-note">
                 Availability unverified · Fees not yet quoted
               </p>
@@ -73,6 +87,58 @@ export function VehicleCards({
           </article>
         ))}
       </div>
+      {cars.length > 1 && (
+        <details className="vehicle-comparison">
+          <summary>Compare these {cars.length} samples side by side</summary>
+          <div
+            className="comparison-scroll"
+            tabIndex={0}
+            aria-label="Side by side vehicle comparison"
+          >
+            <table>
+              <caption>
+                Sample specifications · availability and full prices unverified
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Compare</th>
+                  {cars.map((c) => (
+                    <th scope="col" key={c.id}>
+                      {c.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["Base / day", ...cars.map((c) => money(c.price))],
+                  ["Transmission", ...cars.map((c) => c.transmission)],
+                  ["Passengers", ...cars.map((c) => String(c.seats))],
+                  ["Pickup area", ...cars.map((c) => c.area)],
+                  ["Availability", ...cars.map(() => "Unverified")],
+                ].map(([label, ...values]) => (
+                  <tr key={label}>
+                    <th scope="row">{label}</th>
+                    {values.map((v, i) => (
+                      <td key={cars[i].id}>{v}</td>
+                    ))}
+                  </tr>
+                ))}
+                <tr>
+                  <th scope="row">Next step</th>
+                  {cars.map((c) => (
+                    <td key={c.id}>
+                      <button onClick={() => onSelect(c.id)}>
+                        Review {c.name}
+                      </button>
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      )}
     </section>
   ) : (
     <EmptyState title="No sample vehicles meet this brief">

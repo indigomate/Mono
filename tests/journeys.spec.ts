@@ -530,3 +530,151 @@ test("vehicle carousel controls browse sample supply without leaving chat", asyn
   await expect(page.getByLabel("Message MONO", { exact: true })).toBeVisible();
   await expect(page).toHaveURL(/#customer$/);
 });
+
+test("visible welcome and journey follow actual review without claiming payment", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await page.getByRole("button", { name: "Drive myself", exact: true }).click();
+  await expect(
+    page.locator('.journey-stages [aria-current="step"]'),
+  ).toContainText("Options");
+  await page
+    .getByRole("button", { name: "View car", exact: true })
+    .first()
+    .click();
+  await expect(
+    page.locator('.journey-stages [aria-current="step"]'),
+  ).toContainText("Review");
+  await page.getByRole("button", { name: "Review rental estimate" }).click();
+  await expect(
+    page.getByRole("button", {
+      name: "Deposit option unavailable",
+      exact: true,
+    }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole("button", {
+      name: "Deposit-free option unavailable",
+      exact: true,
+    }),
+  ).toBeDisabled();
+  await expect(page.getByLabel("Deposit and protection options")).toContainText(
+    "does not mean zero damage liability",
+  );
+  await page.getByLabel("Message MONO", { exact: true }).fill("new trip");
+  await page.getByRole("button", { name: "Send message", exact: true }).click();
+  await expect(
+    page.locator('.journey-stages [aria-current="step"]'),
+  ).toContainText("Your brief");
+  await expect(page.locator(".brief-pocket summary")).toContainText(
+    "Your next journey",
+  );
+});
+
+test("service brief stays editable above the composer and survives reload", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/#customer");
+  await page
+    .getByRole("button", { name: "Book a chauffeur", exact: true })
+    .click();
+  await page.getByLabel("Pickup location", { exact: true }).fill("Sea Point");
+  await page.locator(".brief-pocket summary").click();
+  await expect(page.locator(".brief-pocket")).toContainText("Sea Point");
+  await page
+    .locator(".brief-pocket-body")
+    .getByRole("button", { name: "Sea Point", exact: true })
+    .click();
+  await expect(page.getByLabel("Pickup location", { exact: true })).toHaveValue(
+    "Sea Point",
+  );
+  await page.reload();
+  await expect(page.locator(".brief-pocket summary")).toContainText(
+    "Sea Point",
+  );
+  const box = await page
+    .getByLabel("Message MONO", { exact: true })
+    .boundingBox();
+  expect(box).not.toBeNull();
+  expect(box!.y + box!.height).toBeLessThanOrEqual(667);
+  expect(
+    await page.evaluate(() => document.body.scrollWidth),
+  ).toBeLessThanOrEqual(375);
+});
+
+test("comparison and provider readiness actions continue their own conversation", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await page.getByRole("button", { name: "Drive myself", exact: true }).click();
+  await page.getByText(/Compare these .* samples side by side/).click();
+  await expect(page.locator(".comparison-scroll table")).toContainText(
+    "Unverified",
+  );
+  await page.locator(".comparison-scroll").getByRole("button").first().click();
+  await expect(
+    page.getByLabel("Vehicle details and estimate", { exact: true }),
+  ).toBeVisible();
+  await page.goto("/#provider");
+  await say(page, "summary");
+  const readiness = page.getByLabel("Provider launch readiness", {
+    exact: true,
+  });
+  await expect(readiness).toContainText("No verification badge is issued");
+  await readiness
+    .getByRole("button", { name: "Review business details →", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Provider or business name", { exact: true }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/#provider$/);
+});
+
+test("revising a saved service brief preserves history until explicit save", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(
+    page,
+    "I need chauffeur from Sea Point to Waterfront on 2027-02-10 at 10:30 for 2 passengers demo@example.com",
+  );
+  await page.getByRole("checkbox").check();
+  await page
+    .getByRole("button", { name: "Save demo enquiry →", exact: true })
+    .click();
+  await expect(page.locator(".service-inquiry-list .request-card")).toHaveCount(
+    1,
+  );
+  await page
+    .getByRole("button", {
+      name: "Revise this service brief in chat →",
+      exact: true,
+    })
+    .click();
+  await expect(page.getByLabel("Pickup location", { exact: true })).toHaveValue(
+    "Sea Point",
+  );
+  await page.getByLabel("Pickup location", { exact: true }).fill("Camps Bay");
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("mono-service-inquiries-v1") || "[]")
+          .length,
+    ),
+  ).toBe(1);
+  await page.getByRole("checkbox").check();
+  await page
+    .getByRole("button", { name: "Save demo enquiry →", exact: true })
+    .click();
+  await expect(page.locator(".service-inquiry-list .request-card")).toHaveCount(
+    2,
+  );
+  await expect(page.locator(".service-inquiry-list")).toContainText(
+    "Sea Point",
+  );
+  await expect(page.locator(".service-inquiry-list")).toContainText(
+    "Camps Bay",
+  );
+});

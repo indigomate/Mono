@@ -1,3 +1,5 @@
+import { JourneyContext, DecisionHelp } from "./JourneyContext";
+import { RequestRecord } from "./RequestRecord";
 import { useEffect, useRef, useState } from "react";
 import {
   loadJourney,
@@ -495,19 +497,30 @@ export function CustomerConversation({
             ) : (
               <>
                 {requests.map((r) => (
-                  <article className="request-card" key={r.id}>
-                    <span className="eyebrow">
-                      SELF-DRIVE / LOCAL DEMO REQUEST
-                    </span>
-                    <h3>{r.car}</h3>
-                    <p>
-                      {r.start} → {r.end}
-                    </p>
-                    <b>{money(r.total)} estimated base rental</b>
-                    <p>{r.status} · No payment collected</p>
-                  </article>
+                  <RequestRecord
+                    key={r.id}
+                    request={r}
+                    onContinue={() => send(`Show me ${r.car}`)}
+                  />
                 ))}
-                <ServiceInquiryList inquiries={inquiries} />
+                <ServiceInquiryList
+                  inquiries={inquiries}
+                  onReview={(inquiry) => {
+                    const {
+                      id: _id,
+                      createdAt: _createdAt,
+                      service,
+                      ...fields
+                    } = inquiry;
+                    setServiceState({ service, fields });
+                    respond(
+                      "Revise my saved service brief",
+                      "Here’s a copy of your saved brief to revise. Your original stays in request history; review before saving a new version.",
+                      { kind: "enquiry", service },
+                    );
+                  }}
+                />
+                <DecisionHelp />
               </>
             )}
           </div>
@@ -516,9 +529,45 @@ export function CustomerConversation({
         return <p>Tell me what you’d like to do next.</p>;
     }
   }
+  const contextTool = [...turns]
+    .reverse()
+    .find((t) =>
+      ["enquiry", "vehicles", "vehicle", "trip", "services"].includes(
+        t.tool?.kind || "",
+      ),
+    )?.tool;
   return (
     <ChatSurface
       role="customer"
+      context={
+        <JourneyContext
+          service={
+            contextTool && contextTool.kind !== "services"
+              ? contextTool.service || "self-drive"
+              : null
+          }
+          trip={trip}
+          fields={
+            contextTool?.kind === "enquiry" ? serviceState.fields : undefined
+          }
+          stage={
+            contextTool?.kind === "vehicle"
+              ? "review"
+              : contextTool?.kind === "vehicles"
+                ? "options"
+                : "brief"
+          }
+          onEdit={() => {
+            if (contextTool?.kind === "enquiry")
+              respond(
+                "Edit my service brief",
+                "Review or change your service details here.",
+                contextTool,
+              );
+            else send("Edit my trip");
+          }}
+        />
+      }
       onReopen={(tool) => {
         if (tool.service)
           setServiceState({

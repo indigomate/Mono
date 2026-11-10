@@ -1,4 +1,8 @@
-import { EmptyState, InlineCTA } from "../components/ui/ConversationElements";
+import {
+  BriefProgress,
+  EmptyState,
+  InlineCTA,
+} from "../components/ui/ConversationElements";
 import { FieldSelect } from "../components/ui/FieldSelect";
 import { FieldTextarea } from "../components/ui/FieldTextarea";
 import { FieldInput } from "../components/ui/FieldInput";
@@ -35,6 +39,17 @@ export function ListingCard({
       <p className="muted">
         Tell me what to change, or edit these fields. Nothing is published.
       </p>
+      <BriefProgress
+        checks={[
+          { label: "Listing name", complete: Boolean(draft.name.trim()) },
+          { label: "Service area", complete: Boolean(draft.area.trim()) },
+          { label: "Services", complete: draft.services.length > 0 },
+          {
+            label: "Pricing basis",
+            complete: draft.rateUnit === "quote" || draft.price > 0,
+          },
+        ]}
+      />
       <div className="fields-grid">
         <FieldInput
           required
@@ -170,6 +185,17 @@ export function ProfileCard({
       <p className="muted">
         Tell me about your business, or review the details here.
       </p>
+      <BriefProgress
+        checks={[
+          { label: "Business name", complete: Boolean(profile.name.trim()) },
+          { label: "Service area", complete: Boolean(profile.area.trim()) },
+          { label: "Services offered", complete: profile.services.length > 0 },
+          {
+            label: "Business story",
+            complete: Boolean(profile.description.trim()),
+          },
+        ]}
+      />
       <div className="fields-grid">
         <FieldInput
           required
@@ -273,6 +299,19 @@ export function FleetCards({
                   <span key={s}>{serviceLabel(s)}</span>
                 ))}
               </div>
+              <div className="provider-readiness">
+                <span>Availability unverified</span>
+                <span>Documents pending</span>
+              </div>
+              <details className="decision-help">
+                <summary>What this listing needs before launch</summary>
+                <p>
+                  Confirm availability, upload ownership or operating documents,
+                  complete identity verification, and agree service-specific
+                  pricing and cancellation terms. These checks are not yet
+                  connected; this remains a local draft.
+                </p>
+              </details>
               <b>
                 {d.rateUnit === "quote"
                   ? "Quote on request"
@@ -280,6 +319,9 @@ export function FleetCards({
               </b>
               <div className="inline-actions">
                 <button onClick={() => onEdit(d.id)}>Edit listing</button>
+                <button onClick={() => onEdit(d.id)}>
+                  Plan availability & service notes
+                </button>
                 <button onClick={() => onPreview(d.id)}>
                   {d.status === "preview"
                     ? "Remove from preview"

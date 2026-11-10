@@ -1,3 +1,5 @@
+import { PaymentChoices } from "../conversation/PaymentChoices";
+import { DecisionHelp } from "../conversation/JourneyContext";
 import { Mail01 } from "@untitledui/icons";
 import { FieldInput } from "../components/ui/FieldInput";
 import { useEffect, useRef, useState } from "react";
@@ -108,6 +110,7 @@ export function VehicleReview({
               </p>
             </div>
           </div>
+          <DecisionHelp />
           <div className="review-footer">
             <span>
               <b>{money(car.price)}</b> / day
@@ -205,6 +208,7 @@ export function VehicleReview({
             This is not an all-inclusive quote. A live booking will require
             verified availability, full terms and your explicit approval.
           </p>
+          <PaymentChoices />
           {overBudget && days > 0 && (
             <p role="alert" className="form-error">
               Over your saved{" "}

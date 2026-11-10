@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "@untitledui/icons";
 import {
   Modal,
   ModalOverlay,
@@ -15,7 +16,9 @@ export function ChatSurface({
   onReset,
   renderTool,
   onReopen,
+  context,
 }: {
+  context?: ReactNode;
   role: "customer" | "provider";
   turns: Turn[];
   onSend: (text: string) => void;
@@ -25,10 +28,13 @@ export function ChatSurface({
 }) {
   const [input, setInput] = useState("");
   const last = useRef<HTMLElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [resetConfirm, setResetConfirm] = useState(false);
   useEffect(() => {
-    last.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    if (turns.length === 1) scrollRef.current?.scrollTo({ top: 0 });
+    else if (turns.length > 1)
+      last.current?.scrollIntoView({ block: "start", behavior: "instant" });
   }, [turns.at(-1)?.id]);
   const shortcuts =
     role === "customer"
@@ -47,7 +53,7 @@ export function ChatSurface({
         role === "customer" ? "Customer conversation" : "Provider conversation"
       }
     >
-      <div className="chat-scroll">
+      <div className="chat-scroll" ref={scrollRef}>
         <div className="chat-thread">
           <div className="chat-introduction">
             <span className="eyebrow">
@@ -65,6 +71,61 @@ export function ChatSurface({
                 ? "From private rentals to chauffeur trips. Tell us the plan."
                 : "Private owner, fleet or chauffeur operator. Let’s build it together."}
             </p>
+            <div className="welcome-paths" aria-label="Start a conversation">
+              {(role === "customer"
+                ? [
+                    [
+                      "Drive myself",
+                      "Find a self-drive vehicle",
+                      "Your keys. Your own route.",
+                    ],
+                    [
+                      "Book a chauffeur",
+                      "I need Chauffeur service",
+                      "A driver for your schedule.",
+                    ],
+                    [
+                      "Move a group",
+                      "I need Group transport",
+                      "More people. One plan.",
+                    ],
+                    [
+                      "Explore every service",
+                      "Explore services",
+                      "Airports, events, tours & more.",
+                    ],
+                  ]
+                : [
+                    [
+                      "List my vehicle",
+                      "Add a listing",
+                      "Build a listing together.",
+                    ],
+                    [
+                      "Offer a service",
+                      "Business profile",
+                      "Set up your transport business.",
+                    ],
+                    [
+                      "Manage requests",
+                      "Incoming requests",
+                      "Keep customer requests in view.",
+                    ],
+                  ]
+              ).map(([label, command, caption]) => (
+                <button
+                  key={label}
+                  aria-label={label}
+                  onClick={() => onSend(command)}
+                >
+                  <span aria-hidden="true">
+                    <ArrowUpRight width={16} height={16} />
+                  </span>
+                  <b>{label}</b>
+                  <small>{caption}</small>
+                </button>
+              ))}
+            </div>
           </div>
           <div
             className="chat-transcript"
@@ -119,6 +180,7 @@ export function ChatSurface({
       </div>
       <div className="composer-dock">
         <div className="composer-inner">
+          {context}
           <div className="chat-shortcuts" aria-label="Conversation shortcuts">
             {shortcuts.map((s) => (
               <button key={s} onClick={() => onSend(s)}>

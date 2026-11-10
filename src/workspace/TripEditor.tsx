@@ -1,3 +1,5 @@
+import { CalendarPicker } from "../components/ui/CalendarPicker";
+import { BriefProgress } from "../components/ui/ConversationElements";
 import { FieldSelect } from "../components/ui/FieldSelect";
 import { FieldInput } from "../components/ui/FieldInput";
 import { useState } from "react";
@@ -12,6 +14,9 @@ export function TripEditor({
   onSave: (trip: Trip) => void;
   onCancel: () => void;
 }) {
+  const [location, setLocation] = useState(trip.location);
+  const [start, setStart] = useState(trip.start);
+  const [end, setEnd] = useState(trip.end);
   const [error, setError] = useState("");
   return (
     <form
@@ -52,10 +57,18 @@ export function TripEditor({
           Close
         </button>
       </div>
+      <BriefProgress
+        checks={[
+          { label: "Pickup city", complete: Boolean(location.trim()) },
+          { label: "Pickup date", complete: Boolean(start) },
+          { label: "Return date", complete: Boolean(end && end > start) },
+        ]}
+      />
       <div className="fields-grid">
         <FieldInput
           name="location"
-          defaultValue={trip.location}
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
           required
           maxLength={80}
           label="Pickup city"
@@ -95,14 +108,16 @@ export function TripEditor({
           name="start"
           type="date"
           min={today()}
-          defaultValue={trip.start}
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
           label="Pickup date"
         />
         <FieldInput
           name="end"
           type="date"
-          min={trip.start || today()}
-          defaultValue={trip.end}
+          min={start || today()}
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
           label="Return date"
         />
         <FieldInput
@@ -149,6 +164,20 @@ export function TripEditor({
           max="20"
           defaultValue={trip.passengers}
           label="Passengers"
+        />
+      </div>
+      <div className="mono-calendar-options">
+        <CalendarPicker
+          label="Pickup date"
+          value={start}
+          min={today()}
+          onChange={setStart}
+        />
+        <CalendarPicker
+          label="Return date"
+          value={end}
+          min={start || today()}
+          onChange={setEnd}
         />
       </div>
       <p className="muted">

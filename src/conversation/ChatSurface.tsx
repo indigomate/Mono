@@ -1,3 +1,10 @@
+import {
+  Modal,
+  ModalOverlay,
+  Dialog,
+  Heading,
+  Button,
+} from "react-aria-components";
 import { FieldInput } from "../components/ui/FieldInput";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { type ChatTool, type Turn, toolTitles } from "./model";
@@ -125,26 +132,36 @@ export function ChatSurface({
               New chat
             </button>
           </div>
-          {resetConfirm && (
-            <div className="reset-confirm" role="alert">
-              <span>
-                Start a fresh conversation? Saved requests, provider records and
-                trip preferences will stay.
-              </span>
-              <button
-                onClick={() => {
-                  onReset();
-                  setResetConfirm(false);
-                  inputRef.current?.focus();
-                }}
-              >
-                Start new chat
-              </button>
-              <button onClick={() => setResetConfirm(false)}>
-                Keep chatting
-              </button>
-            </div>
-          )}
+          <ModalOverlay
+            isOpen={resetConfirm}
+            onOpenChange={setResetConfirm}
+            isDismissable
+            className="mono-modal-overlay"
+          >
+            <Modal className="mono-modal">
+              <Dialog aria-label="Start a fresh conversation">
+                <Heading slot="title">Start a fresh conversation?</Heading>
+                <div className="reset-confirm">
+                  <span>
+                    Start a fresh conversation? Saved requests, provider records
+                    and trip preferences will stay.
+                  </span>
+                  <button
+                    onClick={() => {
+                      onReset();
+                      setResetConfirm(false);
+                      inputRef.current?.focus();
+                    }}
+                  >
+                    Start new chat
+                  </button>
+                  <Button autoFocus onPress={() => setResetConfirm(false)}>
+                    Keep chatting
+                  </Button>
+                </div>
+              </Dialog>
+            </Modal>
+          </ModalOverlay>
           <form
             className="chat-composer"
             onSubmit={(e) => {

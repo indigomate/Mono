@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/react": "6.18.6",
+    "@internationalized/date": "^3.12.4",
     "@supabase/supabase-js": "2.119.0",
     "@untitledui/icons": "0.0.23",
     "react": "^19.0.0",

@@ -456,3 +456,77 @@ test("Untitled UI inputs expose labels, currency prefixes, keyboard focus and in
   ).toHaveAttribute("aria-invalid", "true");
   await expect(tool(page).locator(".mono-field-error").first()).not.toBeEmpty();
 });
+
+test("calendar selection updates the trip and confirmation dialog preserves focus", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await page.getByRole("button", { name: "Edit my trip", exact: true }).click();
+  await page.getByLabel("Pickup date", { exact: true }).fill("2027-02-10");
+  await page.getByLabel("Return date", { exact: true }).fill("2027-02-13");
+  await page
+    .getByText("Choose pickup date on a calendar", { exact: true })
+    .click();
+  const calendar = page.getByRole("application", { name: /^Pickup date,/ });
+  await expect(calendar).toBeVisible();
+  await calendar
+    .getByRole("button", { name: "Thursday, February 11, 2027", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Pickup date", { exact: true }).first(),
+  ).toHaveValue("2027-02-11");
+  await expect(
+    page.getByRole("progressbar", { name: "Brief completeness" }),
+  ).toHaveAttribute("aria-valuenow", "3");
+  await page.getByRole("button", { name: "Update trip", exact: true }).click();
+  await page.getByRole("button", { name: "New chat", exact: true }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Start a fresh conversation" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Keep chatting", exact: true }),
+  ).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "New chat", exact: true }),
+  ).toBeFocused();
+});
+
+test("provider metrics and inline CTA use local records and stay in conversation", async ({
+  page,
+}) => {
+  await page.goto("/#provider");
+  await say(page, "summary");
+  await expect(page.locator(".mono-metrics")).toContainText("Saved listings0");
+  await page
+    .getByRole("button", { name: "My fleet", exact: true })
+    .last()
+    .click();
+  await expect(page.locator(".mono-empty")).toContainText(
+    "Your collection starts here",
+  );
+  await page
+    .getByRole("button", { name: "Add a listing →", exact: true })
+    .click();
+  await expect(page.getByLabel("Listing name", { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/#provider$/);
+});
+
+test("vehicle carousel controls browse sample supply without leaving chat", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 900 });
+  await page.goto("/#customer");
+  await say(page, "Show me cars");
+  const carousel = page.getByLabel("Vehicle comparisons", { exact: true });
+  await expect(carousel).toBeVisible();
+  await page
+    .getByRole("button", { name: "Next vehicles", exact: true })
+    .click();
+  await expect
+    .poll(() => carousel.evaluate((el) => el.scrollLeft))
+    .toBeGreaterThan(0);
+  await expect(page.getByLabel("Message MONO", { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/#customer$/);
+});

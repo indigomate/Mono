@@ -33,3 +33,7 @@ Rent & Ride uses a service-first dashboard and customer-only navigation. Provide
 ## Chat-first correction
 
 The active UI now treats the conversation as the workspace on both sides. Dashboard navigation is replaced with one conversation entry per role. Tool cards appear within assistant messages, and a persistent composer allows follow-ups during any workflow. Service choices are conversational options, not a separate service dashboard. Untitled UI fields use MONO's emerald semantic theme, consistent labels, focus/error states, hints, icons and currency prefixes. See CONVERSATION_ARCHITECTURE.md; older dashboard descriptions above record earlier milestones only.
+
+### Conversation component language
+
+Inline action cards place a contextual next step inside the thread. Empty states explain what is missing and use existing chat actions for recovery. Vehicle comparisons use a manual, scrollable carousel with buttons and no autoplay. Date fields retain native entry and add optional React Aria calendars. Brief completeness counts entered details only. Provider metrics report saved local records and preview selections, never hypothetical revenue. Messaging retains role labels and an explicit device-local demo notice. Reset confirmation uses a focus-contained, dismissible dialog; vehicle and quote review remain inline. Loading respects reduced-motion preferences and appears only during actual workspace loading. Body text uses readable line spacing and bounded line length; the cinematic landing typography stays intact.

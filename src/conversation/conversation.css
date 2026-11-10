@@ -778,3 +778,210 @@
   border-color: #21855f;
   box-shadow: 0 0 0 2px #21855f22;
 }
+
+/* MONO conversation compositions: shared semantic surfaces and typography. */
+.mono-inline-cta,
+.mono-empty,
+.mono-progress,
+.mono-metrics > div {
+  border: 1px solid #c7d9cb;
+  border-radius: 16px;
+  background: #f1f6f0;
+  padding: 20px;
+}
+.mono-inline-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+}
+.mono-inline-cta h3,
+.mono-empty h3 {
+  margin: 0 0 8px;
+}
+.mono-inline-cta p,
+.mono-empty p {
+  margin: 0;
+  line-height: 1.6;
+  max-width: 65ch;
+}
+.mono-empty > span {
+  display: block;
+  color: #167551;
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+.mono-progress {
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+.mono-progress-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 600;
+}
+.mono-progress-track {
+  height: 6px;
+  background: #d5e2d6;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.mono-progress-track > div {
+  height: 100%;
+  background: #167551;
+}
+.mono-progress ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.mono-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.mono-metrics dt {
+  font-size: 12px;
+  color: #456454;
+}
+.mono-metrics dd {
+  margin: 8px 0 0;
+  font-size: 32px;
+  font-weight: 600;
+}
+.mono-carousel-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.mono-carousel-controls span {
+  flex: 1;
+}
+.mono-carousel-controls button {
+  min-width: 40px;
+  min-height: 40px;
+  border: 1px solid #c7d9cb;
+  border-radius: 50%;
+  background: #f1f6f0;
+}
+.chat-vehicle-grid.mono-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 12px;
+}
+.mono-carousel > article {
+  flex: 0 0 min(330px, 90%);
+  scroll-snap-align: start;
+}
+.mono-calendar-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 16px 0;
+}
+.mono-calendar-picker {
+  max-width: 100%;
+}
+.mono-calendar-picker summary {
+  cursor: pointer;
+  color: #176545;
+  font-size: 13px;
+  padding: 8px 0;
+}
+.mono-calendar-picker .react-aria-Calendar {
+  border: 1px solid #c7d9cb;
+  border-radius: 12px;
+  padding: 12px;
+  background: white;
+  width: 280px;
+  max-width: 100%;
+}
+.mono-calendar-picker header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mono-calendar-picker h2 {
+  font-size: 14px;
+}
+.mono-calendar-picker button {
+  background: transparent;
+  border: 0;
+  min-height: 36px;
+  min-width: 36px;
+}
+.mono-calendar-picker table {
+  width: 100%;
+  font-size: 12px;
+}
+.mono-calendar-picker .react-aria-CalendarCell {
+  text-align: center;
+  padding: 9px 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.mono-calendar-picker [data-selected] {
+  background: #176545;
+  color: white;
+}
+.mono-calendar-picker [data-disabled],
+.mono-calendar-picker [data-outside-month] {
+  opacity: 0.35;
+}
+.mono-calendar-picker [data-focused] {
+  outline: 2px solid #176545;
+}
+.mono-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: #00140fbb;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.mono-modal {
+  width: min(100%, 460px);
+  border-radius: 20px;
+  background: #f1f6f0;
+  padding: 28px;
+  color: #193c2b;
+  box-shadow: 0 24px 90px #0006;
+}
+.mono-modal h2 {
+  font-size: 22px;
+  margin-top: 0;
+}
+.mono-modal .reset-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  background: transparent;
+  padding: 0;
+  border: 0;
+}
+.mono-modal .reset-confirm span {
+  flex-basis: 100%;
+  line-height: 1.6;
+}
+.mono-modal button {
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid #a5bca9;
+  background: white;
+}
+@media (max-width: 600px) {
+  .mono-inline-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

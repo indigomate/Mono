@@ -1,3 +1,7 @@
+import {
+  EmptyState,
+  LocalMetrics,
+} from "../components/ui/ConversationElements";
 import { useEffect, useRef, useState } from "react";
 import { loadDrafts, saveDemo, type Draft } from "../demo/marketplace";
 import {
@@ -522,12 +526,11 @@ export function ProviderConversation({ view }: { view: ProviderView }) {
       case "inbox":
         return (
           <div className="conversation-inbox">
-            <h3>No live requests yet.</h3>
-            <p>
+            <EmptyState title="No live requests yet.">
               Only requests addressed to your business will appear here after
               live services are connected. Customer demo drafts are never copied
               into this inbox.
-            </p>
+            </EmptyState>
             <button className="smallbtn" onClick={() => send("My fleet")}>
               Review my listings →
             </button>
@@ -542,6 +545,10 @@ export function ProviderConversation({ view }: { view: ProviderView }) {
               {drafts.filter((d) => d.status === "preview").length} in local
               preview
             </p>
+            <LocalMetrics
+              saved={drafts.length}
+              preview={drafts.filter((d) => d.status === "preview").length}
+            />
             <div className="inline-actions">
               <button onClick={() => send("Business profile")}>
                 Business profile

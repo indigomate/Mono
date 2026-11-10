@@ -164,7 +164,10 @@ export default function App() {
         <Suspense
           fallback={
             <div className="conversation-loading" role="status">
-              Opening your MONO conversation…
+              <span className="mono-loading-mark" aria-hidden="true">
+                ✧
+              </span>
+              <span>Opening your MONO conversation…</span>
             </div>
           }
         >

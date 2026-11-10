@@ -1,3 +1,4 @@
+import { EmptyState, InlineCTA } from "../components/ui/ConversationElements";
 import { FieldSelect } from "../components/ui/FieldSelect";
 import { FieldTextarea } from "../components/ui/FieldTextarea";
 import { FieldInput } from "../components/ui/FieldInput";
@@ -250,10 +251,10 @@ export function FleetCards({
   return (
     <div className="conversation-fleet">
       {!drafts.length ? (
-        <p>
+        <EmptyState title="Your collection starts here">
           No saved listings yet. Tell me about your first vehicle or transport
           service.
-        </p>
+        </EmptyState>
       ) : (
         drafts.map((d) => (
           <article className="draft-card" key={d.id}>
@@ -289,9 +290,14 @@ export function FleetCards({
           </article>
         ))
       )}
-      <button className="smallbtn" onClick={onAdd}>
-        Add a listing →
-      </button>
+      <InlineCTA
+        title="Grow your collection"
+        action="Add a listing →"
+        onAction={onAdd}
+      >
+        Add a vehicle or transport service. Review the details in this
+        conversation before saving.
+      </InlineCTA>
     </div>
   );
 }

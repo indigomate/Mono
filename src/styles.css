@@ -953,3 +953,21 @@ input:focus-visible {
   color: #d8eddb;
   font-size: 14px;
 }
+.conversation-loading {
+  gap: 16px;
+  align-content: center;
+}
+.mono-loading-mark {
+  font-size: 36px;
+  animation: mono-pulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes mono-pulse {
+  to {
+    opacity: 0.3;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mono-loading-mark {
+    animation: none;
+  }
+}

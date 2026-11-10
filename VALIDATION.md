@@ -18,3 +18,7 @@ The application deploys from GitHub main to https://mono-ochre-psi.vercel.app. V
 ## Limits
 
 The assistant uses bounded demo intent/slot handling, not a connected general-purpose LLM. Requests, profile/listing drafts, transcripts and preview flags remain local. No live availability, quote engine, provider delivery, payment, verification or public publishing is simulated. Clerk and Supabase foundations are retained but those production workflows are not connected. Role selection and separate UI scopes do not replace server-side authorization. A full assistive-technology audit and authenticated integration tests remain future work.
+
+## Conversation component additions
+
+The browser suite now also verifies native-date/calendar synchronization, brief-completeness semantics, reset-dialog focus containment and restoration, local provider metrics, an inline CTA continuing the provider thread, and mobile vehicle-carousel controls. The existing end-to-end role, persistence, request and responsive journeys remain required. Component reference documents are not executed or shipped as demo wrappers.

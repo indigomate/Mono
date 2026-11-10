@@ -1,0 +1,38 @@
+export const cars = [
+  {
+    id: 1,
+    name: "Audi A4",
+    type: "Luxury sedan",
+    price: 1400,
+    area: "City Bowl",
+    img: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=700&q=80",
+    tags: ["luxury", "sedan", "business", "wedding", "audi"],
+  },
+  {
+    id: 2,
+    name: "BMW 3 Series",
+    type: "Premium sedan",
+    price: 1550,
+    area: "Sea Point",
+    img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=700&q=80",
+    tags: ["luxury", "sedan", "business", "wedding", "bmw"],
+  },
+  {
+    id: 3,
+    name: "Toyota Corolla",
+    type: "Economy sedan",
+    price: 650,
+    area: "Claremont",
+    img: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=700&q=80",
+    tags: ["affordable", "economy", "budget", "sedan"],
+  },
+  {
+    id: 4,
+    name: "Range Rover Evoque",
+    type: "Premium SUV",
+    price: 2100,
+    area: "Camps Bay",
+    img: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=700&q=80",
+    tags: ["suv", "luxury", "weekend", "wedding"],
+  },
+];

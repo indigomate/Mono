@@ -1,3 +1,4 @@
+import { isISODate } from "../utils/dates";
 import { CalendarPicker } from "../components/ui/CalendarPicker";
 import { BriefProgress } from "../components/ui/ConversationElements";
 import { DecisionHelp } from "../conversation/JourneyContext";
@@ -53,6 +54,8 @@ export function loadFields(service: string): EnquiryFields {
       for (const k of Object.keys(result) as (keyof EnquiryFields)[])
         if (typeof result[k] === typeof v[k])
           Object.assign(result, { [k]: v[k] });
+      for (const key of ["date", "end"] as const)
+        if (result[key] && !isISODate(result[key])) result[key] = "";
       for (const k of ["passengers", "hours", "budget"] as const)
         if (!Number.isFinite(result[k]) || result[k] < 0)
           result[k] = emptyFields[k];

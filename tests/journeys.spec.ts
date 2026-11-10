@@ -808,3 +808,119 @@ test("provider metrics are present without a command and start-here restores wel
     page.getByRole("button", { name: "Business overview", exact: true }),
   ).toBeInViewport();
 });
+
+test("workspace load failure has a recovery action and keeps saved trip data", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  const workspaceModule =
+    /\/(?:src\/workspace\/Workspace\.tsx|assets\/Workspace-[^/]+\.js)(?:\?.*)?$/;
+  await page.route(workspaceModule, (route) => route.abort("failed"));
+  await page.goto("/");
+  await page.evaluate(() =>
+    localStorage.setItem(
+      "mono-journey-v1",
+      JSON.stringify({
+        trip: { location: "Cape Town", budget: 800, days: 3 },
+        messages: [],
+        searched: false,
+      }),
+    ),
+  );
+  const preview = page.locator(".product-preview");
+  await preview
+    .getByLabel("Start your conversation", { exact: true })
+    .fill("An SUV for 3 days");
+  await preview
+    .getByRole("button", { name: "Continue in chat →", exact: true })
+    .click();
+  await expect(page.getByRole("alert")).toContainText(
+    "Your conversation couldn’t open.",
+  );
+  await expect(
+    page.getByLabel("Your unsent message", { exact: true }),
+  ).toHaveText("An SUV for 3 days");
+  await page.unroute(workspaceModule);
+  await page
+    .getByRole("button", { name: "Reload GOMONO", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Message GOMONO", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Edit my trip", exact: true }).click();
+  await expect(page.getByLabel("Budget (ZAR)", { exact: true })).toHaveValue(
+    "800",
+  );
+});
+
+test("impossible dates in chat are rejected without breaking the calendar", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/#customer");
+  await say(page, "I need a chauffeur on 2027-02-31");
+  await expect(page.locator(".turn-assistant").last()).toContainText(
+    "invalid calendar date",
+  );
+  await expect(page.getByLabel("Service date", { exact: true })).toHaveValue(
+    "",
+  );
+  await expect(
+    page.getByRole("application", { name: /^Service date,/ }),
+  ).toBeVisible();
+  await say(page, "2027-02-28");
+  await expect(page.getByLabel("Service date", { exact: true })).toHaveValue(
+    "2027-02-28",
+  );
+  await page.reload();
+  await expect(page.getByLabel("Service date", { exact: true })).toHaveValue(
+    "2027-02-28",
+  );
+  expect(errors).toEqual([]);
+});
+
+test("invalid stored dates recover without discarding other trip preferences", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    localStorage.setItem(
+      "mono-journey-v1",
+      JSON.stringify({
+        trip: {
+          location: "Cape Town",
+          start: "2027-99-99",
+          end: "2027-02-31",
+          budget: 900,
+        },
+        messages: [],
+        searched: false,
+      }),
+    );
+    localStorage.setItem(
+      "mono-enquiry-draft-chauffeur",
+      JSON.stringify({
+        date: "2027-02-31",
+        pickup: "Sea Point",
+        email: "demo@example.com",
+      }),
+    );
+  });
+  await page.goto("/#customer");
+  await page.getByRole("button", { name: "Edit my trip", exact: true }).click();
+  await expect(page.getByLabel("Pickup date", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Budget (ZAR)", { exact: true })).toHaveValue(
+    "900",
+  );
+  await page.goto("/#chauffeur");
+  await expect(page.getByLabel("Service date", { exact: true })).toHaveValue(
+    "",
+  );
+  await expect(page.getByLabel("Pickup location", { exact: true })).toHaveValue(
+    "Sea Point",
+  );
+  await expect(
+    page.getByRole("application", { name: /^Service date,/ }),
+  ).toBeVisible();
+});

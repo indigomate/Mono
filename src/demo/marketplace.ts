@@ -1,3 +1,4 @@
+import { isISODate } from "../utils/dates";
 import { isService, type ServiceType } from "./services";
 import { cars } from "./inventory";
 import { read, write, loadArray } from "./storage";
@@ -92,6 +93,8 @@ export function loadJourney(): {
         if (typeof v.trip[k] === typeof trip[k])
           Object.assign(trip, { [k]: v.trip[k] });
       }
+      for (const key of ["start", "end"] as const)
+        if (trip[key] && !isISODate(trip[key])) trip[key] = "";
       if (!["daily", "total"].includes(trip.budgetMode))
         trip.budgetMode = "daily";
       for (const k of ["days", "budget", "passengers"] as const)
@@ -186,7 +189,7 @@ export function interpret(text: string, previous: Trip): Trip {
     t.budgetMode = "daily";
   }
   if (/\bcape town\b/.test(lower)) t.location = "Cape Town";
-  const dates = text.match(/\b\d{4}-\d{2}-\d{2}\b/g);
+  const dates = text.match(/\b\d{4}-\d{2}-\d{2}\b/g)?.filter(isISODate);
   if (dates?.length === 2 && dates[1] > dates[0]) {
     t.start = dates[0];
     t.end = dates[1];

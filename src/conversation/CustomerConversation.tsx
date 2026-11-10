@@ -1,3 +1,4 @@
+import { isISODate } from "../utils/dates";
 import { EmptyState, InlineCTA } from "../components/ui/ConversationElements";
 import { JourneyContext, DecisionHelp } from "./JourneyContext";
 import { RequestRecord } from "./RequestRecord";
@@ -54,6 +55,11 @@ function nextField(
   if (!f.email) return "email";
   return null;
 }
+function dateWarning(text: string) {
+  return text.match(/\b\d{4}-\d{2}-\d{2}\b/g)?.some((date) => !isISODate(date))
+    ? "An invalid calendar date wasn’t added. Please check it. "
+    : "";
+}
 function serviceQuestion(f: EnquiryFields, service: EnquiryService) {
   const key = nextField(f, service);
   return (
@@ -83,7 +89,9 @@ function collect(
     f.email = email[0];
     extracted = true;
   }
-  const dates = text.match(/\b\d{4}-\d{2}-\d{2}\b/g);
+  const dateTokens = text.match(/\b\d{4}-\d{2}-\d{2}\b/g);
+  const dates = dateTokens?.filter(isISODate);
+  if (dateTokens?.length) extracted = true;
   if (dates?.length) {
     if (nextField(previous, service) === "end") f.end = dates[0];
     else {
@@ -228,7 +236,7 @@ export function CustomerConversation({
     setServiceState({ service, fields: f });
     respond(
       text,
-      `Let’s plan your ${serviceLabel(service).toLowerCase()}. ${serviceQuestion(f, service)}`,
+      `Let’s plan your ${serviceLabel(service).toLowerCase()}. ${dateWarning(text)}${serviceQuestion(f, service)}`,
       { kind: "enquiry", service },
     );
   }
@@ -334,10 +342,14 @@ export function CustomerConversation({
           : loadFields(active.service);
       const fields = collect(text, previous, active.service, true);
       setServiceState({ service: active.service, fields });
-      respond(text, serviceQuestion(fields, active.service), {
-        kind: "enquiry",
-        service: active.service,
-      });
+      respond(
+        text,
+        dateWarning(text) + serviceQuestion(fields, active.service),
+        {
+          kind: "enquiry",
+          service: active.service,
+        },
+      );
       return;
     }
     const next = interpret(text, trip);
@@ -351,7 +363,7 @@ export function CustomerConversation({
     ) {
       setTrip(next);
       const found = matches(next);
-      respond(text, reply(next, found.length), {
+      respond(text, dateWarning(text) + reply(next, found.length), {
         kind: "vehicles",
         ids: found.map((c) => c.id),
       });

@@ -6,7 +6,11 @@ import {
   CalendarGrid,
   Heading,
 } from "react-aria-components";
-import { parseDate } from "@internationalized/date";
+import {
+  today as calendarToday,
+  getLocalTimeZone,
+} from "@internationalized/date";
+import { toCalendarDate } from "../../utils/dates";
 
 export function CalendarPicker({
   label,
@@ -21,10 +25,21 @@ export function CalendarPicker({
   min: string;
   onChange: (value: string) => void;
 }) {
+  const selectedDate = toCalendarDate(value);
+  const minimumDate = toCalendarDate(min) || calendarToday(getLocalTimeZone());
   const [open, setOpen] = useState(initiallyOpen);
-  const [focused, setFocused] = useState(() => parseDate(value || min));
+  const [focused, setFocused] = useState(
+    () =>
+      toCalendarDate(value) ||
+      toCalendarDate(min) ||
+      calendarToday(getLocalTimeZone()),
+  );
   useEffect(() => {
-    setFocused(parseDate(value || min));
+    setFocused(
+      toCalendarDate(value) ||
+        toCalendarDate(min) ||
+        calendarToday(getLocalTimeZone()),
+    );
   }, [value, min]);
   return (
     <details
@@ -44,8 +59,8 @@ export function CalendarPicker({
         }}
         focusedValue={focused}
         onFocusChange={setFocused}
-        value={value ? parseDate(value) : null}
-        minValue={parseDate(min)}
+        value={selectedDate}
+        minValue={minimumDate}
         onChange={(date) => onChange(date.toString())}
       >
         <header>
@@ -59,6 +74,11 @@ export function CalendarPicker({
         </header>
         <CalendarGrid>{(date) => <CalendarCell date={date} />}</CalendarGrid>
       </Calendar>
+      {value && !selectedDate && (
+        <p className="form-error" role="alert">
+          Enter a valid date in YYYY-MM-DD format.
+        </p>
+      )}
     </details>
   );
 }

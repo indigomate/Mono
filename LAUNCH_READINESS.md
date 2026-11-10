@@ -33,3 +33,7 @@ Open `/#experience` on the existing preview site. The landing section uses actua
 Inside chat, use **Start here** to return to the welcome choices without clearing history. **Plan dates & budget** exposes the date calendar and structured fields. **Drive myself** opens the vehicle carousel and comparison. **Track my requests** exposes saved records or an empty state with a continuation action. Provider entry exposes the business summary, metrics and readiness cards. **New chat** opens the accessible confirmation dialog. Deposit explanations appear during vehicle estimate review, with selection unavailable until authoritative financial quotes exist.
 
 The supplied documentation included paid examples without source. The product uses MIT Untitled UI primitives and original GOMONO compositions; it does not claim to ship unavailable PRO example code. The new custom logo/icon design remains a separate brand-design task.
+
+## Build and operational audit
+
+The current TypeScript/Vite build and formatting checks pass; production dependencies report zero known npm audit vulnerabilities. GitHub runs build, formatting and the browser journeys on every push. The user-facing frontend is deployed through the existing Vercel project. Workspace load-failure recovery is included, but centralized error reporting, delivery monitoring, reconciliation alerts and production incident ownership remain launch work. Automated tests validate demo workflows and recovery, not authenticated bookings or money movement.

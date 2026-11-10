@@ -1,3 +1,4 @@
+import { WorkspaceBoundary } from "./components/WorkspaceBoundary";
 import { ProductPreview } from "./components/ProductPreview";
 import { LoadingIndicator } from "./components/ui/LoadingIndicator";
 import { useEffect, useState, lazy, Suspense } from "react";
@@ -179,20 +180,22 @@ export default function App() {
         </footer>
       </div>
       {view !== "home" && (
-        <Suspense
-          fallback={
-            <div className="conversation-loading">
-              <LoadingIndicator />
-            </div>
-          }
-        >
-          <Workspace
-            view={view}
-            navigate={navigate}
-            entry={entry}
-            onEntryConsumed={() => setEntry(null)}
-          />
-        </Suspense>
+        <WorkspaceBoundary pendingEntry={entry?.text}>
+          <Suspense
+            fallback={
+              <div className="conversation-loading">
+                <LoadingIndicator />
+              </div>
+            }
+          >
+            <Workspace
+              view={view}
+              navigate={navigate}
+              entry={entry}
+              onEntryConsumed={() => setEntry(null)}
+            />
+          </Suspense>
+        </WorkspaceBoundary>
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-name: Validate MONO
+name: Validate GOMONO
 on:
   push:
   pull_request:

@@ -1,39 +1,37 @@
 # Technical architecture
 
-## Audit and decision
+MONO is a React 19 / TypeScript / Vite frontend. The supplied standalone HTML prototype established the visual identity and initial demonstration flows; the active workspace now uses typed React state. No framework migration was introduced.
 
-The supplied source comprised README.md and a 22KB standalone index.html. There was no package manifest, React source, TypeScript configuration, Vite setup, lockfile, tests, or asset directory. The HTML contained working renter chat, rule-based inventory matching, request forms, owner vehicle entry, storefront preview, and localStorage persistence. The referenced hero asset was absent, mobile sidebar navigation was hidden, dynamic form labels were unassociated, and unchecked JSON parsing could stop startup.
+## Active components
 
-A small React 19 / TypeScript / Vite shell now preserves that implementation. The uploaded README's proposed Next.js migration was not adopted: the user's requested Vite foundation takes precedence. Clerk and Supabase SDKs are installed as integration foundations. Live services are not configured; no LLM or payment SDK is installed.
+- `src/App.tsx`: preserved cinematic landing page, hash routing and browser Back support.
+- `src/workspace/Workspace.tsx`: workspace shell, selected navigation, renter conversation/results, local requests and showroom preview.
+- `src/workspace/TripEditor.tsx`: labeled controls for dates, duration, budget mode, category, make, vehicle class, transmission and passengers.
+- `src/workspace/VehicleReview.tsx`: accessible native modal for vehicle details, date selection, base-rental review and explicit demo acknowledgement. Escape closes the modal and restores focus.
+- `src/workspace/OwnerWorkspace.tsx`: create/edit vehicle drafts and select entries for the local storefront preview.
+- `src/demo/marketplace.ts`: typed demo models, bounded preference extraction, deterministic matching, currency formatting and record migration.
+- `src/demo/inventory.js`: illustrative renter inventory; specifications and photographs are not verified vehicle representations.
+- `src/demo/storage.js`: guarded browser persistence with a session-memory fallback and visible storage warning.
+- `src/auth/Authentication.tsx`: optional Clerk account controls, enabled only with a publishable key.
+- `src/services`: separate Clerk-token Supabase client foundation, not used by demo persistence.
+- `src/demo/experience.js`: original DOM controller retained for reference, no longer imported or bundled in the active application.
 
-## Structure
+## State and persistence
 
-- index.html: entry point, language, metadata, and React mount.
-- src/main.tsx: React bootstrapping.
-- src/App.tsx: typed React layout and initial event bindings.
-- src/styles.css: preserved original styling plus emerald and responsive refinements.
-- src/demo/inventory.js: illustrative Cape Town inventory.
-- src/demo/storage.js: guarded browser-only persistence, shape checks, and session-only fallback notice.
-- src/demo/experience.js: compatibility controller for the original DOM interactions, scoped delegated events for generated forms/cards, and hash-based initial view routing.
-- public/assets/cape-town-car.jpg: local landing photograph from Unsplash.
-- tests: Chromium integration and responsive checks.
+React owns all active workspace nodes; generated HTML and direct DOM mutation are no longer used for the renter/owner screens. A versioned `mono-journey-v1` browser record saves structured trip preferences, search state and up to 40 messages. `mono-requests` and `mono-listings` retain their original keys. Legacy owner listings receive stable IDs and become editable drafts. New owner listings never enter renter inventory automatically.
 
-React owns the static layout; the compatibility controller owns generated conversation and panel descendants. React does not re-render those descendants. This intentionally bounded bridge minimizes regression risk; do not add competing React state to the same nodes. JavaScript compatibility modules are included by TypeScript but not checked with checkJs. Migrate them to typed React components feature by feature before increasing state complexity. The controller unregisters event listeners on unmount.
+Daily and whole-rental budgets are distinct. Whole-rental comparisons require dates or a duration. Actual dates determine the estimate when supplied. A changed quote that exceeds the saved budget cannot be saved until the trip is revised. The UI calculates base rental only; fees, deposits, insurance terms, availability and payment status are not invented.
 
-## Demo boundary
+Request timelines describe local draft completion. They do not simulate owner acceptance or booking confirmation. Storefront selection changes only a local preview flag and does not publish a public listing. Browser persistence is untrusted: records are parsed defensively and rendered through React's string escaping. Storage failures preserve progress in memory until reload and display a warning. Do not enter sensitive real data into the demo.
 
-All inventory, matching, requests, listing data, and persistence live under src/demo. Browser keys mono-city, mono-requests, and mono-listings are retained for existing users. No data is sent to providers. Do not enter sensitive real data into this demo. Storage is untrusted: values are parsed defensively and user-facing strings are escaped. Storage failures leave the session usable but cannot provide durable saves. Owner listings are showcased in the storefront; they deliberately do not become verified renter inventory.
+## Production boundary
 
-## Future service contracts
+The dedicated MONO Supabase project exists in QuattroCape (eu-west-1), but no application tables or RLS migrations have been applied. Live owner identity, verification, availability, notification delivery, booking state transitions and payments remain unimplemented. Clerk sign-in alone does not authorize or synchronize the demo records.
 
-Introduce server-authorized InventoryService.search(criteria), AvailabilityService.quote/dates, BookingService.hold/request, OwnerService.listings/verification, and NotificationService subscriptions. Keep demo implementations explicitly selected and never silently fall back to sample availability in production. Use server-side authorization and schema validation, atomic date-overlap prevention and expiring holds, idempotent payment/booking mutations, signed webhook verification, audit logs, and explicit confirmation before money movement.
+Introduce typed Inventory, Availability, Booking, Owner and Notification service implementations behind explicit production screens. Use server authorization, schema validation, ownership policies based on the Clerk JWT text subject, verified published inventory, atomic date-overlap prevention and expiring holds, idempotent payment/booking operations, verified webhooks and audit trails. The concierge must use authoritative service results; it cannot decide availability, price or payment state itself. Never silently substitute demonstration inventory after a production service failure.
 
-The concierge should call typed server tools; the model must never be the authority for availability, price, identity, or payment status. Public SEO storefront rendering can be added as a separately evaluated milestone; Vite alone does not server-render SEO pages. No architectural migration is required for this prototype repair.
+## Delivery and verification
 
-## Runtime
+`npm ci` installs locked dependencies. `npm run build` checks TypeScript and builds Vite output. `npm test` exercises browser journeys in Chromium. `npm run format:check` verifies formatting. GitHub Actions runs these checks. Vercel imports the GitHub main branch with the Vite framework, `npm run build` and `dist`; see DEPLOYMENT.md for identity and environment setup. Public SEO storefront rendering remains a separate future milestone.
 
-npm ci; npm run dev -- --port 5173. npm run build performs TypeScript validation and Vite bundling. npm test runs Playwright against a managed local Vite server. The dev server binds all interfaces for cloud preview access; it is not a production server. Google Fonts and inventory Unsplash images still require network access.
-
-## Deployment and identity foundation
-
-See DEPLOYMENT.md for GitHub, Vercel, Clerk, and Supabase configuration. src/auth/Authentication.tsx enables Clerk only when configured. src/services supplies a separate authenticated Supabase client factory; it is not used by the demo controller. Native Clerk session tokens are used, without deprecated JWT templates. No hosted database schema has been changed.
+The landing hero image is local; vehicle images and Google Fonts still require network access. Native dialogs, keyboard focus, active mobile navigation, and responsive layouts have browser coverage; a full assistive-technology audit remains future work.

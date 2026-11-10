@@ -41,4 +41,4 @@ MONO was created in QuattroCape in eu-west-1 (Ireland). Project reference: vgotg
 
 ## Vercel access status
 
-Project creation through the connected Vercel account returns HTTP 403 (no project-creation permission), including when importing the GitHub repository. No deployment URL exists yet. Import indigomate/Mono through the Vercel dashboard using the authorized owner account, or correct the connected team permissions before retrying.
+The user imported the repository into Vercel and supplied https://mono-ochre-psi.vercel.app as the live application URL. The connected Vercel tool scope does not list this project and previously denied project creation. Releases therefore use the repository Git integration; verify the live URL after every release.

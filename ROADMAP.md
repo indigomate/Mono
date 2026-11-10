@@ -27,3 +27,7 @@ Add owner dashboards, publicly rendered SEO storefronts with structured data/can
 ## 6 — Growth
 
 Calendar integrations, subscriptions, clearly labeled sponsored placement, reviews, retention analytics, and expansion beyond Cape Town. Define metrics and approval criteria before implementing each milestone. No dates are committed until product scope and production vendors are selected.
+
+## Delivered guided-workflow milestone
+
+Typed React workspace, persistent structured trip brief and conversation, daily/total budget handling, preserved make/category/transmission preferences, editable trip fields, vehicle detail and estimate review, honest local request timelines, editable owner drafts, local storefront selection, selected mobile navigation and browser Back support are implemented. The cinematic landing remains intact. Live owner identity, verified supply, availability, notifications, booking transitions and payment services remain future milestones.

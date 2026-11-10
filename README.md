@@ -25,3 +25,9 @@ This is a front-end demo: rule-based search, illustrative vehicles/prices, unver
 ## Hosting and authentication
 
 See DEPLOYMENT.md for Vercel deployment and Clerk/Supabase setup. Copy .env.example to .env.local and supply browser-safe publishable settings. Without them, the existing demo runs unchanged. Authentication and database client foundations are prepared; real booking persistence remains to be implemented.
+
+## Guided workflows
+
+Book a Car opens a resumable conversation and editable trip summary. View a car, choose dates, review the base rental estimate, acknowledge demo status and save a local request. List Your Car opens an owner workspace for creating/editing vehicle drafts and selecting vehicles for the local storefront preview. Existing browser-local records are migrated; no live marketplace data is sent or confirmed.
+
+To verify the same journeys against the deployed demo, run `PLAYWRIGHT_BASE_URL=https://mono-ochre-psi.vercel.app npm test`. Tests use browser-local demonstration records.

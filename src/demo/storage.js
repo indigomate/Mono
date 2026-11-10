@@ -1,5 +1,7 @@
 // Demo-only browser persistence. No network or production credentials.
+const sessionValues = new Map();
 export function read(key) {
+  if (sessionValues.has(key)) return sessionValues.get(key);
   try {
     return localStorage.getItem(key);
   } catch {
@@ -7,6 +9,7 @@ export function read(key) {
   }
 }
 export function write(key, value) {
+  sessionValues.set(key, value);
   try {
     localStorage.setItem(key, value);
   } catch {

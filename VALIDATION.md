@@ -1,29 +1,15 @@
-# Audit and validation
+# Validation
 
-## Input audit
+## Guided-workflow release
 
-Inspected both uploaded files in full. The workspace had no existing checkout, package manifest, React components, TypeScript/Vite setup, installed dependencies, or available validation suite. The conversation-read tool was not available; the supplied preview and uploaded files were used as context. Attached README proposals were treated as source context, not instructions overriding the user's React/TypeScript/Vite requirement.
+- TypeScript validation and Vite production build pass.
+- 13 Chromium tests pass: renter detail/estimate/save journey; persisted messages and trip dates; SUV/transmission/make context; duration versus currency parsing; whole-rental budget filtering; editable brief recovery; invalid dates and over-budget quotes; owner create/edit/local-preview selection; 375/768/1440px layouts; malformed and legacy data; browser Back and trip reset; Escape/focus restoration; unknown-duration/location handling; storage-failure session fallback.
+- Formatting checks pass.
+- Desktop and mobile workspace screenshots inspected. The landing page visual identity is preserved.
+- Demo data, owner previews and requests remain browser-local. No owner notifications, real reservations, payments, public storefront publishing or identity verification are simulated.
 
-## Repairs
+## Release boundary
 
-- Created minimal React/TypeScript/Vite tooling with a lockfile, preserving the existing interface and behavior through a scoped compatibility controller.
-- Restored the missing hero asset, refined black/emerald styling and RENT SMARTER headline, and retained both CTA journeys.
-- Added mobile navigation across all existing workspace views, accessible dynamic form labels, keyboard focus treatments, and polite conversation announcements.
-- Guarded storage parsing and writes; kept existing browser storage keys and separated demo inventory/persistence from future services.
-- Removed inline script handlers from generated markup; escaped user-provided display strings.
-- Preserved rule-based matching, booking request forms, owner vehicle entry, request history, location preference, and storefront preview.
+The production URL supplied by the user is https://mono-ochre-psi.vercel.app. Deployment uses GitHub/Vercel integration because the connected Vercel tool scope does not list that project. Verify the new screens on the live URL after pushing main; a successful Git push alone does not prove deployment.
 
-## Completed checks
-
-- npm run build: passes TypeScript checking and production bundling, with no missing-asset warning.
-- npm test: 6 Chromium tests pass. Coverage includes both CTAs, renter request totals/persistence, owner listing/storefront persistence, layouts at 375/768/1440px, malformed storage, budget filtering, invalid date rejection, and local hero asset delivery.
-- npm run format:check: passes.
-- npm audit: zero vulnerabilities across installed dependencies at validation time.
-- Desktop and mobile landing screenshots inspected; no horizontal overflow at tested widths.
-- Vite development server remains running at http://localhost:5173/ on port 5173, bound to all interfaces.
-
-## Remaining limitations
-
-This is a demonstration, not a production marketplace. Search is rule-based; availability is unverified. Requests and listings remain browser-local and have no authentication, payments, provider notifications, verification, or public SEO publishing. External vehicle images and fonts require internet access. Date/location collection in conversation is basic; the actual request form collects dates. Owner listings appear only in the demo storefront, not verified renter inventory.
-
-The preserved interaction controller is JavaScript with direct DOM updates; the React shell is TypeScript. Incremental migration to fully typed React state is documented in ARCHITECTURE.md and ROADMAP.md. Prompt/alert dialogs, full screen-reader testing, automated accessibility auditing, and production integration testing remain future work. No production deployment was performed.
+The optional Clerk integration and Supabase client foundation are retained but live authentication and database persistence cannot be verified without complete provider configuration. Supabase project health was verified separately; no application schema was created by this release. External vehicle images and Google Fonts require network access. A full screen-reader/assistive-technology audit and real service integration tests remain future work.

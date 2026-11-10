@@ -21,3 +21,7 @@ Use native buttons, visible keyboard focus, labeled inputs, live conversation an
 ## Next design milestones
 
 Validate keyboard and screen-reader flows with users; replace prompt/alert dialogs with accessible contextual forms; add explicit active mobile tab styling and design tokens shared across components. Validate the design with real vehicle photography and approved business copy before launch.
+
+## Guided workspace
+
+The cinematic landing page is retained. The application workspace pairs a deep emerald navigation rail with soft ivory-green surfaces, white vehicle cards and restrained forest-green actions. A right-hand trip brief keeps preferences visible on desktop; a compact summary precedes the conversation on mobile. Vehicle details and estimate review use a keyboard-accessible modal. Owner cards show local draft/preview status with clear next steps. Mobile tabs expose aria-current and a visible selected state. Native controls preserve accessible names, browser date pickers and validation.

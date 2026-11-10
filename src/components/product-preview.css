@@ -329,7 +329,8 @@
   }
 }
 .product-preview .preview-copy > .eyebrow {
-  color: #4f775c;
+  /* Override the legacy landing eyebrow color on this light surface. */
+  color: #4f775c !important;
 }
 .preview-photo {
   position: relative;

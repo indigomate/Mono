@@ -159,7 +159,7 @@ export function CustomerWorkspace({
               {messages.map((m, i) => (
                 <div key={i} className={`chat-message ${m.role}`}>
                   <span className="message-label">
-                    {m.role === "user" ? "YOU" : "MONO CONCIERGE"}
+                    {m.role === "user" ? "YOU" : "GOMONO CONCIERGE"}
                   </span>
                   <p>{m.text}</p>
                 </div>

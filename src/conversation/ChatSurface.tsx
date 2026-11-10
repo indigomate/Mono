@@ -90,6 +90,16 @@ export function ChatSurface({
                       "More people. One plan.",
                     ],
                     [
+                      "Plan dates & budget",
+                      "Edit my trip",
+                      "Open calendars and refine your brief.",
+                    ],
+                    [
+                      "Track my requests",
+                      "My requests",
+                      "Review the requests saved on this device.",
+                    ],
+                    [
                       "Explore every service",
                       "Explore services",
                       "Airports, events, tours & more.",
@@ -105,6 +115,11 @@ export function ChatSurface({
                       "Offer a service",
                       "Business profile",
                       "Set up your transport business.",
+                    ],
+                    [
+                      "Business overview",
+                      "summary",
+                      "See your listings and next steps.",
                     ],
                     [
                       "Manage requests",
@@ -144,7 +159,7 @@ export function ChatSurface({
                 <div className="turn-body">
                   <span className="turn-role">
                     {message.role === "assistant"
-                      ? "MONO"
+                      ? "GOMONO"
                       : role === "customer"
                         ? "YOU"
                         : "YOU / PROVIDER"}
@@ -182,6 +197,13 @@ export function ChatSurface({
         <div className="composer-inner">
           {context}
           <div className="chat-shortcuts" aria-label="Conversation shortcuts">
+            <button
+              onClick={() =>
+                scrollRef.current?.scrollTo({ top: 0, behavior: "instant" })
+              }
+            >
+              Start here
+            </button>
             {shortcuts.map((s) => (
               <button key={s} onClick={() => onSend(s)}>
                 {s}
@@ -237,7 +259,7 @@ export function ChatSurface({
             <span aria-hidden="true">✧</span>
             <FieldInput
               ref={inputRef}
-              aria-label="Message MONO"
+              aria-label="Message GOMONO"
               maxLength={1000}
               value={input}
               onChange={(e) => setInput(e.target.value)}

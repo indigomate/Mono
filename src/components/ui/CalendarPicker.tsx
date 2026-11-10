@@ -13,21 +13,35 @@ export function CalendarPicker({
   value,
   min,
   onChange,
+  initiallyOpen = false,
 }: {
+  initiallyOpen?: boolean;
   label: string;
   value: string;
   min: string;
   onChange: (value: string) => void;
 }) {
+  const [open, setOpen] = useState(initiallyOpen);
   const [focused, setFocused] = useState(() => parseDate(value || min));
   useEffect(() => {
     setFocused(parseDate(value || min));
   }, [value, min]);
   return (
-    <details className="mono-calendar-picker">
+    <details
+      className="mono-calendar-picker"
+      open={open}
+      onToggle={(e) => setOpen(e.currentTarget.open)}
+    >
       <summary>Choose {label.toLowerCase()} on a calendar</summary>
       <Calendar
         aria-label={label}
+        onPointerDownCapture={() => {
+          // Native date editors can scroll themselves back into view during a
+          // calendar press. Commit/blur the editor before React Aria handles it.
+          const active = document.activeElement;
+          if (active instanceof HTMLInputElement && active.type === "date")
+            active.blur();
+        }}
         focusedValue={focused}
         onFocusChange={setFocused}
         value={value ? parseDate(value) : null}

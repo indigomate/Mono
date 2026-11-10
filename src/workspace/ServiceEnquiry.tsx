@@ -1,3 +1,5 @@
+import { CalendarPicker } from "../components/ui/CalendarPicker";
+import { BriefProgress } from "../components/ui/ConversationElements";
 import { DecisionHelp } from "../conversation/JourneyContext";
 import { Mail01 } from "@untitledui/icons";
 import { FieldSelect } from "../components/ui/FieldSelect";
@@ -154,6 +156,33 @@ export function ServiceEnquiry({
           <div className="section-heading">
             <h3>Your service brief</h3>
             <span className="status-badge">Quote required</span>
+          </div>
+          <BriefProgress
+            checks={[
+              { label: "Pickup", complete: Boolean(fields.pickup.trim()) },
+              { label: "Service date", complete: Boolean(fields.date) },
+              {
+                label: "Contact email",
+                complete: Boolean(fields.email.trim()),
+              },
+            ]}
+          />
+          <div className="mono-calendar-options">
+            <CalendarPicker
+              label={longTerm ? "Start date" : "Service date"}
+              initiallyOpen
+              value={fields.date}
+              min={today()}
+              onChange={(value) => update("date", value)}
+            />
+            {longTerm && (
+              <CalendarPicker
+                label="End date"
+                value={fields.end}
+                min={fields.date || today()}
+                onChange={(value) => update("end", value)}
+              />
+            )}
           </div>
           <div className="fields-grid">
             <FieldSelect

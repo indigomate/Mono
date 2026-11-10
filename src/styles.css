@@ -971,3 +971,24 @@ input:focus-visible {
     animation: none;
   }
 }
+.gomono-loader {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 14px;
+  font-size: 12px;
+}
+.hero .experience-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  color: #c4dfbf;
+  text-decoration: none;
+  border-bottom: 1px solid #c4dfbf55;
+  padding-bottom: 5px;
+  font-size: 12px;
+}
+.hero .experience-link:hover {
+  color: #f0f6e9;
+}

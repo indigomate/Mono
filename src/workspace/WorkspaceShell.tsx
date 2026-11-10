@@ -30,7 +30,7 @@ export function WorkspaceShell({
     <div className={`workspace chat-layout role-${role}`}>
       <aside className="workspace-sidebar">
         <button className="logo home-brand" onClick={() => navigate("home")}>
-          MONO.
+          GOMONO.
         </button>
         <div className="workspace-identity">
           <span>{provider ? "PROVIDER STUDIO" : "RENT & RIDE"}</span>
@@ -75,7 +75,7 @@ export function WorkspaceShell({
         <header className="workspace-topbar">
           <div>
             <span className="workspace-breadcrumb">
-              MONO / {provider ? "PROVIDER STUDIO" : "RENT & RIDE"}
+              GOMONO / {provider ? "PROVIDER STUDIO" : "RENT & RIDE"}
             </span>
             <strong>{label}</strong>
           </div>
@@ -122,7 +122,7 @@ export function WorkspaceShell({
             aria-label="Return to website"
             onClick={() => navigate("home")}
           >
-            MONO · Back to website
+            GOMONO · Back to website
           </button>
           <span>
             {provider ? "Provider Studio" : "Rent & Ride"} · Demonstration only
@@ -140,7 +140,7 @@ export function WorkspaceChooser({ navigate }: { navigate: Navigate }) {
   return (
     <main className="workspace-chooser conversation-chooser">
       <button className="logo" onClick={() => navigate("home")}>
-        MONO.
+        GOMONO.
       </button>
       <div className="chooser-chat">
         <span className="eyebrow">ONE MARKETPLACE. TWO CONVERSATIONS.</span>
@@ -150,7 +150,7 @@ export function WorkspaceChooser({ navigate }: { navigate: Navigate }) {
           with you.
         </h1>
         <div className="chooser-message" role="log">
-          <span className="turn-role">MONO</span>
+          <span className="turn-role">GOMONO</span>
           <p>{reply}</p>
           <div className="inline-actions">
             <button onClick={() => navigate("customer")}>
@@ -180,7 +180,7 @@ export function WorkspaceChooser({ navigate }: { navigate: Navigate }) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             maxLength={300}
-            placeholder="Tell me what brings you to MONO…"
+            placeholder="Tell me what brings you to GOMONO…"
           />
           <button
             aria-label="Continue to conversation"

@@ -1,8 +1,8 @@
-# MONO: the conversation is the workspace
+# GOMONO: the conversation is the workspace
 
 ## Product contract
 
-Both sides of MONO use chat as their primary interface. A customer describes a rental or transport need. A provider describes their business, vehicle or desired operation. The assistant responds with text and an appropriate typed tool card inside that conversation. Service options and business summaries are assistant responses, not separate dashboards.
+Both sides of GOMONO use chat as their primary interface. A customer describes a rental or transport need. A provider describes their business, vehicle or desired operation. The assistant responds with text and an appropriate typed tool card inside that conversation. Service options and business summaries are assistant responses, not separate dashboards.
 
 The landing page remains cinematic. Its Book a Car and List Your Car actions enter the corresponding conversation. An explicit conversational role chooser switches between customer and provider scope. Older links such as #owner, #bookings, #airport and #store open the relevant tool inside chat rather than resurrecting standalone pages.
 
@@ -55,7 +55,7 @@ Natural-language edits update a draft, not the saved listing. Save buttons expli
 
 ## UI foundation
 
-Actual MIT-licensed Untitled UI components are vendored at a pinned commit. FieldInput, FieldSelect and FieldTextarea provide a stable app-facing contract around React Aria and Tailwind, preserving labels, validation, focus, hints, optional icons/tooltips and currency prefixes. Native date/time pickers and numeric constraints remain available on mobile. The semantic palette is MONO emerald rather than the upstream purple. Tailwind preflight is omitted to preserve the existing landing page.
+Actual MIT-licensed Untitled UI components are vendored at a pinned commit. FieldInput, FieldSelect and FieldTextarea provide a stable app-facing contract around React Aria and Tailwind, preserving labels, validation, focus, hints, optional icons/tooltips and currency prefixes. Native date/time pickers and numeric constraints remain available on mobile. The semantic palette is GOMONO emerald rather than the upstream purple. Tailwind preflight is omitted to preserve the existing landing page.
 
 The app adapter supports native event callbacks for compatibility and a string-value onValueChange API for new integrations. Future API errors should map to field error/hint properties and a conversational failure message. Show disabled/submitting states during real asynchronous operations; never show a completed action before the service confirms it.
 

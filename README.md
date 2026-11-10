@@ -1,4 +1,4 @@
-# MONO
+# GOMONO
 
 Cape Town conversation-first car rental concept. React 19, TypeScript and Vite. The supplied standalone prototype was preserved and integrated, with demo logic isolated under src/demo.
 
@@ -36,6 +36,10 @@ The assistant currently uses bounded demo intent/slot handling, not a connected 
 
 ## UI foundation
 
-The actual Untitled UI input primitives are vendored under src/components/base with MIT license and pinned provenance. FieldInput, FieldSelect and FieldTextarea supply consistent React Aria labeling, focus, validation, hints and disabled states, plus currency prefixes and appropriate icons. MONO's emerald tokens replace the upstream brand palette. See src/components/UPSTREAM.md.
+The actual Untitled UI input primitives are vendored under src/components/base with MIT license and pinned provenance. FieldInput, FieldSelect and FieldTextarea supply consistent React Aria labeling, focus, validation, hints and disabled states, plus currency prefixes and appropriate icons. GOMONO's emerald tokens replace the upstream brand palette. See src/components/UPSTREAM.md.
 
 To verify the deployed demo, run `PLAYWRIGHT_BASE_URL=https://mono-ochre-psi.vercel.app npm test`.
+
+## Launch readiness and visible interface
+
+See [LAUNCH_READINESS.md](LAUNCH_READINESS.md) for the audited difference between demo usability testing and a real booking pilot. Open `/#experience` to use the frontend preview and continue into the actual customer/provider conversation. No domain purchase or production payment activation is included.

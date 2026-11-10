@@ -73,7 +73,7 @@ export function ProviderWorkspace({
         </p>
         <div className="storefront-hero">
           <span className="eyebrow">
-            MONO / {providerKindLabel(profile.kind)}
+            GOMONO / {providerKindLabel(profile.kind)}
           </span>
           <h2>{profile.name || "Your rental & transport collection"}</h2>
           <p>

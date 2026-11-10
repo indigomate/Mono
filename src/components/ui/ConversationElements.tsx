@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ProgressBar } from "react-aria-components";
 
-/** MONO compositions, not Untitled UI PRO demo source. */
+/** GOMONO compositions, not Untitled UI PRO demo source. */
 export function InlineCTA({
   title,
   children,

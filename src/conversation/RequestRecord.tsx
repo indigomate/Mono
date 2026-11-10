@@ -42,7 +42,7 @@ export function RequestRecord({
         <p>{request.id}</p>
         <p>{request.email}</p>
         <p>
-          For help with this local brief, continue in the MONO conversation.
+          For help with this local brief, continue in the GOMONO conversation.
           Live support delivery is not connected.
         </p>
       </details>

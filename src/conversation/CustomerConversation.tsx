@@ -1,3 +1,4 @@
+import { EmptyState, InlineCTA } from "../components/ui/ConversationElements";
 import { JourneyContext, DecisionHelp } from "./JourneyContext";
 import { RequestRecord } from "./RequestRecord";
 import { useEffect, useRef, useState } from "react";
@@ -146,7 +147,11 @@ function collect(
 export function CustomerConversation({
   view,
   navigate,
+  entry,
+  onEntryConsumed,
 }: {
+  entry?: string;
+  onEntryConsumed?: () => void;
   view: CustomerView;
   navigate: Navigate;
 }) {
@@ -358,6 +363,12 @@ export function CustomerConversation({
       { kind: "services" },
     );
   }
+  useEffect(() => {
+    if (entry) {
+      send(entry);
+      onEntryConsumed?.();
+    }
+  }, [entry]);
   const toolNavigate: Navigate = (next) => {
     if (next === "bookings") send("My requests");
     else if (next === "customer") send("Explore services");
@@ -490,10 +501,20 @@ export function CustomerConversation({
         return (
           <div className="inline-requests">
             {!requests.length && !inquiries.length ? (
-              <p>
-                No requests saved yet. Tell me what you need and we’ll prepare
-                one together.
-              </p>
+              <>
+                <EmptyState title="Your next journey starts here">
+                  No requests saved yet. Tell me what you need and we’ll prepare
+                  one together.
+                </EmptyState>
+                <InlineCTA
+                  title="Find your first option"
+                  action="Explore rental services"
+                  onAction={() => send("Explore services")}
+                >
+                  Self-drive, chauffeur, transfers, groups and more. Every
+                  service starts in this conversation.
+                </InlineCTA>
+              </>
             ) : (
               <>
                 {requests.map((r) => (

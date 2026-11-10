@@ -199,7 +199,15 @@ function parseProfile(text: string, profile: ProviderProfile): ProviderProfile {
   if (area) p.area = area[1].trim().slice(0, 120);
   return p;
 }
-export function ProviderConversation({ view }: { view: ProviderView }) {
+export function ProviderConversation({
+  view,
+  entry,
+  onEntryConsumed,
+}: {
+  view: ProviderView;
+  entry?: string;
+  onEntryConsumed?: () => void;
+}) {
   const [profile, setProfile] = useState(loadProfile);
   const [profileDraft, setProfileDraft] = useState(() => {
     try {
@@ -232,7 +240,13 @@ export function ProviderConversation({ view }: { view: ProviderView }) {
   const [working, setWorking] = useState(loadWorking);
   const [turns, setTurns] = useState(() => {
     const history = loadTurns("provider");
-    const tool = initialTool(view);
+    const tool =
+      initialTool(view) ||
+      (!read("mono-provider-chat-v1") && history.length === 1
+        ? { kind: "summary" as const }
+        : undefined);
+    if (tool?.kind === "summary" && history.length === 1)
+      return [{ ...history[0], tool }];
     return tool && history.at(-1)?.tool?.kind !== tool.kind
       ? [
           ...history,
@@ -613,12 +627,12 @@ export function ProviderConversation({ view }: { view: ProviderView }) {
             </section>
             <div className="inline-actions">
               <button onClick={() => send("Business profile")}>
-                Business profile
+                Edit business profile
               </button>
               <button onClick={() => send("Add a listing")}>
-                Add a listing
+                Create a listing draft
               </button>
-              <button onClick={() => send("My fleet")}>My fleet</button>
+              <button onClick={() => send("My fleet")}>Review my fleet</button>
             </div>
           </div>
         );
@@ -633,6 +647,12 @@ export function ProviderConversation({ view }: { view: ProviderView }) {
     }
     send(text);
   }
+  useEffect(() => {
+    if (entry) {
+      handleSend(entry);
+      onEntryConsumed?.();
+    }
+  }, [entry]);
   return (
     <ChatSurface
       role="provider"

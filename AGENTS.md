@@ -1,6 +1,6 @@
-# MONO project rules
+# GOMONO project rules
 
-MONO is a chat-first mobility marketplace. Preserve the React, TypeScript and Vite foundation and cinematic emerald landing page.
+GOMONO is a chat-first mobility marketplace. Preserve the React, TypeScript and Vite foundation and cinematic emerald landing page.
 
 ## Product architecture
 
@@ -12,7 +12,7 @@ MONO is a chat-first mobility marketplace. Preserve the React, TypeScript and Vi
 
 ## UI components
 
-Use FieldInput, FieldSelect and FieldTextarea from src/components/ui for form fields. They adapt the actual Untitled UI React/React Aria/Tailwind primitives under src/components/base. Retain upstream license and provenance. See src/components/UPSTREAM.md. Use the shared MONO semantic tokens, labels, help/error states, disabled/read-only states and currency prefixes rather than styling another ad hoc field family. Native checkboxes and secure vendor-owned controls are allowed where appropriate.
+Use FieldInput, FieldSelect and FieldTextarea from src/components/ui for form fields. They adapt the actual Untitled UI React/React Aria/Tailwind primitives under src/components/base. Retain upstream license and provenance. See src/components/UPSTREAM.md. Use the shared GOMONO semantic tokens, labels, help/error states, disabled/read-only states and currency prefixes rather than styling another ad hoc field family. Native checkboxes and secure vendor-owned controls are allowed where appropriate.
 
 ## Domain and integration boundaries
 

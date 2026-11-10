@@ -15,7 +15,11 @@ export type { View } from "./navigation";
 export function Workspace({
   view,
   navigate,
+  entry,
+  onEntryConsumed,
 }: {
+  entry?: { role: "customer" | "provider"; text: string } | null;
+  onEntryConsumed?: () => void;
   view: View;
   navigate: Navigate;
 }) {
@@ -28,9 +32,18 @@ export function Workspace({
       navigate={navigate}
     >
       {provider ? (
-        <ProviderConversation view={view as ProviderView} />
+        <ProviderConversation
+          view={view as ProviderView}
+          entry={entry?.role === "provider" ? entry.text : undefined}
+          onEntryConsumed={onEntryConsumed}
+        />
       ) : (
-        <CustomerConversation view={view as CustomerView} navigate={navigate} />
+        <CustomerConversation
+          view={view as CustomerView}
+          navigate={navigate}
+          entry={entry?.role === "customer" ? entry.text : undefined}
+          onEntryConsumed={onEntryConsumed}
+        />
       )}
     </WorkspaceShell>
   );

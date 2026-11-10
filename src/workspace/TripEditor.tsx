@@ -64,6 +64,21 @@ export function TripEditor({
           { label: "Return date", complete: Boolean(end && end > start) },
         ]}
       />
+      <div className="mono-calendar-options">
+        <CalendarPicker
+          initiallyOpen
+          label="Pickup date"
+          value={start}
+          min={today()}
+          onChange={setStart}
+        />
+        <CalendarPicker
+          label="Return date"
+          value={end}
+          min={start || today()}
+          onChange={setEnd}
+        />
+      </div>
       <div className="fields-grid">
         <FieldInput
           name="location"
@@ -164,20 +179,6 @@ export function TripEditor({
           max="20"
           defaultValue={trip.passengers}
           label="Passengers"
-        />
-      </div>
-      <div className="mono-calendar-options">
-        <CalendarPicker
-          label="Pickup date"
-          value={start}
-          min={today()}
-          onChange={setStart}
-        />
-        <CalendarPicker
-          label="Return date"
-          value={end}
-          min={start || today()}
-          onChange={setEnd}
         />
       </div>
       <p className="muted">

@@ -10,7 +10,7 @@ import { TextField, InputBase } from "../base/input/input";
 import { InputGroup } from "../base/input/input-group";
 import { Label } from "../base/input/label";
 import { HintText } from "../base/input/hint-text";
-/** MONO adapter: native field contracts remain stable; React Aria owns labeling,
+/** GOMONO adapter: native field contracts remain stable; React Aria owns labeling,
  * focus and validation. onValueChange offers Untitled UI's string-value API.
  * Dates/times/numbers retain native mobile pickers and constraint validation.
  */

@@ -107,7 +107,7 @@ export function OwnerWorkspace({
           {drafts.map((d) => (
             <article className="draft-card" key={d.id}>
               <div className="draft-cover">
-                <span>MONO / COLLECTION</span>
+                <span>GOMONO / COLLECTION</span>
                 <b>{d.name.split(" ")[0]}</b>
                 <span>
                   {d.status === "preview" ? "LOCAL PREVIEW" : "DRAFT"}

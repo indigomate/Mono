@@ -1,4 +1,4 @@
-# MONO architecture
+# GOMONO architecture
 
 React 19, TypeScript and Vite remain the foundation. The cinematic landing page is preserved and conversation code loads lazily when entering a workspace.
 
@@ -15,7 +15,7 @@ The enduring product contract is in CONVERSATION_ARCHITECTURE.md and enforced by
 - src/conversation/ProviderConversation.tsx: provider intent handling, profile/listing drafts, fleet, preview and inbox tools.
 - src/conversation/ProviderCards.tsx and VehicleCards.tsx: typed inline presentation and review actions.
 - src/components/base: pinned MIT-licensed Untitled UI input primitives built on React Aria and Tailwind.
-- src/components/ui: MONO field adapters; domain handlers do not depend on upstream component implementation details.
+- src/components/ui: GOMONO field adapters; domain handlers do not depend on upstream component implementation details.
 - src/demo: sample inventory, typed domain records, matching, service taxonomy and guarded browser persistence.
 - src/auth and src/services: optional Clerk identity and Supabase client foundations; not used to present demo changes as live transactions.
 
@@ -29,7 +29,7 @@ All business records remain demo-only browser data. Existing storage keys and re
 
 ## Integration boundary
 
-The MONO Supabase project exists, but no application tables or RLS migrations were added by this UI release. Authentication, availability, payments, notifications and public publishing must be connected through the typed domain/tool layer described in CONVERSATION_ARCHITECTURE.md. No service credentials are exposed in client code.
+The GOMONO Supabase project exists, but no application tables or RLS migrations were added by this UI release. Authentication, availability, payments, notifications and public publishing must be connected through the typed domain/tool layer described in CONVERSATION_ARCHITECTURE.md. No service credentials are exposed in client code.
 
 ## Validation and delivery
 
@@ -40,3 +40,7 @@ npm run build performs TypeScript checking and Vite bundling. npm test covers wh
 `JourneyContext` reads existing customer domain state and typed tool context; it does not infer bookings from assistant prose. The latest service/vehicle/trip/service-choice tool establishes the active brief. `ProviderContext` reads saved provider records and the independent unfinished listing draft. Both are optional ChatSurface context slots beside the always-available composer. Welcome, readiness and comparison actions call the existing conversation handlers.
 
 `RequestRecord` presents local requests without trusting arbitrary legacy status text as a booking confirmation. Service history review creates an editable copy and preserves the original record. `PaymentChoices` is an explanatory, unavailable state: it persists no financial election and moves no money. Future quote/booking integrations must replace it with server-authorized prices, option eligibility, accepted terms, payment state and confirmed fulfilment details. A local request or viewed quote cannot advance the journey to paid or confirmed.
+
+### Landing-to-conversation entry
+
+App holds an optional transient role/text entry from an explicit landing action or form submission. Workspace passes it only to the matching role; the conversation consumes it using its existing command handler and acknowledges consumption back to App. It is not a new stored transcript format or an authorization boundary. Existing history is appended to, never replaced. Reload resumes the resulting transcript without resubmitting the entry. ProductPreview reads current local listing counts when returning to the landing page and never reads customer records into the provider preview.

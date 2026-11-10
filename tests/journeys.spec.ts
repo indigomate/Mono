@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 async function say(page: Page, text: string) {
-  await page.getByLabel("Message MONO", { exact: true }).fill(text);
+  await page.getByLabel("Message GOMONO", { exact: true }).fill(text);
   await page.getByRole("button", { name: "Send message", exact: true }).click();
 }
 const tool = (page: Page) => page.locator(".chat-tool");
@@ -12,7 +12,7 @@ test("primary actions open distinct customer and provider conversations with no 
   await expect(
     page.getByRole("region", { name: "Customer conversation", exact: true }),
   ).toBeVisible();
-  await expect(page.getByLabel("Message MONO")).toBeVisible();
+  await expect(page.getByLabel("Message GOMONO")).toBeVisible();
   await expect(
     page.locator(".service-grid,.customer-overview,.provider-checklist"),
   ).toHaveCount(0);
@@ -68,7 +68,7 @@ test("self-drive conversation preserves preferences and shows details and estima
   await expect(tool(page)).toContainText("Toyota Corolla");
   await expect(tool(page)).toContainText("not submitted");
   await expect(page).toHaveURL(/#customer$/);
-  await expect(page.getByLabel("Message MONO")).toBeVisible();
+  await expect(page.getByLabel("Message GOMONO")).toBeVisible();
   await page.reload();
   await expect(tool(page)).toContainText("Toyota Corolla");
   expect(errors).toEqual([]);
@@ -203,7 +203,7 @@ for (const [mode, label] of [
     await expect(page).toHaveURL(/#customer$/);
     await page.reload();
     await expect(tool(page)).toContainText(label);
-    await expect(page.getByLabel("Message MONO")).toBeVisible();
+    await expect(page.getByLabel("Message GOMONO")).toBeVisible();
   });
 test("an airport address does not switch a chauffeur conversation to another service", async ({
   page,
@@ -388,7 +388,7 @@ for (const width of [375, 768, 1440])
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/#customer");
     await say(page, "I need an airport transfer");
-    await expect(page.getByLabel("Message MONO")).toBeInViewport();
+    await expect(page.getByLabel("Message GOMONO")).toBeInViewport();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -398,7 +398,7 @@ for (const width of [375, 768, 1440])
     await page
       .getByRole("button", { name: "Add a listing", exact: true })
       .click();
-    await expect(page.getByLabel("Message MONO")).toBeInViewport();
+    await expect(page.getByLabel("Message GOMONO")).toBeInViewport();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -425,13 +425,13 @@ test("legacy links and malformed browser data recover into chat", async ({
     );
   });
   await page.goto("/#owner");
-  await expect(page.getByLabel("Message MONO")).toBeVisible();
+  await expect(page.getByLabel("Message GOMONO")).toBeVisible();
   await expect(tool(page)).toContainText("Legacy BMW");
   await page.goto("/#airport");
   await expect(
     page.getByLabel("Pickup location", { exact: true }),
   ).toBeVisible();
-  await expect(page.getByLabel("Message MONO")).toBeVisible();
+  await expect(page.getByLabel("Message GOMONO")).toBeVisible();
 });
 test("Untitled UI inputs expose labels, currency prefixes, keyboard focus and invalid states", async ({
   page,
@@ -464,9 +464,9 @@ test("calendar selection updates the trip and confirmation dialog preserves focu
   await page.getByRole("button", { name: "Edit my trip", exact: true }).click();
   await page.getByLabel("Pickup date", { exact: true }).fill("2027-02-10");
   await page.getByLabel("Return date", { exact: true }).fill("2027-02-13");
-  await page
-    .getByText("Choose pickup date on a calendar", { exact: true })
-    .click();
+  await expect(
+    page.getByText("Choose pickup date on a calendar", { exact: true }),
+  ).toBeVisible();
   const calendar = page.getByRole("application", { name: /^Pickup date,/ });
   await expect(calendar).toBeVisible();
   await calendar
@@ -527,7 +527,9 @@ test("vehicle carousel controls browse sample supply without leaving chat", asyn
   await expect
     .poll(() => carousel.evaluate((el) => el.scrollLeft))
     .toBeGreaterThan(0);
-  await expect(page.getByLabel("Message MONO", { exact: true })).toBeVisible();
+  await expect(
+    page.getByLabel("Message GOMONO", { exact: true }),
+  ).toBeVisible();
   await expect(page).toHaveURL(/#customer$/);
 });
 
@@ -562,7 +564,7 @@ test("visible welcome and journey follow actual review without claiming payment"
   await expect(page.getByLabel("Deposit and protection options")).toContainText(
     "does not mean zero damage liability",
   );
-  await page.getByLabel("Message MONO", { exact: true }).fill("new trip");
+  await page.getByLabel("Message GOMONO", { exact: true }).fill("new trip");
   await page.getByRole("button", { name: "Send message", exact: true }).click();
   await expect(
     page.locator('.journey-stages [aria-current="step"]'),
@@ -595,7 +597,7 @@ test("service brief stays editable above the composer and survives reload", asyn
     "Sea Point",
   );
   const box = await page
-    .getByLabel("Message MONO", { exact: true })
+    .getByLabel("Message GOMONO", { exact: true })
     .boundingBox();
   expect(box).not.toBeNull();
   expect(box!.y + box!.height).toBeLessThanOrEqual(667);
@@ -677,4 +679,132 @@ test("revising a saved service brief preserves history until explicit save", asy
   await expect(page.locator(".service-inquiry-list")).toContainText(
     "Camps Bay",
   );
+});
+
+test("landing fields submit the customer intent once and preserve the existing chat", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(page, "Explore services");
+  await page.locator(".home-brand").click();
+  const preview = page.locator(".product-preview");
+  await preview
+    .getByLabel("Start your conversation", { exact: true })
+    .fill("An affordable automatic car for 3 days");
+  await preview
+    .getByRole("button", { name: "Continue in chat →", exact: true })
+    .click();
+  await expect(page).toHaveURL(/#customer$/);
+  await expect(tool(page)).toContainText("Toyota Corolla");
+  await expect(
+    page
+      .locator(".turn-user")
+      .filter({ hasText: "An affordable automatic car for 3 days" }),
+  ).toHaveCount(1);
+  await expect(
+    page.locator(".turn-user").filter({ hasText: "Explore services" }),
+  ).toHaveCount(1);
+  await page.reload();
+  await expect(
+    page
+      .locator(".turn-user")
+      .filter({ hasText: "An affordable automatic car for 3 days" }),
+  ).toHaveCount(1);
+});
+
+test("provider preview opens real editors and updates its local metrics after saving", async ({
+  page,
+}) => {
+  await page.goto("/#experience");
+  const preview = page.locator(".product-preview");
+  await preview
+    .getByRole("button", { name: "I provide vehicles & services", exact: true })
+    .click();
+  await expect(preview.locator(".mono-metrics")).toContainText(
+    "Saved listings0",
+  );
+  await preview
+    .getByLabel("Start your conversation", { exact: true })
+    .fill("Add my BMW 320i for chauffeur at R650 per hour");
+  await preview
+    .getByRole("button", { name: "Continue in chat →", exact: true })
+    .click();
+  await expect(page).toHaveURL(/#provider$/);
+  await expect(page.getByLabel("Listing name", { exact: true })).toHaveValue(
+    "BMW 320i",
+  );
+  await page
+    .getByRole("button", { name: "Save listing draft", exact: true })
+    .click();
+  await page.locator(".home-brand").click();
+  await expect(preview.locator(".mono-metrics")).toContainText(
+    "Saved listings1",
+  );
+  await preview
+    .getByRole("button", { name: "Business & readiness", exact: true })
+    .click();
+  await expect(tool(page).locator(".mono-metrics")).toContainText(
+    "Saved listings1",
+  );
+});
+
+for (const width of [375, 768, 1440])
+  test(`frontend components are visible and usable from landing at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await page
+      .getByRole("link", { name: "See the interface in action", exact: true })
+      .click();
+    const preview = page.locator(".product-preview");
+    await expect(
+      preview.getByRole("heading", { name: "Toyota Corolla", exact: true }),
+    ).toBeVisible();
+    await expect(
+      preview.getByRole("progressbar", { name: "Brief completeness" }),
+    ).toHaveAttribute("aria-valuenow", "1");
+    await preview
+      .getByRole("button", { name: "Preview loading animation", exact: true })
+      .click();
+    await expect(preview.getByRole("status")).toContainText(
+      "Loading animation preview",
+    );
+    expect(
+      await preview
+        .locator(".mono-loading-mark")
+        .evaluate((el) => getComputedStyle(el).animationName),
+    ).toBe("none");
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBeTruthy();
+    await preview
+      .getByRole("button", { name: "Plan dates & budget", exact: true })
+      .click();
+    await expect(
+      page.getByRole("application", { name: /^Pickup date,/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByLabel("Message GOMONO", { exact: true }),
+    ).toBeInViewport();
+  });
+
+test("provider metrics are present without a command and start-here restores welcome", async ({
+  page,
+}) => {
+  await page.goto("/#provider");
+  await expect(tool(page).locator(".mono-metrics")).toBeVisible();
+  await page
+    .getByRole("button", { name: "Incoming requests", exact: true })
+    .click();
+  await expect(tool(page).locator(".mono-empty")).toContainText(
+    "No live requests yet.",
+  );
+  await page.getByRole("button", { name: "Start here", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Business overview", exact: true }),
+  ).toBeInViewport();
 });

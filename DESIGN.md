@@ -1,6 +1,6 @@
-# MONO design system
+# GOMONO design system
 
-MONO is a conversation-first Cape Town rental concept. Its landing page uses cinematic car photography, glossy layered emerald gradients, generous whitespace, and oversized RENT SMARTER typography. Book a Car and List Your Car lead directly to the existing renter and owner experiences.
+GOMONO is a conversation-first Cape Town rental concept. Its landing page uses cinematic car photography, glossy layered emerald gradients, generous whitespace, and oversized RENT SMARTER typography. Book a Car and List Your Car lead directly to the existing renter and owner experiences.
 
 ## Tokens and hierarchy
 
@@ -28,11 +28,11 @@ The cinematic landing page is retained. The application workspace pairs a deep e
 
 ## Distinct customer and provider experiences
 
-Rent & Ride uses a service-first dashboard and customer-only navigation. Provider Studio uses a business overview, setup checklist and provider-only navigation. Both retain the MONO emerald/ivory identity but have explicit workspace labels and slightly distinct sidebar treatments. Moving between roles requires the Change workspace chooser. Service enquiry forms emphasize the appropriate route/timing requirements and quote-required status; they do not resemble instant self-drive checkout. Provider reference rates always show their unit.
+Rent & Ride uses a service-first dashboard and customer-only navigation. Provider Studio uses a business overview, setup checklist and provider-only navigation. Both retain the GOMONO emerald/ivory identity but have explicit workspace labels and slightly distinct sidebar treatments. Moving between roles requires the Change workspace chooser. Service enquiry forms emphasize the appropriate route/timing requirements and quote-required status; they do not resemble instant self-drive checkout. Provider reference rates always show their unit.
 
 ## Chat-first correction
 
-The active UI now treats the conversation as the workspace on both sides. Dashboard navigation is replaced with one conversation entry per role. Tool cards appear within assistant messages, and a persistent composer allows follow-ups during any workflow. Service choices are conversational options, not a separate service dashboard. Untitled UI fields use MONO's emerald semantic theme, consistent labels, focus/error states, hints, icons and currency prefixes. See CONVERSATION_ARCHITECTURE.md; older dashboard descriptions above record earlier milestones only.
+The active UI now treats the conversation as the workspace on both sides. Dashboard navigation is replaced with one conversation entry per role. Tool cards appear within assistant messages, and a persistent composer allows follow-ups during any workflow. Service choices are conversational options, not a separate service dashboard. Untitled UI fields use GOMONO's emerald semantic theme, consistent labels, focus/error states, hints, icons and currency prefixes. See CONVERSATION_ARCHITECTURE.md; older dashboard descriptions above record earlier milestones only.
 
 ### Conversation component language
 
@@ -49,3 +49,7 @@ Vehicle cards use larger illustrative images, prominent sample/verification labe
 Saved-request cards provide a reference, itinerary, payment/confirmation state and a useful continuation action. Service enquiries can be copied into an editable brief without overwriting history. Local records never become confirmed bookings based on their free-text status. Live booking cards will require authoritative provider, pickup, payment and support details from the future booking service.
 
 Provider summaries show concrete readiness actions and local supply counts. Listing/profile editors show entered-detail completeness. Supply cards disclose pending documents and availability; availability planning currently uses listing notes, not a verified calendar. Responsive brief expansion is bounded so the composer remains available; short-height screens simplify the journey strip.
+
+### Make the interface discoverable
+
+The landing experience section is an interactive entry into the product, not a separate component showroom. It reuses the shared input, progress, inline CTA, loading and local metric components. Customer/provider choices carry explicit user commands into the same role-scoped chat. A labelled animation preview allows design review without pretending a request is processing. Fresh provider entry includes summary metrics; dates and progress are visible near the top of customer editors. Start here makes welcome actions recoverable after a long conversation. GOMONO is the visible brand; the new logo/icon work remains separate.

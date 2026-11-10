@@ -5,7 +5,7 @@ function AccountBar() {
   const { isLoaded, isSignedIn } = useAuth();
   return (
     <div className="account-bar">
-      <span>MONO · Demo workspace</span>
+      <span>GOMONO · Demo workspace</span>
       {!isLoaded ? (
         <span>Loading account…</span>
       ) : isSignedIn ? (

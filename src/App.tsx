@@ -1,3 +1,5 @@
+import { ProductPreview } from "./components/ProductPreview";
+import { LoadingIndicator } from "./components/ui/LoadingIndicator";
 import { useEffect, useState, lazy, Suspense } from "react";
 import type { View } from "./workspace/navigation";
 const Workspace = lazy(() =>
@@ -15,6 +17,10 @@ function currentView(): View | "home" {
       : "home";
 }
 export default function App() {
+  const [entry, setEntry] = useState<{
+    role: "customer" | "provider";
+    text: string;
+  } | null>(null);
   const [view, setView] = useState<View | "home">(currentView);
   useEffect(() => {
     const sync = () => setView(currentView());
@@ -36,9 +42,10 @@ export default function App() {
       <div id="landing" className="landing" hidden={view !== "home"}>
         <header className="nav">
           <a href="#" className="logo">
-            MONO<span style={{ color: "#999" }}>.</span>
+            GOMONO<span style={{ color: "#999" }}>.</span>
           </a>
           <nav className="navlinks">
+            <a href="#experience">Try the experience</a>
             <a href="#how">How it works</a>
             <a href="#for-owners">For owners</a>
             <button className="outline" onClick={() => navigate("provider")}>
@@ -120,11 +127,22 @@ export default function App() {
                 </span>
               </button>
             </div>
+            <a className="experience-link" href="#experience">
+              See the interface in action <span aria-hidden="true">↓</span>
+            </a>
           </div>
         </section>
         <div className="landing-bottom">
           <span>01 / DISCOVER    02 / MATCH    03 / REQUEST TO BOOK</span>
           <span>THE FUTURE OF RENTAL IS CONVERSATIONAL</span>
+        </div>
+        <div id="experience">
+          <ProductPreview
+            onStart={(role, text) => {
+              setEntry({ role, text });
+              navigate(role);
+            }}
+          />
         </div>
         <section id="how" className="features">
           <div className="eyebrow" style={{ color: "#777" }}>
@@ -156,22 +174,24 @@ export default function App() {
           </div>
         </section>
         <footer className="footer">
-          MONO.  ·  Concept MVP · Demonstration listings and booking requests
+          GOMONO.  ·  Concept MVP · Demonstration listings and booking requests
           only.
         </footer>
       </div>
       {view !== "home" && (
         <Suspense
           fallback={
-            <div className="conversation-loading" role="status">
-              <span className="mono-loading-mark" aria-hidden="true">
-                ✧
-              </span>
-              <span>Opening your MONO conversation…</span>
+            <div className="conversation-loading">
+              <LoadingIndicator />
             </div>
           }
         >
-          <Workspace view={view} navigate={navigate} />
+          <Workspace
+            view={view}
+            navigate={navigate}
+            entry={entry}
+            onEntryConsumed={() => setEntry(null)}
+          />
         </Suspense>
       )}
     </div>

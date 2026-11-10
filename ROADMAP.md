@@ -1,4 +1,4 @@
-# MONO roadmap
+# GOMONO roadmap
 
 ## 0 — Working concept (this delivery)
 

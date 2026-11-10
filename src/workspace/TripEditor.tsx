@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { type Trip, today } from "../demo/marketplace";
+import { vehicleTypes } from "../demo/services";
 export function TripEditor({
   trip,
   onSave,
@@ -63,8 +64,9 @@ export function TripEditor({
           Vehicle type
           <select name="category" defaultValue={trip.category}>
             <option value="">Any type</option>
-            <option>SUV</option>
-            <option>Sedan</option>
+            {vehicleTypes.map((type) => (
+              <option key={type}>{type}</option>
+            ))}
           </select>
         </label>
         <label>

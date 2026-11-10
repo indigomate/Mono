@@ -5,10 +5,17 @@ MONO is a React 19 / TypeScript / Vite frontend. The supplied standalone HTML pr
 ## Active components
 
 - `src/App.tsx`: preserved cinematic landing page, hash routing and browser Back support.
-- `src/workspace/Workspace.tsx`: workspace shell, selected navigation, renter conversation/results, local requests and showroom preview.
+- `src/workspace/Workspace.tsx`: route dispatcher mounting either the customer or provider workspace.
+- `src/workspace/WorkspaceShell.tsx`: shared presentation with distinct role-specific menus and an explicit workspace chooser.
+- `src/workspace/CustomerWorkspace.tsx`: owns the renter journey, self-drive requests and service enquiries only.
+- `src/workspace/CustomerDashboard.tsx`: eight service entry points and customer activity.
+- `src/workspace/ServiceEnquiry.tsx`: service-specific briefs and customer enquiry history.
+- `src/workspace/ProviderWorkspace.tsx`: owns provider profile and listing drafts only, plus a separate overview, incoming inbox placeholder and local storefront.
+- `src/workspace/ProviderProfile.tsx`: provider type, service area and offered services.
+- `src/workspace/VehicleServiceEditor.tsx`: vehicle category, multiple service types, capacity and reference-rate units.
 - `src/workspace/TripEditor.tsx`: labeled controls for dates, duration, budget mode, category, make, vehicle class, transmission and passengers.
 - `src/workspace/VehicleReview.tsx`: accessible native modal for vehicle details, date selection, base-rental review and explicit demo acknowledgement. Escape closes the modal and restores focus.
-- `src/workspace/OwnerWorkspace.tsx`: create/edit vehicle drafts and select entries for the local storefront preview.
+- `src/workspace/OwnerWorkspace.tsx`: provider-only listing management and local-preview selection.
 - `src/demo/marketplace.ts`: typed demo models, bounded preference extraction, deterministic matching, currency formatting and record migration.
 - `src/demo/inventory.js`: illustrative renter inventory; specifications and photographs are not verified vehicle representations.
 - `src/demo/storage.js`: guarded browser persistence with a session-memory fallback and visible storage warning.
@@ -35,3 +42,11 @@ Introduce typed Inventory, Availability, Booking, Owner and Notification service
 `npm ci` installs locked dependencies. `npm run build` checks TypeScript and builds Vite output. `npm test` exercises browser journeys in Chromium. `npm run format:check` verifies formatting. GitHub Actions runs these checks. Vercel imports the GitHub main branch with the Vite framework, `npm run build` and `dist`; see DEPLOYMENT.md for identity and environment setup. Public SEO storefront rendering remains a separate future milestone.
 
 The landing hero image is local; vehicle images and Google Fonts still require network access. Native dialogs, keyboard focus, active mobile navigation, and responsive layouts have browser coverage; a full assistive-technology audit remains future work.
+
+## Service taxonomy and workspace boundaries
+
+`src/demo/services.ts` defines service types independently of vehicle categories and provider identity. Services are self-drive, chauffeur, airport, events, group transport, tours, long-term/subscriptions and custom enquiries. Vehicle categories include cars, SUVs, luxury/exotic, vans/minibuses, bakkies, motorcycles, campers, trucks and other vehicles. A custom brief covers requirements beyond sample inventory without inventing supply.
+
+Service enquiries use their own `mono-service-inquiries-v1` records and per-service resumable draft keys. They collect driver arrangement, route, date/time or rental end date, passengers, driver hours where applicable, target total budget and notes. They do not create numeric quotes. Provider profile uses `mono-provider-profile-v1`; listings extend the existing `mono-listings` record with services, vehicle category and day/hour/trip/month/quote rate basis. Legacy listings migrate to self-drive/day. Customers' drafts never appear as live incoming provider requests.
+
+The workspace split is a frontend/product boundary, not an authentication or authorization claim. Both remain usable as demos through an explicit switch. Production must authorize customer and provider roles server-side and restrict each provider inbox to addressed requests under Supabase policies. Neither route visibility nor Clerk UI alone is a security boundary.

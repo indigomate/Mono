@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Workspace, type View } from "./workspace/Workspace";
+import { validViews } from "./workspace/navigation";
 function currentView(): View | "home" {
   const hash = location.hash.slice(1);
-  return ["chat", "bookings", "owner", "store"].includes(hash)
+  return validViews.includes(hash)
     ? (hash as View)
     : hash === "app"
       ? "chat"
@@ -31,7 +32,7 @@ export default function App() {
           <nav className="navlinks">
             <a href="#how">How it works</a>
             <a href="#for-owners">For owners</a>
-            <button className="outline" onClick={() => navigate("owner")}>
+            <button className="outline" onClick={() => navigate("provider")}>
               List Your Car{" "}
               <svg
                 width="14"
@@ -62,10 +63,11 @@ export default function App() {
             <p>
               Just a conversation away. Tell us where you're going. Your
               personal AI rental concierge helps you discover the right car,
-              from local providers. Explore the Cape Town demo below.
+              from private owners, fleets and transport providers. Drive
+              yourself or choose a service with a driver.
             </p>
             <div className="actions">
-              <button className="primary" onClick={() => navigate("chat")}>
+              <button className="primary" onClick={() => navigate("customer")}>
                 Book a Car{" "}
                 <span className="arrow">
                   <svg
@@ -85,7 +87,10 @@ export default function App() {
                   </svg>
                 </span>
               </button>
-              <button className="secondary" onClick={() => navigate("owner")}>
+              <button
+                className="secondary"
+                onClick={() => navigate("provider")}
+              >
                 List Your Car{" "}
                 <span className="arrow">
                   <svg
@@ -135,8 +140,8 @@ export default function App() {
             <div className="feature" id="for-owners">
               <b>03 — Your business, elevated</b>
               <p>
-                Rental owners get a dedicated storefront, fleet management, and
-                booking requests in one place.
+                Private owners, fleets and chauffeur operators get a dedicated
+                studio, service management, and booking requests in one place.
               </p>
             </div>
           </div>

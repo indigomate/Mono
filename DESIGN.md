@@ -25,3 +25,7 @@ Validate keyboard and screen-reader flows with users; replace prompt/alert dialo
 ## Guided workspace
 
 The cinematic landing page is retained. The application workspace pairs a deep emerald navigation rail with soft ivory-green surfaces, white vehicle cards and restrained forest-green actions. A right-hand trip brief keeps preferences visible on desktop; a compact summary precedes the conversation on mobile. Vehicle details and estimate review use a keyboard-accessible modal. Owner cards show local draft/preview status with clear next steps. Mobile tabs expose aria-current and a visible selected state. Native controls preserve accessible names, browser date pickers and validation.
+
+## Distinct customer and provider experiences
+
+Rent & Ride uses a service-first dashboard and customer-only navigation. Provider Studio uses a business overview, setup checklist and provider-only navigation. Both retain the MONO emerald/ivory identity but have explicit workspace labels and slightly distinct sidebar treatments. Moving between roles requires the Change workspace chooser. Service enquiry forms emphasize the appropriate route/timing requirements and quote-required status; they do not resemble instant self-drive checkout. Provider reference rates always show their unit.

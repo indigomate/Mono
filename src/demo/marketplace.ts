@@ -1,3 +1,4 @@
+import { isService, type ServiceType } from "./services";
 import { cars } from "./inventory";
 import { read, write, loadArray } from "./storage";
 export const inventory = cars.map((c) => ({
@@ -29,6 +30,9 @@ export type Draft = {
   seats: number;
   status: "draft" | "preview";
   notes: string;
+  vehicleType: string;
+  services: ServiceType[];
+  rateUnit: "day" | "hour" | "trip" | "month" | "quote";
 };
 export type Request = {
   id: string | number;
@@ -128,6 +132,16 @@ export function loadDrafts(): Draft[] {
     seats: typeof v.seats === "number" && v.seats > 0 ? v.seats : 5,
     status: v.status === "preview" ? "preview" : "draft",
     notes: typeof v.notes === "string" ? v.notes : "",
+    vehicleType: typeof v.vehicleType === "string" ? v.vehicleType : "Sedan",
+    services:
+      Array.isArray(v.services) && v.services.some(isService)
+        ? v.services.filter(isService)
+        : ["self-drive"],
+    rateUnit: ["day", "hour", "trip", "month", "quote"].includes(
+      v.rateUnit || "",
+    )
+      ? v.rateUnit!
+      : "day",
   }));
 }
 export function loadRequests(): Request[] {
@@ -149,6 +163,11 @@ export function interpret(text: string, previous: Trip): Trip {
   if (/\b(suv|4x4)\b/.test(lower)) t.category = "SUV";
   else if (/\b(sedan|business|wedding)\b/.test(lower)) t.category = "Sedan";
   else if (/\b(any car|any type|all cars)\b/.test(lower)) t.category = "";
+  if (/\b(minibus|van)\b/.test(lower)) t.category = "Van / minibus";
+  if (/\b(bakkie|pickup)\b/.test(lower)) t.category = "Bakkie / pickup";
+  if (/\b(motorbike|motorcycle)\b/.test(lower)) t.category = "Motorcycle";
+  if (/\b(camper|motorhome)\b/.test(lower)) t.category = "Camper / motorhome";
+  if (/\btruck\b/.test(lower)) t.category = "Truck";
   if (/\bautomatic\b/.test(lower)) t.transmission = "Automatic";
   else if (/\bmanual\b/.test(lower)) t.transmission = "Manual";
   for (const make of ["Audi", "BMW", "Toyota", "Range Rover"])
@@ -187,7 +206,9 @@ export function matches(trip: Trip) {
       (!trip.tier ||
         (trip.tier === "Premium" ? c.price >= 1300 : c.price < 1000)) &&
       (!trip.category ||
-        c.type.toLowerCase().includes(trip.category.toLowerCase())) &&
+        (trip.category === "Luxury / exotic"
+          ? /luxury|premium/i.test(c.type)
+          : c.type.toLowerCase().includes(trip.category.toLowerCase()))) &&
       (!trip.transmission || c.transmission === trip.transmission) &&
       (!trip.passengers || c.seats >= trip.passengers) &&
       (!trip.budget ||

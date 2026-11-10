@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { type Draft, money } from "../demo/marketplace";
+import { VehicleServiceEditor } from "./VehicleServiceEditor";
+import { serviceLabel, type ServiceType } from "../demo/services";
 export function OwnerWorkspace({
   drafts,
   onSave,
   onStore,
+  defaultServices,
 }: {
   drafts: Draft[];
   onSave: (draft: Draft) => void;
   onStore: () => void;
+  defaultServices: ServiceType[];
 }) {
   const [editing, setEditing] = useState<Draft | null>(null);
   const [adding, setAdding] = useState(false);
@@ -19,21 +23,22 @@ export function OwnerWorkspace({
   }
   return (
     <>
-      <div className="eyebrow">OWNER WORKSPACE / OVERVIEW</div>
+      <div className="eyebrow">PROVIDER STUDIO / VEHICLES & SERVICES</div>
       <div className="section-heading">
         <div>
-          <h1>Your fleet. One place.</h1>
+          <h1>Your vehicles & services.</h1>
           <p className="muted">
-            Build your collection, one great listing at a time.
+            Manage private rentals, fleet vehicles and driver-led services in
+            your provider workspace.
           </p>
         </div>
         <button className="smallbtn" onClick={openNew}>
-          + Add a vehicle
+          + Add a listing
         </button>
       </div>
       <div className="statgrid">
         <div className="stat">
-          <span>Saved vehicles</span>
+          <span>Saved listings</span>
           <b>{drafts.length}</b>
         </div>
         <div className="stat">
@@ -48,10 +53,10 @@ export function OwnerWorkspace({
       <div className="owner-callout">
         <span className="step-number">01</span>
         <div>
-          <strong>Your next milestone: a complete vehicle draft</strong>
+          <strong>Your next milestone: a complete listing draft</strong>
           <p>
-            Add vehicle details, review your storefront, then prepare photos,
-            availability and verification for the live launch.
+            Choose the vehicle and services, review your storefront, then
+            prepare photos, availability and verification for the live launch.
           </p>
         </div>
       </div>
@@ -61,119 +66,26 @@ export function OwnerWorkspace({
         </p>
       )}
       {(adding || editing) && (
-        <form
+        <VehicleServiceEditor
           key={editing?.id || "new"}
-          className="listing-editor"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const f = new FormData(e.currentTarget);
-            const name = String(f.get("name")).trim(),
-              area = String(f.get("area")).trim();
-            if (!name || !area) return;
-            onSave({
-              id: editing?.id || crypto.randomUUID(),
-              name,
-              area,
-              price: Number(f.get("price")),
-              seats: Number(f.get("seats")),
-              transmission: String(f.get("transmission")),
-              notes: String(f.get("notes")).trim(),
-              status: editing?.status || "draft",
-            });
+          draft={editing}
+          defaultServices={defaultServices}
+          onCancel={() => {
+            setAdding(false);
+            setEditing(null);
+          }}
+          onSave={(draft) => {
+            onSave(draft);
             setAdding(false);
             setEditing(null);
             setNotice(
-              "Vehicle draft saved on this device. Review it below or preview your storefront.",
+              "Listing draft saved in Provider Studio. Preview it below; it has not been published.",
             );
           }}
-        >
-          <div className="section-heading">
-            <h2>{editing ? "Edit vehicle" : "Create your vehicle draft"}</h2>
-            <button
-              className="text-button"
-              type="button"
-              onClick={() => {
-                setAdding(false);
-                setEditing(null);
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-          <div className="fields-grid">
-            <label>
-              Vehicle name
-              <input
-                name="name"
-                required
-                maxLength={100}
-                defaultValue={editing?.name}
-                placeholder="e.g. Mercedes-Benz C-Class"
-              />
-            </label>
-            <label>
-              Price per day (ZAR)
-              <input
-                name="price"
-                type="number"
-                required
-                min="1"
-                max="1000000"
-                step="1"
-                defaultValue={editing?.price}
-                placeholder="1200"
-              />
-            </label>
-            <label>
-              Pickup area
-              <input
-                name="area"
-                required
-                maxLength={100}
-                defaultValue={editing?.area}
-                placeholder="e.g. Waterfront"
-              />
-            </label>
-            <label>
-              Transmission
-              <select
-                name="transmission"
-                defaultValue={editing?.transmission || "Automatic"}
-              >
-                <option>Automatic</option>
-                <option>Manual</option>
-              </select>
-            </label>
-            <label>
-              Seats
-              <input
-                name="seats"
-                type="number"
-                min="1"
-                max="20"
-                required
-                defaultValue={editing?.seats || 5}
-              />
-            </label>
-          </div>
-          <label>
-            Pickup and vehicle notes
-            <textarea
-              name="notes"
-              maxLength={1000}
-              defaultValue={editing?.notes}
-              placeholder="What should a renter know about your vehicle?"
-            />
-          </label>
-          <p className="muted">
-            Draft only. Photos, calendar availability, document verification and
-            public publishing are not connected yet.
-          </p>
-          <button className="smallbtn">Save vehicle draft</button>
-        </form>
+        />
       )}
       <div className="section-heading">
-        <h2>Your vehicles</h2>
+        <h2>Your listings</h2>
         <button className="text-button" onClick={onStore}>
           Preview storefront →
         </button>
@@ -182,9 +94,12 @@ export function OwnerWorkspace({
         <div className="empty-state">
           <span className="empty-icon">◇</span>
           <h2>Your first listing starts here.</h2>
-          <p>Save a draft now. Your progress stays on this device.</p>
+          <p>
+            Save a listing or transport service draft. Progress stays on this
+            device.
+          </p>
           <button className="smallbtn" onClick={openNew}>
-            Create first draft
+            Create first listing
           </button>
         </div>
       ) : (
@@ -201,9 +116,18 @@ export function OwnerWorkspace({
               <div className="draft-content">
                 <h3>{d.name}</h3>
                 <p className="muted">
-                  {d.area} · {d.transmission} · {d.seats} seats
+                  {d.area} · {d.vehicleType} · {d.seats} seats
                 </p>
-                <strong>{money(d.price)} / day</strong>
+                <div className="service-badges">
+                  {d.services.map((service) => (
+                    <span key={service}>{serviceLabel(service)}</span>
+                  ))}
+                </div>
+                <strong>
+                  {d.rateUnit === "quote"
+                    ? "Quote on request"
+                    : `${money(d.price)} / ${d.rateUnit}`}
+                </strong>
                 <p className="completion-note">
                   Next: photos, availability & verification
                 </p>
@@ -216,7 +140,7 @@ export function OwnerWorkspace({
                       setNotice("");
                     }}
                   >
-                    Edit vehicle
+                    Edit listing
                   </button>
                   <button
                     className="text-button"

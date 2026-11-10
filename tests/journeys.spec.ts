@@ -924,3 +924,36 @@ test("invalid stored dates recover without discarding other trip preferences", a
     page.getByRole("application", { name: /^Service date,/ }),
   ).toBeVisible();
 });
+
+test("credit card artwork stays an honest masked illustration inside quote review", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 900 });
+  await page.goto("/#customer");
+  await say(page, "An affordable automatic car for 3 days");
+  await expect(
+    page.getByLabel("Card payment preview", { exact: true }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "View car", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Review rental estimate →", exact: true })
+    .click();
+  const preview = page.getByLabel("Card payment preview", { exact: true });
+  await expect(preview).toBeVisible();
+  await expect(preview).toContainText("No card connected");
+  await expect(preview).toContainText("no card details are collected here");
+  await expect(preview.locator("input")).toHaveCount(0);
+  await expect(preview).not.toContainText("1234");
+  await expect(preview).not.toContainText("OLIVIA");
+  await expect(
+    page.getByRole("button", {
+      name: "Deposit option unavailable",
+      exact: true,
+    }),
+  ).toBeDisabled();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBeTruthy();
+});

@@ -1,3 +1,4 @@
+import { PaymentMethodPreview } from "../components/ui/PaymentMethodPreview";
 import { DecisionHelp } from "./JourneyContext";
 /** No financial selections are stored until authoritative quotes exist. */
 export function PaymentChoices() {
@@ -74,6 +75,7 @@ export function PaymentChoices() {
         Deposit-free does not mean zero damage liability. Both options need a
         verified quote before selection.
       </p>
+      <PaymentMethodPreview />
       <DecisionHelp />
     </section>
   );

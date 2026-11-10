@@ -1,3 +1,5 @@
+import { ButtonUtility } from "../components/base/buttons/button-utility";
+import { XClose } from "@untitledui/icons";
 import { PaymentChoices } from "../conversation/PaymentChoices";
 import { DecisionHelp } from "../conversation/JourneyContext";
 import { Mail01 } from "@untitledui/icons";
@@ -61,13 +63,12 @@ export function VehicleReview({
         <span className="eyebrow">
           {step === "details" ? "01 / YOUR MATCH" : "02 / REVIEW YOUR REQUEST"}
         </span>
-        <button
-          aria-label="Close vehicle review"
-          className="icon-button"
-          onClick={onClose}
-        >
-          ×
-        </button>
+        <ButtonUtility
+          className="gomono-utility"
+          icon={XClose}
+          tooltip="Close vehicle review"
+          onPress={onClose}
+        />
       </div>
       <h2 id="review-title">{car.name}</h2>
       {step === "details" ? (

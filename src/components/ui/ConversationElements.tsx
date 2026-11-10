@@ -1,3 +1,5 @@
+import { sm as DocumentsSmall } from "../shared-assets/illustrations/documents";
+import { sm as CloudSmall } from "../shared-assets/illustrations/cloud";
 import type { ReactNode } from "react";
 import { ProgressBar } from "react-aria-components";
 
@@ -28,13 +30,20 @@ export function InlineCTA({
 export function EmptyState({
   title,
   children,
+  illustration = "documents",
 }: {
   title: string;
   children: ReactNode;
+  illustration?: "documents" | "cloud";
 }) {
+  const Picture = illustration === "cloud" ? CloudSmall : DocumentsSmall;
   return (
     <div className="mono-empty">
-      <span aria-hidden="true">✧</span>
+      <Picture
+        className="mono-empty-illustration"
+        aria-hidden="true"
+        children={null}
+      />
       <h3>{title}</h3>
       <p>{children}</p>
     </div>

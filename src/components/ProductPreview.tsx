@@ -1,5 +1,7 @@
-import { ArrowUpRight } from "@untitledui/icons";
-import { useState } from "react";
+import { ButtonUtility } from "./base/buttons/button-utility";
+import { PhoneSharePanel } from "./ui/PhoneSharePanel";
+import { ArrowUpRight, QrCode01 } from "@untitledui/icons";
+import { useState, useId } from "react";
 import { FieldInput } from "./ui/FieldInput";
 import {
   BriefProgress,
@@ -17,6 +19,8 @@ export function ProductPreview({
 }) {
   const [role, setRole] = useState<"customer" | "provider">("customer");
   const [message, setMessage] = useState("");
+  const [phoneOpen, setPhoneOpen] = useState(false);
+  const phoneId = useId();
   const [showLoading, setShowLoading] = useState(false);
   const drafts = loadDrafts();
   const car = inventory.find((c) => c.id === 3)!;
@@ -78,7 +82,16 @@ export function ProductPreview({
             </small>
           </div>
           <span className="preview-local">LOCAL DEMO</span>
+          <ButtonUtility
+            className="gomono-utility"
+            icon={QrCode01}
+            tooltip="Open demo on phone"
+            aria-expanded={phoneOpen}
+            aria-controls={phoneId}
+            onPress={() => setPhoneOpen((open) => !open)}
+          />
         </header>
+        {phoneOpen && <PhoneSharePanel role={role} id={phoneId} />}
         <div className="preview-message">
           <span>GOMONO</span>
           <p>

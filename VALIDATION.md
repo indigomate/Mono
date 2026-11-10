@@ -3,7 +3,7 @@
 ## Completed local checks
 
 - TypeScript validation and Vite production build pass. Conversation code loads separately from the landing entry point.
-- 41 Chromium tests pass (including the component and visible-journey checks below): distinct chat entry points and no active dashboards; inline self-drive detail/estimate/save; context and budget handling; estimate-date resumption; airport slot collection through messages; all other service paths saved in chat; no accidental service switch from an airport address; provider add/edit/preview; unfinished profile/listing persistence; quote-only rates; no simulated publishing; role transcript separation; new-chat confirmation; earlier-tool reopening; composer/field usability at 375/768/1440px; legacy links and malformed-data recovery; Untitled UI labels, prefixes, focus and invalid-field states.
+- 43 Chromium tests pass (including the component and visible-journey checks below): distinct chat entry points and no active dashboards; inline self-drive detail/estimate/save; context and budget handling; estimate-date resumption; airport slot collection through messages; all other service paths saved in chat; no accidental service switch from an airport address; provider add/edit/preview; unfinished profile/listing persistence; quote-only rates; no simulated publishing; role transcript separation; new-chat confirmation; earlier-tool reopening; composer/field usability at 375/768/1440px; legacy links and malformed-data recovery; Untitled UI labels, prefixes, focus and invalid-field states.
 - Formatting checks pass and dependency audit reports zero vulnerabilities at validation time.
 - Desktop/mobile customer and provider chat screenshots inspected, with no browser runtime errors in smoke journeys.
 
@@ -44,3 +44,7 @@ Impossible ISO-like dates from chat and corrupt stored dates are rejected/normal
 ## Credit card illustration
 
 Quote review uses the pinned MIT Untitled UI credit-card visual with masked placeholders and its hardcoded Mastercard mark disabled. A mobile browser check verifies that it appears only in quote review, says no card is connected, contains no payment inputs or source demo identity/number, preserves disabled unquoted financial options, and does not overflow the screen. The fluid-conversation redesign and background cloud saving remain a proposal in CONVERSATION_EXPERIENCE_PLAN.md.
+
+## Additional visible component families
+
+Illustrated empty states, accessible preference/preview switches, utility controls and the actual Embla carousel are wired into existing tasks. The carousel journey now checks the visible position, keyboard return and disabled previous control instead of inspecting native scrollLeft. The provider journey exercises the new preview switch via its keyboard interaction. Two additional checks verify saved automatic-transmission preference and illustrated empty results, plus actual decoding of the public QR SVG for both roles with exactly one generated graphic. The QR panel is closed by default, explains that drafts do not transfer, and is not presented as a payment or booking pass.

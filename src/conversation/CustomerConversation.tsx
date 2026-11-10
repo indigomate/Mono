@@ -434,6 +434,25 @@ export function CustomerConversation({
             <VehicleCards
               ids={tool.ids || []}
               trip={trip}
+              onAutomaticChange={(selected) => {
+                const next = {
+                  ...trip,
+                  transmission: selected ? "Automatic" : "",
+                };
+                const found = matches(next);
+                setTrip(next);
+                setTurns((all) =>
+                  all.map((t, i) =>
+                    i === all.length - 1 && t.tool?.kind === "vehicles"
+                      ? {
+                          ...t,
+                          text: reply(next, found.length),
+                          tool: { ...t.tool, ids: found.map((c) => c.id) },
+                        }
+                      : t,
+                  ),
+                );
+              }}
               onSelect={(id) =>
                 send(`Show me ${inventory.find((c) => c.id === id)!.name}`)
               }

@@ -357,3 +357,70 @@
     min-height: 0;
   }
 }
+.gomono-utility {
+  min-width: 44px;
+  min-height: 44px;
+  color: #345e40;
+  border: 1px solid #cfddc5;
+  background: #f7faf2;
+}
+.phone-share-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #dbe6d2;
+}
+.phone-share-panel > div:first-child {
+  flex: 1;
+  min-width: 160px;
+}
+.phone-share-panel h3 {
+  font-size: 17px;
+  margin: 0 0 10px;
+}
+.phone-share-panel p,
+.phone-share-panel a {
+  font-size: 11px;
+  line-height: 1.8;
+}
+.phone-share-panel a {
+  color: #21643d;
+  overflow-wrap: anywhere;
+}
+.phone-share-panel small {
+  display: block;
+  margin-top: 12px;
+  font-size: 10px;
+  color: #647a5c;
+  line-height: 1.7;
+}
+.public-demo-qr {
+  flex-shrink: 0;
+  background: white;
+  color: #103b29;
+}
+@media (max-width: 600px) {
+  .preview-window > header {
+    gap: 8px;
+  }
+  .preview-window header b {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .preview-window header small {
+    font-size: 10px;
+  }
+  .preview-local {
+    font-size: 7px;
+    padding: 6px;
+  }
+  .phone-share-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .public-demo-qr {
+    align-self: center;
+  }
+}

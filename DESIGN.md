@@ -53,3 +53,7 @@ Provider summaries show concrete readiness actions and local supply counts. List
 ### Make the interface discoverable
 
 The landing experience section is an interactive entry into the product, not a separate component showroom. It reuses the shared input, progress, inline CTA, loading and local metric components. Customer/provider choices carry explicit user commands into the same role-scoped chat. A labelled animation preview allows design review without pretending a request is processing. Fresh provider entry includes summary metrics; dates and progress are visible near the top of customer editors. Start here makes welcome actions recoverable after a long conversation. GOMONO is the visible brand; the new logo/icon work remains separate.
+
+### Contextual shared assets
+
+Small cloud/document illustrations replace the generic star in empty results and histories. Utility buttons keep carousel and close controls compact, with accessible names, tooltips and touch targets. Preference switches represent real local state changes, including automatic transmission and storefront-preview inclusion. Vehicle comparisons use the upstream manual Embla carousel. A single optional QR utility in the landing preview opens the public experience on a phone, with its real URL and device-local-data limitation stated beside it. QR sharing is not placed in the main conversation or used as an invented booking/payment credential. The broader fluid-chat redesign remains a proposal in CONVERSATION_EXPERIENCE_PLAN.md.

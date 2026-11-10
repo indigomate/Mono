@@ -1,3 +1,4 @@
+import jsQR from "jsqr";
 import { test, expect, type Page } from "@playwright/test";
 async function say(page: Page, text: string) {
   await page.getByLabel("Message GOMONO", { exact: true }).fill(text);
@@ -254,8 +255,11 @@ test("provider can add, edit and preview a listing from the same chat", async ({
     .getByRole("button", { name: "Save listing draft", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Add to preview", exact: true })
-    .click();
+    .getByRole("switch", {
+      name: "Include in local storefront preview",
+      exact: true,
+    })
+    .press("Space");
   await page
     .getByRole("button", { name: "Storefront preview", exact: true })
     .click();
@@ -524,9 +528,23 @@ test("vehicle carousel controls browse sample supply without leaving chat", asyn
   await page
     .getByRole("button", { name: "Next vehicles", exact: true })
     .click();
-  await expect
-    .poll(() => carousel.evaluate((el) => el.scrollLeft))
-    .toBeGreaterThan(0);
+  await expect(
+    page.getByRole("status", {
+      name: "Vehicle carousel position",
+      exact: true,
+    }),
+  ).toContainText("2 of");
+  await carousel.focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(
+    page.getByRole("status", {
+      name: "Vehicle carousel position",
+      exact: true,
+    }),
+  ).toContainText("1 of");
+  await expect(
+    page.getByRole("button", { name: "Previous vehicles", exact: true }),
+  ).toBeDisabled();
   await expect(
     page.getByLabel("Message GOMONO", { exact: true }),
   ).toBeVisible();
@@ -956,4 +974,93 @@ test("credit card artwork stays an honest masked illustration inside quote revie
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBeTruthy();
+});
+
+test("automatic toggle persists its preference and empty results show an illustration", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(page, "Show me cars");
+  const automatic = page.getByRole("switch", {
+    name: "Automatic only",
+    exact: true,
+  });
+  await expect(automatic).not.toBeChecked();
+  await page.getByText("Automatic only", { exact: true }).click();
+  await expect(automatic).toBeChecked();
+  await page.reload();
+  await expect(automatic).toBeChecked();
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("mono-journey-v1") || "{}").trip
+          .transmission,
+    ),
+  ).toBe("Automatic");
+  await automatic.press("Space");
+  await expect(automatic).not.toBeChecked();
+  await say(page, "My budget is R50 per day");
+  await expect(page.locator(".mono-empty")).toContainText(
+    "No sample vehicles meet this brief",
+  );
+  await expect(page.locator(".mono-empty-illustration svg")).toBeVisible();
+});
+
+async function decodePublicQR(page: Page) {
+  const raster = await page
+    .locator(".public-demo-qr svg")
+    .evaluate(async (svg) => {
+      const image = new Image();
+      image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}`;
+      await image.decode();
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const context = canvas.getContext("2d")!;
+      context.drawImage(image, 0, 0);
+      return {
+        width: canvas.width,
+        height: canvas.height,
+        pixels: Array.from(
+          context.getImageData(0, 0, canvas.width, canvas.height).data,
+        ),
+      };
+    });
+  return jsQR(new Uint8ClampedArray(raster.pixels), raster.width, raster.height)
+    ?.data;
+}
+
+test("phone QR really decodes to the public demo and updates without duplicate graphics", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 900 });
+  await page.goto("/#experience");
+  const open = page.getByRole("button", {
+    name: "Open demo on phone",
+    exact: true,
+  });
+  await expect(open).toHaveAttribute("aria-expanded", "false");
+  await open.click();
+  const panel = page.getByLabel("Open public demo on your phone", {
+    exact: true,
+  });
+  await expect(panel).toContainText("not transferred");
+  await expect(panel.locator("svg")).toHaveCount(1);
+  expect(await decodePublicQR(page)).toBe(
+    "https://mono-ochre-psi.vercel.app/#customer",
+  );
+  await page
+    .getByRole("button", { name: "I provide vehicles & services", exact: true })
+    .click();
+  await expect(panel.locator("svg")).toHaveCount(1);
+  await expect
+    .poll(() => decodePublicQR(page))
+    .toBe("https://mono-ochre-psi.vercel.app/#provider");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBeTruthy();
+  await open.click();
+  await expect(panel).toHaveCount(0);
 });

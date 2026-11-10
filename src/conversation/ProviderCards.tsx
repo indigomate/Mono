@@ -1,3 +1,4 @@
+import { Toggle } from "../components/base/toggle/toggle";
 import {
   BriefProgress,
   EmptyState,
@@ -322,11 +323,13 @@ export function FleetCards({
                 <button onClick={() => onEdit(d.id)}>
                   Plan availability & service notes
                 </button>
-                <button onClick={() => onPreview(d.id)}>
-                  {d.status === "preview"
-                    ? "Remove from preview"
-                    : "Add to preview"}
-                </button>
+                <Toggle
+                  className="gomono-toggle"
+                  label="Include in local storefront preview"
+                  aria-label="Include in local storefront preview"
+                  isSelected={d.status === "preview"}
+                  onChange={() => onPreview(d.id)}
+                />
               </div>
             </div>
           </article>

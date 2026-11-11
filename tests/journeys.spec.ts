@@ -32,10 +32,9 @@ test("primary actions open distinct customer and provider conversations with no 
     page.locator(".service-grid,.customer-overview,.provider-checklist"),
   ).toHaveCount(0);
   await expect(
-    page
-      .getByRole("navigation", { name: "Customer navigation", exact: true })
-      .getByRole("button"),
-  ).toHaveCount(1);
+    page.locator(".workspace-sidebar,.workspace-mobile-nav"),
+  ).toHaveCount(0);
+  await expect(page.locator(".home-brand")).toBeVisible();
   await page
     .getByRole("button", { name: "Change workspace", exact: true })
     .click();
@@ -49,10 +48,9 @@ test("primary actions open distinct customer and provider conversations with no 
     page.getByRole("region", { name: "Provider conversation", exact: true }),
   ).toBeVisible();
   await expect(
-    page
-      .getByRole("navigation", { name: "Provider navigation", exact: true })
-      .getByRole("button"),
-  ).toHaveCount(1);
+    page.locator(".workspace-sidebar,.workspace-mobile-nav"),
+  ).toHaveCount(0);
+  await expect(page.locator(".home-brand")).toBeVisible();
   await expect(page.locator("#nav-bookings,#nav-owner")).toHaveCount(0);
 });
 test("self-drive conversation preserves preferences and shows details and estimate inside chat", async ({
@@ -698,6 +696,7 @@ test("comparison and provider readiness actions continue their own conversation"
   const readiness = page.getByLabel("Provider launch readiness", {
     exact: true,
   });
+  await page.getByText("Before going live", { exact: true }).click();
   await expect(readiness).toContainText("No verification badge is issued");
   await readiness
     .getByRole("button", { name: "Review business details →", exact: true })
@@ -794,9 +793,7 @@ test("provider preview opens real editors and updates its local metrics after sa
   await preview
     .getByRole("button", { name: "I provide vehicles & services", exact: true })
     .click();
-  await expect(preview.locator(".mono-metrics")).toContainText(
-    "Saved listings0",
-  );
+  await expect(preview.locator(".mono-metrics")).toHaveCount(0);
   await preview
     .getByLabel("Start your conversation", { exact: true })
     .fill("Add my BMW 320i for chauffeur at R650 per hour");
@@ -811,12 +808,11 @@ test("provider preview opens real editors and updates its local metrics after sa
     .getByRole("button", { name: "Save listing draft", exact: true })
     .click();
   await page.locator(".home-brand").click();
-  await expect(preview.locator(".mono-metrics")).toContainText(
-    "Saved listings1",
-  );
-  await preview
-    .getByRole("button", { name: "Business & readiness", exact: true })
+  await page
+    .getByRole("button", { name: "List Your Car", exact: true })
+    .first()
     .click();
+  await chatAction(page, "Business overview");
   await expect(tool(page).locator(".mono-metrics")).toContainText(
     "Saved listings1",
   );
@@ -829,34 +825,23 @@ for (const width of [375, 768, 1440])
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
-    await page
-      .getByRole("link", { name: "See the interface in action", exact: true })
-      .click();
     const preview = page.locator(".product-preview");
     await expect(
-      preview.getByRole("heading", { name: "Toyota Corolla", exact: true }),
+      preview.getByRole("heading", { name: "What’s the plan?" }),
     ).toBeVisible();
     await expect(
-      preview.getByRole("progressbar", { name: "Brief completeness" }),
-    ).toHaveAttribute("aria-valuenow", "1");
-    await preview
-      .getByRole("button", { name: "Preview loading animation", exact: true })
-      .click();
-    await expect(preview.getByRole("status")).toContainText(
-      "Loading animation preview",
-    );
-    expect(
-      await preview
-        .locator(".mono-loading-mark")
-        .evaluate((el) => getComputedStyle(el).animationName),
-    ).toBe("none");
+      preview.locator(".preview-sample,.mono-metrics,.preview-component-note"),
+    ).toHaveCount(0);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBeTruthy();
     await preview
-      .getByRole("button", { name: "Plan dates & budget", exact: true })
+      .getByLabel("Start your conversation", { exact: true })
+      .fill("Edit my trip");
+    await preview
+      .getByRole("button", { name: "Continue in chat →", exact: true })
       .click();
     await expect(
       page.getByRole("application", { name: /^Pickup date,/ }),
@@ -866,10 +851,12 @@ for (const width of [375, 768, 1440])
     ).toBeInViewport();
   });
 
-test("provider metrics are present without a command and start-here restores welcome", async ({
+test("provider starts quietly and shows business details only on request", async ({
   page,
 }) => {
   await page.goto("/#provider");
+  await expect(page.locator(".mono-metrics")).toHaveCount(0);
+  await chatAction(page, "Business overview");
   await expect(tool(page).locator(".mono-metrics")).toBeVisible();
   await page
     .getByRole("button", { name: "Incoming requests", exact: true })
@@ -879,7 +866,7 @@ test("provider metrics are present without a command and start-here restores wel
   );
   await chatAction(page, "Start here");
   await expect(
-    page.getByRole("button", { name: "Business overview", exact: true }),
+    page.getByRole("button", { name: "List my vehicle", exact: true }),
   ).toBeInViewport();
 });
 
@@ -1344,45 +1331,39 @@ test("car-brand logo loop uses local SVGs and supports pausing and reduced motio
   );
 });
 
-test("TechText paints the loading preview and retains a static reduced-motion fallback", async ({
+test("actual workspace loading retains its static reduced-motion fallback", async ({
   page,
 }) => {
-  await page.goto("/");
-  const preview = page.locator(".product-preview");
-  await preview
-    .getByRole("button", { name: "Preview loading animation", exact: true })
-    .click();
-  await preview.locator(".animated-loading-wordmark").scrollIntoViewIfNeeded();
-  const canvas = preview.locator('canvas[data-tech-ready="true"]');
-  await expect(canvas).toBeVisible();
-  expect(
-    await canvas.evaluate((el: HTMLCanvasElement) =>
-      el
-        .getContext("2d")!
-        .getImageData(0, 0, el.width, el.height)
-        .data.some((value, i) => i % 4 === 3 && value > 0),
-    ),
-  ).toBeTruthy();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route(
+    /(?:src\/workspace\/Workspace\.tsx|assets\/Workspace-[^/]+\.js)/,
+    async (route) => {
+      await gate;
+      await route.continue();
+    },
+  );
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Book a Car", exact: true }).click();
   await expect(
-    preview.locator(".animated-loading-wordmark canvas"),
-  ).toHaveCount(0);
-  await expect(preview.locator(".brand-static-wordmark")).toBeVisible();
+    page.locator(".conversation-loading").getByRole("status"),
+  ).toContainText("Opening your GOMONO conversation");
+  await expect(page.locator(".brand-static-wordmark")).toBeVisible();
+  release();
+  await expect(
+    page.getByLabel("Message GOMONO", { exact: true }),
+  ).toBeVisible();
 });
 
-test("optional animation load failures leave the brand and trip details usable", async ({
+test("optional animation load failures leave trip details usable", async ({
   page,
 }) => {
   await page.route(/TechText[^/]*\.(?:tsx|js)/, (route) => route.abort());
   await page.route(/(?:gsap|ScrollTrigger)[^/]*\.js/, (route) => route.abort());
   await page.goto("/");
-  await page
-    .locator(".product-preview")
-    .getByRole("button", { name: "Preview loading animation", exact: true })
-    .click();
-  await expect(
-    page.locator(".product-preview .brand-static-wordmark"),
-  ).toBeVisible();
   await page.getByRole("button", { name: "Book a Car", exact: true }).click();
   await openContext(page);
   await expect(page.locator(".chat-context-panel")).toBeVisible();
@@ -1533,4 +1514,41 @@ test("workspace owns scrolling across viewport sizes and landing scroll is resto
   await page.goto("/");
   await page.evaluate(() => window.scrollTo(0, 600));
   expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+});
+
+test("legacy automatic provider summary becomes opt-in without losing records", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    localStorage.setItem(
+      "mono-provider-chat-v1",
+      JSON.stringify([
+        {
+          id: "old-welcome",
+          role: "assistant",
+          text: "Welcome back",
+          tool: { kind: "summary" },
+        },
+      ]),
+    );
+    localStorage.setItem("mono-listings", "[]");
+  });
+  await page.goto("/#provider");
+  await expect(page.locator(".chat-transcript")).toContainText("Welcome back");
+  await expect(page.locator(".mono-metrics")).toHaveCount(0);
+  await expect(page.locator(".welcome-paths button")).toHaveCount(2);
+  await chatAction(page, "Business overview");
+  await expect(tool(page).locator(".mono-metrics")).toContainText(
+    "Saved listings0",
+  );
+  await expect(
+    page.getByText("Before going live", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel("Provider launch readiness", { exact: true }),
+  ).not.toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("mono-listings"))).toBe(
+    "[]",
+  );
 });

@@ -1,5 +1,5 @@
 import { AnimatedBrandMark } from "./AnimatedBrandMark";
-/** Used for real workspace loading and an explicitly labelled animation preview. */
+/** Feedback for actual workspace loading. */
 export function LoadingIndicator({
   label = "Opening your GOMONO conversation…",
 }: {

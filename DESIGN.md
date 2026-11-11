@@ -71,3 +71,11 @@ Use small, purposeful entrances; no decorative delays. TechText belongs in works
 The current visual layer is based on 12ui’s selected landing A and corrected chat B, with a site branch covering forms, provider states and pricing. Inter is the primary refined UI/display family; the existing optional loading wordmark retains its Manrope setting. Cinematic emerald imagery remains on the landing/role chooser, while the workspace uses ivory, white and pale mint for reading. The narrow rail keeps its one real conversation action; secondary commands stay in the disclosure menu. Local illustrative vehicle art improves model consistency without asserting verified photos or inventory.
 
 See 12UI_UPGRADE.md for source IDs, alignment results, intentional functional/content deviations and validation. Earlier milestone descriptions above are historical; active tasks remain in conversation.
+
+## Minimal surfaces
+
+The landing page keeps its cinematic hero, the two primary role actions and the eleven-brand strip. A compact role selector and message field replace the simulated dashboard/component showcase. Keep the explanation to three brief steps and one owner entry. Loading animation previews, demo metrics and duplicated product pitches are not marketing content.
+
+Both workspaces use one header with a home logo, active role and workspace switch. Keep two welcome choices, three green suggestions and the composer. Secondary operations belong in Conversation actions; business readiness belongs behind an explicit disclosure. The welcome disappears when a user sends a message, and Start here can reveal it again. A provider business summary is requested explicitly rather than injected into first entry. The existing emerald/ivory tokens, vehicle cards, actual loading state and accessible form components remain.
+
+See MINIMALISM_AUDIT.md for the removal/preservation mapping and 12ui generation limitation.

@@ -49,9 +49,7 @@ export default function App() {
             GOMONO<span style={{ color: "#999" }}>.</span>
           </a>
           <nav className="navlinks">
-            <a href="#experience">Try the experience</a>
             <a href="#how">How it works</a>
-            <a href="#for-owners">For owners</a>
             <button className="outline" onClick={() => navigate("provider")}>
               List Your Car{" "}
               <svg
@@ -81,10 +79,8 @@ export default function App() {
               SMARTER<span className="hero-dot">.</span>
             </h1>
             <p>
-              Just a conversation away. Tell us where you're going. Your
-              personal AI rental concierge helps you discover the right car,
-              from private owners, fleets and transport providers. Drive
-              yourself or choose a service with a driver.
+              Find a car or a driver in Cape Town. Tell us your plans; we’ll
+              help you explore the options.
             </p>
             <div className="actions">
               <button className="primary" onClick={() => navigate("customer")}>
@@ -131,15 +127,8 @@ export default function App() {
                 </span>
               </button>
             </div>
-            <a className="experience-link" href="#experience">
-              See the interface in action <span aria-hidden="true">↓</span>
-            </a>
           </div>
         </section>
-        <div className="landing-bottom">
-          <span>01 / DISCOVER    02 / MATCH    03 / REQUEST TO BOOK</span>
-          <span>THE FUTURE OF RENTAL IS CONVERSATIONAL</span>
-        </div>
         <VehicleBrandLoop />
         <div id="experience">
           <ProductPreview
@@ -150,32 +139,33 @@ export default function App() {
           />
         </div>
         <section id="how" className="features">
-          <div className="eyebrow" style={{ color: "#777" }}>
-            DESIGNED AROUND YOU
-          </div>
-          <h2>No filters. No endless scrolling. Just tell us what you need.</h2>
+          <div className="eyebrow">HOW IT WORKS</div>
+          <h2>Your plans. One conversation.</h2>
           <div className="feature-grid">
             <div className="feature">
               <b>01 — Tell us your plans</b>
-              <p>
-                A wedding, a weekend escape, or a business trip. Start with a
-                simple conversation.
-              </p>
+              <p>Where, when and how you want to travel.</p>
             </div>
             <div className="feature">
-              <b>02 — Discover your match</b>
+              <b>02 — Explore the options</b>
+              <p>Compare vehicles or find a service with a driver.</p>
+            </div>
+            <div className="feature">
+              <b>03 — Review your request</b>
               <p>
-                Explore sample cars by budget and occasion. Live dates and
-                verified availability are coming next.
+                Check the details and save your request. Live booking is coming
+                next.
               </p>
             </div>
-            <div className="feature" id="for-owners">
-              <b>03 — Your business, elevated</b>
-              <p>
-                Private owners, fleets and chauffeur operators get a dedicated
-                studio, service management, and booking requests in one place.
-              </p>
+          </div>
+          <div id="for-owners" className="minimal-owner-entry">
+            <div>
+              <h3>Have a car or transport business?</h3>
+              <p>Prepare your listings and services in your own workspace.</p>
             </div>
+            <button className="smallbtn" onClick={() => navigate("provider")}>
+              List Your Car →
+            </button>
           </div>
         </section>
         <footer className="footer">

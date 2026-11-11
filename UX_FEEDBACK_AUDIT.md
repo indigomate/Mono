@@ -43,3 +43,7 @@ The new shortlist is a private preference, separate from booking records and pro
 Reload restores an unsent message and unfinished edit without sending or booking; browser-storage failure stays explicit; background tabs and delayed replies do not steal reading position; reduced motion retains every action; slow/error/offline operations show the correct task and recovery; no availability, payment, publish or save success appears before the responsible service confirms it. Validate desktop/tablet/mobile plus keyboard and screen-reader announcements.
 
 The local parser remains a bounded demo, not a connected general-purpose assistant. Backend search, verified inventory, Paystack transactions, provider subscriptions and real booking completion are not delivered by this visual release.
+
+## Minimalism pass
+
+See MINIMALISM_AUDIT.md for the current audit. The marketing component showcase has been replaced by a compact chat entry. Duplicate workspace navigation and the automatic provider summary have been removed; business metrics and readiness remain available on request. Actual loading, inline vehicle/service tools, profile/fleet operations and the green composer suggestions remain in their task contexts.

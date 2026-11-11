@@ -1,12 +1,6 @@
 import { FieldInput } from "../components/ui/FieldInput";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { type View, type Navigate } from "./navigation";
-const customerLinks = [
-  { view: "customer", label: "Customer conversation", icon: "✧" },
-] as const;
-const providerLinks = [
-  { view: "provider", label: "Provider conversation", icon: "✧" },
-] as const;
 export function WorkspaceShell({
   role,
   view,
@@ -20,64 +14,22 @@ export function WorkspaceShell({
 }) {
   const title = useRef<HTMLHeadingElement>(null);
   const provider = role === "provider";
-  const links = provider ? providerLinks : customerLinks;
-  const active = links.find((l) => l.view === view);
   const label = provider ? "Provider assistant" : "Customer concierge";
   useEffect(() => {
     title.current?.focus();
   }, [view]);
   return (
     <div className={`workspace chat-layout role-${role}`}>
-      <aside className="workspace-sidebar">
-        <button className="logo home-brand" onClick={() => navigate("home")}>
-          GOMONO.
-        </button>
-        <div className="workspace-identity">
-          <span>{provider ? "PROVIDER STUDIO" : "RENT & RIDE"}</span>
-          <small>
-            {provider
-              ? "Your business. Your services."
-              : "Your plans. Your way."}
-          </small>
-        </div>
-        <nav
-          aria-label={provider ? "Provider navigation" : "Customer navigation"}
-        >
-          {links.map((l) => (
-            <button
-              key={l.view}
-              id={`nav-${l.view}`}
-              aria-current="page"
-              className="ws-nav active"
-              title={l.label}
-              onClick={() => navigate(l.view)}
-            >
-              <span aria-hidden="true">{l.icon}</span>
-              <span>{l.label}</span>
-            </button>
-          ))}
-        </nav>
-        <div className="workspace-sidebar-foot">
-          <button onClick={() => navigate("workspaces")}>
-            Change workspace →
-          </button>
-          <p>
-            <span className="live-dot" />
-            {provider ? "Provider workspace" : "Customer workspace"}
-            <br />
-            Cape Town · Demo experience
-          </p>
-          <button aria-label="Back to website" onClick={() => navigate("home")}>
-            ← Back to website
-          </button>
-        </div>
-      </aside>
       <main className="workspace-main">
         <header className="workspace-topbar">
-          <div>
-            <span className="workspace-breadcrumb">
-              GOMONO / {provider ? "PROVIDER STUDIO" : "RENT & RIDE"}
-            </span>
+          <div className="minimal-workspace-identity">
+            <button
+              className="logo home-brand"
+              aria-label="Back to website"
+              onClick={() => navigate("home")}
+            >
+              GOMONO.
+            </button>
             <strong>{label}</strong>
           </div>
           <div className="workspace-top-actions">
@@ -87,48 +39,14 @@ export function WorkspaceShell({
             >
               Change workspace
             </button>
-            <span className="demo-pill">
-              <i />
-              {provider ? "Provider demo" : "Customer demo"}
-            </span>
           </div>
         </header>
-        <nav
-          className="workspace-mobile-nav"
-          aria-label={
-            provider
-              ? "Mobile provider navigation"
-              : "Mobile customer navigation"
-          }
-        >
-          {links.map((l) => (
-            <button
-              key={l.view}
-              aria-current="page"
-              onClick={() => navigate(l.view)}
-            >
-              {l.label}
-            </button>
-          ))}
-        </nav>
         <div className="workspace-content">
           <h1 className="sr-only" ref={title} tabIndex={-1}>
             {label}
           </h1>
           {children}
         </div>
-        <footer className="workspace-footer">
-          <button
-            className="text-button"
-            aria-label="Return to website"
-            onClick={() => navigate("home")}
-          >
-            GOMONO · Back to website
-          </button>
-          <span>
-            {provider ? "Provider Studio" : "Rent & Ride"} · Demonstration only
-          </span>
-        </footer>
       </main>
     </div>
   );

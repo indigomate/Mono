@@ -1,0 +1,222 @@
+/* Content reduction within the existing approved emerald/ivory design system. */
+.app-root .minimal-chat-entry {
+  padding: 80px max(24px, calc((100vw - 1200px) / 2));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 64px;
+  align-items: center;
+}
+.app-root .minimal-chat-entry h2 {
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+}
+.app-root .minimal-chat-entry .preview-window {
+  padding: 24px;
+  box-shadow: none;
+  border-radius: 16px;
+}
+.app-root .minimal-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+.app-root .minimal-chat-entry .preview-role-switch {
+  margin: 0;
+  gap: 4px;
+}
+.app-root .minimal-chat-entry .preview-role-switch button {
+  font-size: 12px;
+  padding: 10px 12px;
+}
+.app-root .minimal-chat-entry .preview-composer {
+  padding: 24px 0 12px;
+  margin: 0;
+  border: 0;
+}
+.app-root .minimal-chat-entry .preview-demo-note {
+  padding: 0;
+  margin: 0;
+  font-size: 11px;
+}
+.app-root .features {
+  padding: 72px max(24px, calc((100vw - 1200px) / 2));
+}
+.app-root .features h2 {
+  max-width: 700px;
+  font-size: clamp(30px, 4vw, 48px);
+  margin: 16px 0 40px;
+}
+.app-root .feature-grid {
+  gap: 32px;
+}
+.app-root .feature {
+  min-height: 0;
+  padding: 0;
+  box-shadow: none;
+  border: 0;
+  background: transparent;
+}
+.app-root .minimal-owner-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid #d4e0d6;
+}
+.app-root .minimal-owner-entry h3 {
+  font-size: 20px;
+  margin: 0 0 8px;
+}
+.app-root .minimal-owner-entry p {
+  font-size: 14px;
+  color: #536e60;
+  margin: 0;
+}
+.app-root .minimal-owner-entry button {
+  flex-shrink: 0;
+}
+.app-root.app-conversation-root .workspace-main {
+  width: 100%;
+}
+.app-root.app-conversation-root .workspace-topbar {
+  padding: 16px 32px;
+}
+.app-root.app-conversation-root .minimal-workspace-identity {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.app-root.app-conversation-root .minimal-workspace-identity .home-brand {
+  display: block;
+  background: none;
+  border: 0;
+  color: #124332;
+  font-size: 20px;
+  padding: 0;
+  cursor: pointer;
+}
+.app-root.app-conversation-root .minimal-workspace-identity strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: #567162;
+  border-left: 1px solid #d4e0d6;
+  padding-left: 24px;
+}
+.app-root.app-conversation-root .chat-introduction {
+  padding: 32px 0 24px;
+}
+.app-root.app-conversation-root .chat-introduction h2 {
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.15;
+  white-space: normal;
+  max-width: 650px;
+}
+.app-root.app-conversation-root .chat-introduction > p {
+  margin: 14px 0 24px;
+}
+.app-root.app-conversation-root .welcome-paths {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.app-root.app-conversation-root .welcome-paths button {
+  min-height: 44px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 18px;
+  border-radius: 10px;
+}
+.app-root.app-conversation-root .welcome-paths button b {
+  font-size: 13px;
+}
+.app-root .minimal-business-details {
+  margin-top: 24px;
+  border-top: 1px solid #d4e0d6;
+  padding-top: 16px;
+}
+.app-root .minimal-business-details > summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: #536e60;
+}
+@media (max-width: 700px) {
+  .app-root .minimal-chat-entry {
+    padding: 48px 20px;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .app-root .minimal-chat-entry .preview-window {
+    padding: 18px;
+  }
+  .app-root .minimal-chat-entry .preview-role-switch {
+    flex-wrap: wrap;
+  }
+  .app-root .minimal-chat-entry .preview-composer {
+    grid-template-columns: 1fr;
+  }
+  .app-root .features {
+    padding: 48px 24px;
+  }
+  .app-root .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .app-root .minimal-owner-entry {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 40px;
+  }
+  .app-root.app-conversation-root .workspace-topbar {
+    padding: 12px 16px;
+  }
+  .app-root.app-conversation-root .minimal-workspace-identity {
+    gap: 12px;
+  }
+  .app-root.app-conversation-root .minimal-workspace-identity strong {
+    padding-left: 12px;
+    font-size: 11px;
+    max-width: 100px;
+  }
+  .app-root.app-conversation-root .workspace-switch {
+    font-size: 11px;
+  }
+}
+.app-root.app-conversation-root .minimal-workspace-identity .home-brand {
+  margin: 0;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.app-root.app-conversation-root
+  .workspace-topbar
+  .minimal-workspace-identity
+  strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.app-root.app-conversation-root .chat-introduction {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 24px 0;
+  margin-bottom: 8px;
+}
+.app-root .minimal-owner-entry p {
+  color: #adcbc0;
+}
+.app-root .minimal-owner-entry {
+  margin-top: 40px;
+}
+@media (max-width: 700px) {
+  .app-root.app-conversation-root
+    .workspace-topbar
+    .minimal-workspace-identity
+    strong {
+    font-size: 11px;
+  }
+}

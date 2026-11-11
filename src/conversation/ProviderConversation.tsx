@@ -242,11 +242,11 @@ export function ProviderConversation({
   const [working, setWorking] = useState(loadWorking);
   const [turns, setTurns] = useState(() => {
     const history = loadTurns("provider");
-    const tool =
-      initialTool(view) ||
-      (!read("mono-provider-chat-v1") && history.length === 1
-        ? { kind: "summary" as const }
-        : undefined);
+    const tool = initialTool(view);
+    // Earlier versions injected a dashboard into the sole welcome turn. Keep
+    // its text and all domain records, but make this automatic summary opt-in.
+    if (!tool && history.length === 1 && history[0].tool?.kind === "summary")
+      return [{ ...history[0], tool: undefined }];
     if (tool?.kind === "summary" && history.length === 1)
       return [{ ...history[0], tool }];
     return tool && history.at(-1)?.tool?.kind !== tool.kind
@@ -571,85 +571,93 @@ export function ProviderConversation({
         return (
           <div className="chat-business-summary">
             <h3>{profile.name || "Your provider studio"}</h3>
-            <p>
-              {profile.area} · {drafts.length} saved listings ·{" "}
-              {drafts.filter((d) => d.status === "preview").length} in local
-              preview
-            </p>
+            <p>{profile.area} · Saved on this device</p>
             <LocalMetrics
               saved={drafts.length}
               preview={drafts.filter((d) => d.status === "preview").length}
             />
-            <section
-              className="provider-launch"
-              aria-label="Provider launch readiness"
+            <button
+              className="smallbtn"
+              onClick={() =>
+                send(
+                  !profile.name
+                    ? "Business profile"
+                    : drafts.length
+                      ? "My fleet"
+                      : "Add a listing",
+                )
+              }
             >
-              <h4>Your next steps</h4>
-              <article>
-                <span className="record-status">
-                  {profile.name ? "Saved locally" : "To complete"}
-                </span>
-                <h5>Introduce your business</h5>
-                <p>
-                  A clear name, service area and offering help customers
-                  understand who they’re booking with.
-                </p>
-                <button onClick={() => send("Business profile")}>
-                  Review business details →
-                </button>
-              </article>
-              <article>
-                <span className="record-status">
-                  {drafts.length
-                    ? `${drafts.length} local listings`
-                    : "No saved supply"}
-                </span>
-                <h5>Prepare your supply</h5>
-                <p>
-                  Add rates and service notes. Plan availability in your draft
-                  notes; no live calendar is connected.
-                </p>
-                <button
-                  onClick={() =>
-                    send(drafts.length ? "My fleet" : "Add a listing")
-                  }
-                >
-                  {drafts.length
-                    ? "Review fleet & availability notes"
-                    : "Create your first listing"}{" "}
-                  →
-                </button>
-              </article>
-              <article>
-                <span className="record-status">Not connected</span>
-                <h5>Verification & payouts</h5>
-                <p>
-                  Identity, ownership or operating documents, protection terms
-                  and payout verification are required before live operation. No
-                  verification badge is issued in this demo.
-                </p>
-              </article>
-              <article>
-                <span className="record-status">Live delivery pending</span>
-                <h5>Be ready for enquiries</h5>
-                <p>
-                  Incoming requests will stay separate from customer drafts,
-                  with a clear response action for your business.
-                </p>
-                <button onClick={() => send("Incoming requests")}>
-                  Open provider inbox →
-                </button>
-              </article>
-            </section>
-            <div className="inline-actions">
-              <button onClick={() => send("Business profile")}>
-                Edit business profile
-              </button>
-              <button onClick={() => send("Add a listing")}>
-                Create a listing draft
-              </button>
-              <button onClick={() => send("My fleet")}>Review my fleet</button>
-            </div>
+              {!profile.name
+                ? "Set up business profile"
+                : drafts.length
+                  ? "Review my fleet"
+                  : "Create a listing draft"}
+            </button>
+            <details className="minimal-business-details">
+              <summary>Before going live</summary>
+              <section
+                className="provider-launch"
+                aria-label="Provider launch readiness"
+              >
+                <h4>Your next steps</h4>
+                <article>
+                  <span className="record-status">
+                    {profile.name ? "Saved locally" : "To complete"}
+                  </span>
+                  <h5>Introduce your business</h5>
+                  <p>
+                    A clear name, service area and offering help customers
+                    understand who they’re booking with.
+                  </p>
+                  <button onClick={() => send("Business profile")}>
+                    Review business details →
+                  </button>
+                </article>
+                <article>
+                  <span className="record-status">
+                    {drafts.length
+                      ? `${drafts.length} local listings`
+                      : "No saved supply"}
+                  </span>
+                  <h5>Prepare your supply</h5>
+                  <p>
+                    Add rates and service notes. Plan availability in your draft
+                    notes; no live calendar is connected.
+                  </p>
+                  <button
+                    onClick={() =>
+                      send(drafts.length ? "My fleet" : "Add a listing")
+                    }
+                  >
+                    {drafts.length
+                      ? "Review fleet & availability notes"
+                      : "Create your first listing"}{" "}
+                    →
+                  </button>
+                </article>
+                <article>
+                  <span className="record-status">Not connected</span>
+                  <h5>Verification & payouts</h5>
+                  <p>
+                    Identity, ownership or operating documents, protection terms
+                    and payout verification are required before live operation.
+                    No verification badge is issued in this demo.
+                  </p>
+                </article>
+                <article>
+                  <span className="record-status">Live delivery pending</span>
+                  <h5>Be ready for enquiries</h5>
+                  <p>
+                    Incoming requests will stay separate from customer drafts,
+                    with a clear response action for your business.
+                  </p>
+                  <button onClick={() => send("Incoming requests")}>
+                    Open provider inbox →
+                  </button>
+                </article>
+              </section>
+            </details>
           </div>
         );
       default:

@@ -72,3 +72,11 @@ The brand strip has eleven local Simple Icons marks and no visible Pause button.
 An additional WebKit 27.2 smoke check passed long-conversation scrolling at 2048×828, 768×700, 375×667 and 375×400, clear/reload and restored landing scroll, with no page errors. The document stayed at scrollY 0 with no horizontal overflow and the composer bottom within each viewport. Screenshots were inspected. This is engine-level coverage; a physical iPhone keyboard and Safari browser chrome were not tested.
 
 For this change, all 57 Chromium journeys passed locally, including the full saved-request/listing recovery paths. TypeScript/Vite build, formatting and npm audit passed (zero vulnerabilities). The previous release’s GitHub Actions job failed before tests during browser dependency installation because Ubuntu mirrors could not resolve; it was an infrastructure failure, separate from local application validation.
+
+## Minimalism audit — 11 November 2026
+
+All 58 local Chromium journeys pass after replacing the marketing showcase with compact role/message entry, removing duplicated workspace navigation and making provider summary/readiness opt-in. Coverage retains every service path, typed landing handoff, saved request/listing recovery, profile/draft persistence, clear-chat preservation, vehicle review, plan previews and QR decoding. A real workspace module is held in the loading test to check the actual reduced-motion fallback; there is no product animation-preview control or artificial search delay.
+
+Nine rendered landing/customer/provider states at 375, 768 and 1440px showed no horizontal overflow and kept the composer within the viewport. Desktop and phone screenshots were inspected and legacy feature-card minimum heights removed. WebKit long-chat checks passed 2048×828, 768×700, 375×667 and 375×400, plus clear/reload and restored landing scroll, with no page errors. Physical mobile keyboards were not tested.
+
+Build, formatting and dependency audit passed (zero vulnerabilities). New 12ui generation/alignment remains blocked by the account’s exhausted free allowance and insufficient prepaid balance. The existing approved 12ui style remains the design basis; no new generated candidate or alignment result is claimed. See MINIMALISM_AUDIT.md.

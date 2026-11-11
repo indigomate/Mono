@@ -62,3 +62,7 @@ Production subscription/commission architecture and launch sequencing are specif
 `useWorkspaceViewport` bounds workspace routes to the visual viewport, including keyboard resizing, while the marketing page retains native document scrolling. A flex chain accounts for the actual authentication bar height. The transcript owns its scroll; opening a turn scrolls this container rather than calling `scrollIntoView` on the page. Readers can return with Back to latest.
 
 Clear chat confirms before replacing only the active role transcript. Domain records, preferences, shortlist, provider drafts and the other role transcript remain separate and unchanged. Persistence is local demo storage, not server backup or account synchronization.
+
+## Minimal entry and shell
+
+`ProductPreview` now provides only role selection, typed conversation handoff and optional QR entry; its historical name remains to avoid unnecessary routing churn. It no longer loads sample inventory, progress previews or local provider metrics. `WorkspaceShell` exposes one header rather than duplicated sidebar/mobile navigation. `ChatSurface` owns a welcome disclosure independent of business records. Business overview remains a typed provider tool available through chat and its action menu. A legacy single welcome turn with an automatically injected summary is normalized without changing its text or domain records. Multi-turn history is retained.

@@ -36,6 +36,7 @@ export function ChatSurface({
   onReopen: (tool: ChatTool) => void;
 }) {
   const [input, setInput] = useState("");
+  const [welcomeOpen, setWelcomeOpen] = useState(turns.length === 1);
   const last = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,6 +81,7 @@ export function ChatSurface({
       setResetConfirm(true);
       return;
     }
+    setWelcomeOpen(false);
     requestFollow();
     onSend(text);
   }
@@ -188,6 +190,11 @@ export function ChatSurface({
                     icon: <Car01 width={18} height={18} />,
                   },
                   {
+                    id: "summary",
+                    label: "Business overview",
+                    icon: <Building02 width={18} height={18} />,
+                  },
+                  {
                     id: "Business profile",
                     label: "Business profile",
                     icon: <Building02 width={18} height={18} />,
@@ -212,9 +219,10 @@ export function ChatSurface({
           onAction={(key) => {
             setContextOpen(false);
             if (key === "new-chat") setResetConfirm(true);
-            else if (key === "start-here")
+            else if (key === "start-here") {
+              setWelcomeOpen(true);
               scrollRef.current?.scrollTo({ top: 0, behavior: "instant" });
-            else send(key);
+            } else send(key);
           }}
         />
       </div>
@@ -258,93 +266,36 @@ export function ChatSurface({
         }}
       >
         <div className="chat-thread">
-          <div className="chat-introduction">
-            <span className="eyebrow">
-              {role === "customer"
-                ? "RENT & RIDE / YOUR CONCIERGE"
-                : "PROVIDER STUDIO / YOUR ASSISTANT"}
-            </span>
-            <h2>
-              {role === "customer"
-                ? "Every journey starts\nwith a conversation."
-                : "Your business,\none conversation away."}
-            </h2>
-            <p>
-              {role === "customer"
-                ? "From private rentals to chauffeur trips. Tell us the plan."
-                : "Private owner, fleet or chauffeur operator. Let’s build it together."}
-            </p>
-            <div className="welcome-paths" aria-label="Start a conversation">
-              {(role === "customer"
-                ? [
-                    [
-                      "Drive myself",
-                      "Find a self-drive vehicle",
-                      "Your keys. Your own route.",
-                    ],
-                    [
-                      "Book a chauffeur",
-                      "I need Chauffeur service",
-                      "A driver for your schedule.",
-                    ],
-                    [
-                      "Move a group",
-                      "I need Group transport",
-                      "More people. One plan.",
-                    ],
-                    [
-                      "Plan dates & budget",
-                      "Edit my trip",
-                      "Open calendars and refine your brief.",
-                    ],
-                    [
-                      "Track my requests",
-                      "My requests",
-                      "Review the requests saved on this device.",
-                    ],
-                    [
-                      "Explore every service",
-                      "Explore services",
-                      "Airports, events, tours & more.",
-                    ],
-                  ]
-                : [
-                    [
-                      "List my vehicle",
-                      "Add a listing",
-                      "Build a listing together.",
-                    ],
-                    [
-                      "Offer a service",
-                      "Business profile",
-                      "Set up your transport business.",
-                    ],
-                    [
-                      "Business overview",
-                      "summary",
-                      "See your listings and next steps.",
-                    ],
-                    [
-                      "Manage requests",
-                      "Incoming requests",
-                      "Keep customer requests in view.",
-                    ],
-                  ]
-              ).map(([label, command, caption]) => (
-                <button
-                  key={label}
-                  aria-label={label}
-                  onClick={() => send(command)}
-                >
-                  <span aria-hidden="true">
-                    <ArrowUpRight width={16} height={16} />
-                  </span>
-                  <b>{label}</b>
-                  <small>{caption}</small>
-                </button>
-              ))}
+          {welcomeOpen && (
+            <div className="chat-introduction">
+              <h2>
+                {role === "customer"
+                  ? "Where are you going?"
+                  : "Let’s build your business."}
+              </h2>
+              <div className="welcome-paths" aria-label="Start a conversation">
+                {(role === "customer"
+                  ? [
+                      ["Drive myself", "Find a self-drive vehicle"],
+                      ["Book a chauffeur", "I need Chauffeur service"],
+                    ]
+                  : [
+                      ["List my vehicle", "Add a listing"],
+                      ["Offer a service", "Business profile"],
+                    ]
+                ).map(([label, command]) => (
+                  <button
+                    key={label}
+                    aria-label={label}
+                    onClick={() => send(command)}
+                  >
+                    <b>{label}</b>
+                    <ArrowUpRight width={16} height={16} aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           <div
             className="chat-transcript"
             role="log"

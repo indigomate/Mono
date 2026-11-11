@@ -101,6 +101,12 @@ test("self-drive conversation preserves preferences and shows details and estima
   await expect(page.getByLabel("Message GOMONO")).toBeVisible();
   await page.reload();
   await expect(tool(page)).toContainText("Toyota Corolla");
+  await chatAction(page, "Clear chat");
+  await page.getByRole("button", { name: "Clear chat", exact: true }).click();
+  await page.reload();
+  await expect(page.locator(".turn-user")).toHaveCount(0);
+  await page.getByRole("button", { name: "My requests", exact: true }).click();
+  await expect(tool(page)).toContainText("Toyota Corolla");
   expect(errors).toEqual([]);
 });
 test("conversation context handles duration without turning it into a price", async ({
@@ -307,6 +313,11 @@ test("provider can add, edit and preview a listing from the same chat", async ({
     })
     .press("Space");
   await chatAction(page, "Storefront preview");
+  await chatAction(page, "Clear chat");
+  await page.getByRole("button", { name: "Clear chat", exact: true }).click();
+  await page.reload();
+  await expect(page.locator(".turn-user")).toHaveCount(0);
+  await chatAction(page, "Storefront preview");
   await expect(tool(page).locator(".store-item")).toContainText("BMW 320i");
   await expect(tool(page)).toContainText("/ hour");
   await expect(page).toHaveURL(/#provider$/);
@@ -397,20 +408,18 @@ test("customer records never appear in provider inbox and transcripts remain sep
     .click();
   await expect(page.locator(".chat-transcript")).toContainText("I need an SUV");
 });
-test("new chat requires confirmation and preserves saved trip context", async ({
+test("clear chat requires confirmation and preserves saved trip context", async ({
   page,
 }) => {
   await page.goto("/#customer");
   await say(page, "I need an SUV for 3 days");
-  await chatAction(page, "New chat");
+  await chatAction(page, "Clear chat");
   await page
     .getByRole("button", { name: "Keep chatting", exact: true })
     .click();
   await expect(page.locator(".turn-user")).toHaveCount(1);
-  await chatAction(page, "New chat");
-  await page
-    .getByRole("button", { name: "Start new chat", exact: true })
-    .click();
+  await chatAction(page, "Clear chat");
+  await page.getByRole("button", { name: "Clear chat", exact: true }).click();
   await expect(page.locator(".turn-user")).toHaveCount(0);
   await page.getByRole("button", { name: "Edit my trip", exact: true }).click();
   await expect(
@@ -525,9 +534,9 @@ test("calendar selection updates the trip and confirmation dialog preserves focu
     page.getByRole("progressbar", { name: "Brief completeness" }),
   ).toHaveAttribute("aria-valuenow", "3");
   await page.getByRole("button", { name: "Update trip", exact: true }).click();
-  await chatAction(page, "New chat");
+  await chatAction(page, "Clear chat");
   await expect(
-    page.getByRole("dialog", { name: "Start a fresh conversation" }),
+    page.getByRole("dialog", { name: "Clear this chat?" }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Keep chatting", exact: true }),
@@ -1294,15 +1303,33 @@ test("car-brand logo loop uses local SVGs and supports pausing and reduced motio
   await page.goto("/");
   const band = page.locator(".vehicle-brand-band");
   await band.scrollIntoViewIfNeeded();
-  await band
-    .getByRole("button", { name: "Pause brand animation", exact: true })
-    .click();
-  await expect(
-    band.getByRole("button", { name: "Resume brand animation", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
+  await expect(band.getByRole("button")).toHaveCount(0);
+  const loop = band.getByRole("group", { name: "Car brand animation" });
+  await expect(loop).toHaveAttribute("tabindex", "0");
+  const track = band.locator(".logoloop__track");
+  await page.mouse.move(0, 0);
+  const before = await track.evaluate((el) => el.style.transform);
+  await expect
+    .poll(() => track.evaluate((el) => el.style.transform))
+    .not.toBe(before);
+  await loop.focus();
+  await page.keyboard.press("Space");
+  await expect(loop.getByRole("status")).toContainText("stopped");
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(band.locator(".static-vehicle-brands img")).toHaveCount(3);
-  for (const name of ["Audi", "BMW", "Toyota"]) {
+  await expect(band.locator(".static-vehicle-brands img")).toHaveCount(11);
+  for (const name of [
+    "Audi",
+    "BMW",
+    "Toyota",
+    "Volkswagen",
+    "Ford",
+    "Honda",
+    "Hyundai",
+    "Nissan",
+    "Kia",
+    "Mazda",
+    "Volvo",
+  ]) {
     const image = band.getByRole("img", { name, exact: true });
     await expect(image).toBeVisible();
     expect(
@@ -1313,7 +1340,7 @@ test("car-brand logo loop uses local SVGs and supports pausing and reduced motio
   }
   await expect(band.getByRole("button")).toHaveCount(0);
   await expect(band).toContainText(
-    "availability requires provider confirmation",
+    "Live inventory and availability require confirmation.",
   );
 });
 
@@ -1425,4 +1452,85 @@ test("disclosure actions support keyboard navigation and Escape restores the tri
   await expect(
     page.getByLabel("Message GOMONO", { exact: true }),
   ).toBeVisible();
+});
+
+test("clearing a transcript preserves independent records and survives reload", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(page, "I need an SUV for 3 days");
+  const records = {
+    "mono-requests": "[]",
+    "mono-listings": "[]",
+    "mono-provider-chat-v1": "[]",
+    "mono-customer-saved-cars-v1": "[2]",
+  };
+  await page.evaluate(
+    (values) =>
+      Object.entries(values).forEach(([key, value]) =>
+        localStorage.setItem(key, value),
+      ),
+    records,
+  );
+  await say(page, "clear chat");
+  await expect(
+    page.getByRole("dialog", { name: "Clear this chat?" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Clear chat", exact: true }).click();
+  await page.reload();
+  await expect(page.locator(".turn-user")).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      (keys) =>
+        Object.fromEntries(keys.map((key) => [key, localStorage.getItem(key)])),
+      Object.keys(records),
+    ),
+  ).toEqual(records);
+  await page.getByRole("button", { name: "Edit my trip", exact: true }).click();
+  await expect(
+    page.getByRole("combobox", { name: "Vehicle type", exact: true }),
+  ).toHaveValue("SUV");
+});
+
+test("workspace owns scrolling across viewport sizes and landing scroll is restored", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  for (let i = 0; i < 8; i++) await say(page, `Help with my journey ${i}`);
+  for (const size of [
+    { width: 1440, height: 900 },
+    { width: 768, height: 700 },
+    { width: 375, height: 667 },
+    { width: 375, height: 400 },
+  ]) {
+    await page.setViewportSize(size);
+    const scroll = page.locator(".chat-scroll");
+    await scroll.evaluate((el) => {
+      el.scrollTop = 0;
+    });
+    await expect(
+      page.getByRole("button", { name: "Back to latest ↓", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Back to latest ↓", exact: true })
+      .click();
+    const metrics = await page.evaluate(() => {
+      const dock =
+        document.querySelector(".chat-composer-dock") ||
+        document.querySelector(".chat-composer");
+      return {
+        y: window.scrollY,
+        width: document.documentElement.scrollWidth,
+        height: document.documentElement.scrollHeight,
+        bottom: dock?.getBoundingClientRect().bottom,
+      };
+    });
+    expect(metrics.y).toBe(0);
+    expect(metrics.width).toBeLessThanOrEqual(size.width);
+    expect(metrics.height).toBeLessThanOrEqual(size.height);
+    expect(metrics.bottom).toBeLessThanOrEqual(size.height);
+  }
+  await page.goto("/");
+  await page.evaluate(() => window.scrollTo(0, 600));
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
 });

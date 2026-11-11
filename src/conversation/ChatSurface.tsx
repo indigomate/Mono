@@ -5,6 +5,7 @@ import {
   ArrowUpRight,
   ArrowUp,
   Plus,
+  Trash01,
   Compass01,
   Edit03,
   FileCheck02,
@@ -15,7 +16,7 @@ import {
   Bookmark,
 } from "@untitledui/icons";
 import { FieldInput } from "../components/ui/FieldInput";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { type ChatTool, type Turn, toolTitles } from "./model";
 export function ChatSurface({
   role,
@@ -44,15 +45,68 @@ export function ChatSurface({
   const contextLabel =
     role === "customer" ? "Trip details" : "Business details";
   const contextId = `${role}-context-panel`;
+  const followRequested = useRef(false);
+  const nearBottom = useRef(true);
+  const initialized = useRef(false);
+  const previousUser = useRef<string | undefined>(undefined);
+  const [showLatest, setShowLatest] = useState(false);
+  const latestId = turns.at(-1)?.id;
+  const latestUserId = turns.filter((turn) => turn.role === "user").at(-1)?.id;
+  function updateReadingPosition() {
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+    nearBottom.current =
+      scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight < 96;
+    setShowLatest(
+      turns.length > 1 &&
+        Boolean(last.current) &&
+        last.current!.getBoundingClientRect().top >
+          scroll.getBoundingClientRect().bottom - 20,
+    );
+  }
+  function requestFollow() {
+    followRequested.current = true;
+    requestAnimationFrame(() => {
+      followRequested.current = false;
+    });
+  }
   function send(text: string) {
     setContextOpen(false);
+    if (
+      /^(?:clear(?: my| this| the)? (?:chat|conversation)(?: history)?|new chat|start (?:a )?new chat)[.!?]?$/i.test(
+        text.trim(),
+      )
+    ) {
+      setResetConfirm(true);
+      return;
+    }
+    requestFollow();
     onSend(text);
   }
-  useEffect(() => {
-    if (turns.length === 1) scrollRef.current?.scrollTo({ top: 0 });
-    else if (turns.length > 1)
-      last.current?.scrollIntoView({ block: "start", behavior: "instant" });
-  }, [turns.at(-1)?.id]);
+  useLayoutEffect(() => {
+    const scroll = scrollRef.current;
+    const message = last.current;
+    if (!scroll || !message) return;
+    const shouldFollow =
+      !initialized.current ||
+      followRequested.current ||
+      nearBottom.current ||
+      latestUserId !== previousUser.current;
+    initialized.current = true;
+    previousUser.current = latestUserId;
+    if (turns.length === 1) scroll.scrollTop = 0;
+    else if (shouldFollow) {
+      const top =
+        scroll.scrollTop +
+        message.getBoundingClientRect().top -
+        scroll.getBoundingClientRect().top -
+        16;
+      // Scroll only this container; scrollIntoView can move Safari's outer page.
+      scroll.scrollTo({ top: Math.max(0, top), behavior: "instant" });
+    }
+    followRequested.current = false;
+    updateReadingPosition();
+  }, [latestId, latestUserId]);
   const shortcuts =
     role === "customer"
       ? ["Explore services", "Edit my trip", "My requests"]
@@ -60,6 +114,15 @@ export function ChatSurface({
   return (
     <section
       className="chat-surface"
+      onClickCapture={(e) => {
+        if (
+          (e.target as HTMLElement).closest(
+            ".chat-tool button, .past-tool button",
+          )
+        )
+          requestFollow();
+      }}
+      onSubmitCapture={requestFollow}
       aria-label={
         role === "customer" ? "Customer conversation" : "Provider conversation"
       }
@@ -87,8 +150,8 @@ export function ChatSurface({
             },
             {
               id: "new-chat",
-              label: "New chat",
-              icon: <Plus width={18} height={18} />,
+              label: "Clear chat",
+              icon: <Trash01 width={18} height={18} />,
             },
             ...(role === "customer"
               ? [
@@ -164,7 +227,7 @@ export function ChatSurface({
             if (e.key === "Escape") {
               e.preventDefault();
               setContextOpen(false);
-              contextToggle.current?.focus();
+              contextToggle.current?.focus({ preventScroll: true });
             }
           }}
           onClick={(e) => {
@@ -189,6 +252,7 @@ export function ChatSurface({
       <div
         className="chat-scroll"
         ref={scrollRef}
+        onScroll={updateReadingPosition}
         onClick={() => {
           if (contextOpen) setContextOpen(false);
         }}
@@ -322,6 +386,7 @@ export function ChatSurface({
                           className="text-button"
                           onClick={() => {
                             setContextOpen(false);
+                            requestFollow();
                             onReopen(message.tool!);
                           }}
                         >
@@ -335,6 +400,25 @@ export function ChatSurface({
           </div>
         </div>
       </div>
+      {showLatest && (
+        <div className="chat-reading-controls">
+          <button
+            type="button"
+            onClick={() => {
+              const scroll = scrollRef.current;
+              if (scroll)
+                scroll.scrollTo({
+                  top: scroll.scrollHeight,
+                  behavior: "instant",
+                });
+              updateReadingPosition();
+              inputRef.current?.focus({ preventScroll: true });
+            }}
+          >
+            Back to latest ↓
+          </button>
+        </div>
+      )}
       <div className="composer-dock">
         <div className="composer-inner">
           <div className="chat-suggestion-box">
@@ -352,13 +436,19 @@ export function ChatSurface({
           <FamilyConfirmDialog
             isOpen={resetConfirm}
             onOpenChange={setResetConfirm}
-            title="Start a fresh conversation?"
-            description="Start a fresh conversation? Saved requests, provider records and trip preferences will stay."
-            confirmLabel="Start new chat"
+            title="Clear this chat?"
+            description={
+              role === "customer"
+                ? "Only this customer conversation will be cleared. Saved requests, service enquiries, saved cars and trip preferences stay on this device."
+                : "Only this provider conversation will be cleared. Your saved profile, listings, preview selections and unfinished drafts stay on this device."
+            }
+            confirmLabel="Clear chat"
             cancelLabel="Keep chatting"
             onConfirm={() => {
+              setInput("");
+              setContextOpen(false);
               onReset();
-              inputRef.current?.focus();
+              inputRef.current?.focus({ preventScroll: true });
             }}
           />
           <form

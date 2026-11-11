@@ -1,3 +1,4 @@
+import { useWorkspaceViewport } from "./hooks/useWorkspaceViewport";
 import { VehicleBrandLoop } from "./components/VehicleBrandLoop";
 import { WorkspaceBoundary } from "./components/WorkspaceBoundary";
 import { ProductPreview } from "./components/ProductPreview";
@@ -24,6 +25,7 @@ export default function App() {
     text: string;
   } | null>(null);
   const [view, setView] = useState<View | "home">(currentView);
+  useWorkspaceViewport(view !== "home");
   useEffect(() => {
     const sync = () => setView(currentView());
     window.addEventListener("hashchange", sync);

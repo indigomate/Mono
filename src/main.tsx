@@ -6,6 +6,7 @@ import "./styles.css";
 import "./styles/fields.css";
 import "./styles/12ui-tokens.css";
 import "./styles/12ui-refinement.css";
+import "./styles/scroll-layout.css";
 createRoot(document.getElementById("root")!).render(
   <Authentication>
     <App />

@@ -13,7 +13,7 @@ Audit date: 2026-11-11. Scope: current React/Vite demo, desktop and a 375×667 m
 | Typed unsent composer text disappeared after reload                             | Lost work                                                | Still open; quiet private draft autosave is next                                                                                   |
 | Unsubmitted self-drive budget edit disappeared after reload                     | Inconsistent saving expectations                         | Still open; domain draft model needs the same autosave contract                                                                    |
 | Service pickup draft did survive reload                                         | Some persistence works, but the contract is inconsistent | Existing working persistence preserved                                                                                             |
-| New assistant output forced scroll to latest even when reading earlier messages | Reading position lost                                    | Still open; reading-aware scroll and new-message affordance planned                                                                |
+| New assistant output forced scroll to latest even when reading earlier messages | Reading position lost                                    | Fixed: container-only, reading-aware scrolling and Back to latest action                                                           |
 | History keeps at most 60 turns per role; no conversation archive                | Long work is hard to recover                             | Still open; separate thread/history storage planned                                                                                |
 
 The new shortlist is a private preference, separate from booking records and provider notifications. “Saved” follows the actual storage write; a failed persistent write is labelled “Saved (visit)” and the existing session-only warning appears. Reload persistence is tested when browser storage works. This does not add cloud sync or autosave to every editor.
@@ -22,7 +22,7 @@ The new shortlist is a private preference, separate from booking records and pro
 
 - TechText paints the GOMONO loading wordmark during actual workspace-code loading and the explicitly labelled loading-style preview. It does not animate quotes, change terms or impose a fake search delay. Static text remains if the chunk fails or motion is reduced.
 - AnimatedContent gives the optional context panel a small entrance. Contents remain usable if its dynamic dependency fails. Reduced motion skips it.
-- LogoLoop runs in the landing-page sample-brand band with Audi, BMW and Toyota SVGs, a pause control and static reduced-motion fallback. These are examples, not partnerships or verified live supply.
+- LogoLoop runs in the landing-page sample-brand band with eleven local car-brand SVGs, hover/focus/keyboard stopping and a static reduced-motion fallback. These are examples, not partnerships or verified live supply.
 - The disclosure menu hides less-used commands; the compact confirmation card is limited to starting a fresh chat. Vehicle review stays inline.
 - SaveToggle acknowledges a real local shortlist action. The supplied timer-only sequence was replaced; instant work stays instant.
 - Expandable trip tiles show current domain values, with explicit edit-in-chat actions. The profile card shows saved provider details in the local storefront preview, without invented analytics.

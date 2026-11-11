@@ -6,6 +6,14 @@ const brands = [
   { src: "/brands/audi.svg", alt: "Audi", title: "Audi" },
   { src: "/brands/bmw.svg", alt: "BMW", title: "BMW" },
   { src: "/brands/toyota.svg", alt: "Toyota", title: "Toyota" },
+  { src: "/brands/volkswagen.svg", alt: "Volkswagen", title: "Volkswagen" },
+  { src: "/brands/ford.svg", alt: "Ford", title: "Ford" },
+  { src: "/brands/honda.svg", alt: "Honda", title: "Honda" },
+  { src: "/brands/hyundai.svg", alt: "Hyundai", title: "Hyundai" },
+  { src: "/brands/nissan.svg", alt: "Nissan", title: "Nissan" },
+  { src: "/brands/kia.svg", alt: "Kia", title: "Kia" },
+  { src: "/brands/mazda.svg", alt: "Mazda", title: "Mazda" },
+  { src: "/brands/volvo.svg", alt: "Volvo", title: "Volvo" },
 ];
 
 export function VehicleBrandLoop() {
@@ -15,6 +23,7 @@ export function VehicleBrandLoop() {
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
   const [paused, setPaused] = useState(false);
+  const [focused, setFocused] = useState(false);
   const [LogoLoop, setLogoLoop] = useState<typeof LogoLoopComponent | null>(
     null,
   );
@@ -57,28 +66,42 @@ export function VehicleBrandLoop() {
       <header>
         <div>
           <span className="eyebrow" id="vehicle-brand-title">
-            SAMPLE VEHICLE BRANDS
+            EXPLORE CAR BRANDS
           </span>
-          <p>A few familiar names from our demo collection.</p>
+          <p>Familiar names from across the rental world.</p>
         </div>
-        {!reduced && LogoLoop && (
-          <button
-            type="button"
-            aria-label={
-              paused ? "Resume brand animation" : "Pause brand animation"
-            }
-            aria-pressed={paused}
-            onClick={() => setPaused((value) => !value)}
-          >
-            {paused ? "Resume" : "Pause"}
-          </button>
-        )}
       </header>
-      <div className="vehicle-brand-loop">
+      <div
+        className="vehicle-brand-loop"
+        role="group"
+        aria-label="Car brand animation"
+        tabIndex={!reduced && LogoLoop ? 0 : undefined}
+        aria-describedby="brand-motion-help"
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null))
+            setFocused(false);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === " " && e.target === e.currentTarget) {
+            e.preventDefault();
+            setPaused((value) => !value);
+          }
+        }}
+      >
+        <span id="brand-motion-help" className="sr-only">
+          Hover or focus to pause. Press Space to toggle automatic scrolling; it
+          remains paused while focused. Reduced motion shows a static list.
+        </span>
+        <span className="sr-only" role="status">
+          {paused
+            ? "Automatic brand scrolling stopped"
+            : "Automatic brand scrolling enabled"}
+        </span>
         {!reduced && LogoLoop ? (
           <LogoLoop
             logos={brands}
-            speed={paused ? 0 : 32}
+            speed={paused || focused ? 0 : 32}
             direction="left"
             logoHeight={38}
             gap={68}
@@ -90,13 +113,10 @@ export function VehicleBrandLoop() {
             intro={false}
             fadeOut
             fadeOutColor="#0b2920"
-            ariaLabel="Sample vehicle brands"
+            ariaLabel="Car brand examples"
           />
         ) : (
-          <ul
-            className="static-vehicle-brands"
-            aria-label="Sample vehicle brands"
-          >
+          <ul className="static-vehicle-brands" aria-label="Car brand examples">
             {brands.map((brand) => (
               <li key={brand.title}>
                 <img
@@ -113,7 +133,8 @@ export function VehicleBrandLoop() {
         )}
       </div>
       <p className="brand-availability-note">
-        Illustrative listings · availability requires provider confirmation.
+        Brand examples only · Live inventory and availability require
+        confirmation.
       </p>
     </section>
   );

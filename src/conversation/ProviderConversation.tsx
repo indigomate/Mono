@@ -702,14 +702,16 @@ export function ProviderConversation({
           {renderTool(tool)}
         </>
       )}
-      onReset={() =>
-        setTurns([
+      onReset={() => {
+        const fresh = [
           turn(
             "assistant",
             "A fresh provider conversation. Your profile, listings and unfinished draft are still available. What would you like to do?",
           ),
-        ])
-      }
+        ];
+        saveDemo("mono-provider-chat-v1", fresh);
+        setTurns(fresh);
+      }}
     />
   );
 }

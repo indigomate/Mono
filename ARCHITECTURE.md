@@ -56,3 +56,9 @@ Production subscription/commission architecture and launch sequencing are specif
 ## 12ui design integration
 
 12ui is a design-time tool installed outside the app, not a new runtime dependency. Generated HTML/prototype outputs supplied visual references and extracted image layers. The application still runs the same React components, hash routing, typed chat tools and demo persistence. New token/refinement styles load through main.tsx; the legacy landing override priorities were relaxed so this layer can own presentation. No generated prototype routing, checkout, verification, uploads or mocked business records replaced domain behavior. See 12UI_UPGRADE.md.
+
+## Workspace viewport and transcript clearing
+
+`useWorkspaceViewport` bounds workspace routes to the visual viewport, including keyboard resizing, while the marketing page retains native document scrolling. A flex chain accounts for the actual authentication bar height. The transcript owns its scroll; opening a turn scrolls this container rather than calling `scrollIntoView` on the page. Readers can return with Back to latest.
+
+Clear chat confirms before replacing only the active role transcript. Domain records, preferences, shortlist, provider drafts and the other role transcript remain separate and unchanged. Persistence is local demo storage, not server backup or account synchronization.

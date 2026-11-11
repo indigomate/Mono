@@ -689,14 +689,16 @@ export function CustomerConversation({
           {renderTool(tool)}
         </>
       )}
-      onReset={() =>
-        setTurns([
+      onReset={() => {
+        const fresh = [
           turn(
             "assistant",
             "A fresh conversation, with your saved trip and requests still available. Where would you like to go?",
           ),
-        ])
-      }
+        ];
+        saveDemo("mono-customer-chat-v1", fresh);
+        setTurns(fresh);
+      }}
     />
   );
 }

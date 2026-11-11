@@ -62,3 +62,13 @@ Pricing/paid features are explicitly proposals; subscription checkout and entitl
 The selected design was expanded with 12ui, integrated into existing components and compared with unchanged source LayerDocs for seven surfaces. Automatic mapping had low overlap and false semantic matches; those are documented in 12UI_UPGRADE.md rather than reported as a pixel-perfect pass. Rendered home/chooser/chat screenshots at 375, 768 and 1440px show no horizontal overflow and an available chat composer. Source image layers are served as local WebP assets, with existing illustrative/unverified labels. All 55 journey checks remain required, including failed-photo retry on the new local paths, role choice, draft persistence and inline review/save behavior.
 
 One run during the 12ui integration hit an intermittent panel-opening assertion while optional animation requests were blocked; its cause was not established. Ten isolated repeats passed, followed by a final complete 55/55 local run. No artificial retry or timing delay was added to hide the failure.
+
+## Scroll containment and transcript clearing — 11 November 2026
+
+Workspace scrolling now belongs to the conversation container, with an independent composer and actual-height account bar. Reading older messages exposes Back to latest. Landing document scrolling is restored on leaving a workspace. Visual viewport resizing keeps the composer within the available viewport. Clear chat requires confirmation and preserves independent records; typing “clear chat” opens the same confirmation. Saved rental-request and provider-listing journeys exercise clear, reload and recovery of the saved record.
+
+The brand strip has eleven local Simple Icons marks and no visible Pause button. Automatic movement, keyboard stop and static reduced-motion rendering are checked. Hover and focus also stop motion. New brand examples do not imply available inventory.
+
+An additional WebKit 27.2 smoke check passed long-conversation scrolling at 2048×828, 768×700, 375×667 and 375×400, clear/reload and restored landing scroll, with no page errors. The document stayed at scrollY 0 with no horizontal overflow and the composer bottom within each viewport. Screenshots were inspected. This is engine-level coverage; a physical iPhone keyboard and Safari browser chrome were not tested.
+
+For this change, all 57 Chromium journeys passed locally, including the full saved-request/listing recovery paths. TypeScript/Vite build, formatting and npm audit passed (zero vulnerabilities). The previous release’s GitHub Actions job failed before tests during browser dependency installation because Ubuntu mirrors could not resolve; it was an infrastructure failure, separate from local application validation.

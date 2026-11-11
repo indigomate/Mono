@@ -1,3 +1,4 @@
+import { VehicleBrandLoop } from "./components/VehicleBrandLoop";
 import { WorkspaceBoundary } from "./components/WorkspaceBoundary";
 import { ProductPreview } from "./components/ProductPreview";
 import { LoadingIndicator } from "./components/ui/LoadingIndicator";
@@ -137,6 +138,7 @@ export default function App() {
           <span>01 / DISCOVER    02 / MATCH    03 / REQUEST TO BOOK</span>
           <span>THE FUTURE OF RENTAL IS CONVERSATIONAL</span>
         </div>
+        <VehicleBrandLoop />
         <div id="experience">
           <ProductPreview
             onStart={(role, text) => {

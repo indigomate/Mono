@@ -1,3 +1,4 @@
+import { ChatDetailCards } from "../components/ui/ChatDetailCards";
 import type { ReactNode } from "react";
 import type { Trip } from "../demo/marketplace";
 import { money } from "../demo/marketplace";
@@ -40,14 +41,8 @@ export function JourneyContext({
           </li>
         ))}
       </ol>
-      <details
-        className="brief-pocket"
-        onClick={(e) => {
-          if ((e.target as HTMLElement).closest("button"))
-            e.currentTarget.open = false;
-        }}
-      >
-        <summary>
+      <section className="brief-pocket">
+        <header>
           <span>
             <b>{service ? serviceLabel(service) : "Your next journey"}</b>
             <small>
@@ -55,54 +50,56 @@ export function JourneyContext({
               {date ? ` · ${date}` : " · Dates to decide"}
             </small>
           </span>
-          <span className="brief-expand">Brief +</span>
-        </summary>
+        </header>
         <div className="brief-pocket-body">
-          <dl>
-            <div>
-              <dt>Route / pickup</dt>
-              <dd>
-                <button onClick={onEdit}>{location || "Add pickup"}</button>
-              </dd>
-            </div>
-            <div>
-              <dt>Dates & time</dt>
-              <dd>
-                <button onClick={onEdit}>
-                  {date
-                    ? `${date}${end ? ` → ${end}` : ""}${fields?.time ? ` · ${fields.time} SAST` : ""}`
-                    : "Add dates"}
-                </button>
-              </dd>
-            </div>
-            <div>
-              <dt>Passengers</dt>
-              <dd>
-                <button onClick={onEdit}>
-                  {passengers || "Add passengers"}
-                </button>
-              </dd>
-            </div>
-            <div>
-              <dt>Budget</dt>
-              <dd>
-                <button onClick={onEdit}>
-                  {budget
-                    ? `${money(budget)}${!fields && trip.budgetMode === "daily" ? " / day" : " total target"}`
-                    : "Set budget"}
-                </button>
-              </dd>
-            </div>
-          </dl>
+          <ChatDetailCards
+            cards={[
+              {
+                id: "route",
+                title: "Route / pickup",
+                value: location || "Add pickup",
+                detail:
+                  "Your planning location. Pickup availability still needs provider confirmation.",
+                onEdit,
+              },
+              {
+                id: "dates",
+                title: "Dates & time",
+                value: date
+                  ? `${date}${end ? ` → ${end}` : ""}${fields?.time ? ` · ${fields.time} SAST` : ""}`
+                  : "Add dates",
+                detail: "Dates are part of your brief, not a reservation.",
+                onEdit,
+              },
+              {
+                id: "passengers",
+                title: "Passengers",
+                value: passengers ? String(passengers) : "Add passengers",
+                detail:
+                  "Passenger count helps narrow suitable vehicles and transport services.",
+                onEdit,
+              },
+              {
+                id: "budget",
+                title: "Budget",
+                value: budget
+                  ? `${money(budget)}${!fields && trip.budgetMode === "daily" ? " / day" : " total target"}`
+                  : "Set budget",
+                detail:
+                  "A target only. Fees, protection and security deposits require a full quote.",
+                onEdit,
+              },
+            ]}
+          />
           <p>
             Planning only. Live sourcing, payment and confirmation have not
             started.
           </p>
-          <button className="text-button" onClick={onEdit}>
+          <button data-context-action className="text-button" onClick={onEdit}>
             Edit this brief in chat →
           </button>
         </div>
-      </details>
+      </section>
     </div>
   );
 }
@@ -120,14 +117,8 @@ export function ProviderContext({
   onAction: (text: string) => void;
 }) {
   return (
-    <details
-      className="brief-pocket provider-pocket"
-      onClick={(e) => {
-        if ((e.target as HTMLElement).closest("button"))
-          e.currentTarget.open = false;
-      }}
-    >
-      <summary>
+    <section className="brief-pocket provider-pocket">
+      <header>
         <span>
           <b>{name || "Build your provider presence"}</b>
           <small>
@@ -135,24 +126,36 @@ export function ProviderContext({
             {unfinished ? " · Draft to finish" : ""}
           </small>
         </span>
-        <span className="brief-expand">Actions +</span>
-      </summary>
+      </header>
       <div className="brief-pocket-body">
         <p>
           Finish your details, review your supply, and prepare for requests.
         </p>
         <div className="provider-context-actions">
           <button
+            data-context-action
             onClick={() =>
               onAction(unfinished ? "Resume my draft" : "Add a listing")
             }
           >
             {unfinished ? "Resume listing draft" : "List a vehicle or service"}
           </button>
-          <button onClick={() => onAction("Business profile")}>
+          <button
+            data-context-action
+            onClick={() => onAction("Business profile")}
+          >
             Complete business details
           </button>
-          <button onClick={() => onAction("Incoming requests")}>
+          <button
+            data-context-action
+            onClick={() => onAction("Provider plans")}
+          >
+            Compare provider plans
+          </button>
+          <button
+            data-context-action
+            onClick={() => onAction("Incoming requests")}
+          >
             Review incoming requests
           </button>
         </div>
@@ -161,7 +164,7 @@ export function ProviderContext({
           connected.
         </small>
       </div>
-    </details>
+    </section>
   );
 }
 export function DecisionHelp({ children }: { children?: ReactNode }) {

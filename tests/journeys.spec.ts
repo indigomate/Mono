@@ -4,6 +4,20 @@ async function say(page: Page, text: string) {
   await page.getByLabel("Message GOMONO", { exact: true }).fill(text);
   await page.getByRole("button", { name: "Send message", exact: true }).click();
 }
+async function chatAction(page: Page, label: string) {
+  await page
+    .getByRole("button", { name: "Conversation actions", exact: true })
+    .click();
+  await page.getByRole("menuitem", { name: label, exact: true }).click();
+}
+async function openContext(page: Page) {
+  const trigger = page.getByRole("button", {
+    name: "Trip details",
+    exact: true,
+  });
+  if ((await trigger.getAttribute("aria-expanded")) !== "true")
+    await trigger.click();
+}
 const tool = (page: Page) => page.locator(".chat-tool");
 test("primary actions open distinct customer and provider conversations with no dashboards", async ({
   page,
@@ -68,6 +82,21 @@ test("self-drive conversation preserves preferences and shows details and estima
     .click();
   await expect(tool(page)).toContainText("Toyota Corolla");
   await expect(tool(page)).toContainText("not submitted");
+  const feedback = page.getByRole("region", {
+    name: "Feedback on this demo step",
+    exact: true,
+  });
+  await expect(feedback).toContainText("no booking confirmed");
+  await feedback
+    .getByRole("button", { name: "This step worked well", exact: true })
+    .click();
+  await feedback
+    .getByLabel("Feedback (optional)", { exact: true })
+    .fill("Easy to review the estimate");
+  await feedback
+    .getByRole("button", { name: "Save feedback on device", exact: true })
+    .click();
+  await expect(feedback).toContainText("hasn’t been sent to GOMONO");
   await expect(page).toHaveURL(/#customer$/);
   await expect(page.getByLabel("Message GOMONO")).toBeVisible();
   await page.reload();
@@ -240,6 +269,23 @@ test("provider can add, edit and preview a listing from the same chat", async ({
     .getByRole("button", { name: "Save listing draft", exact: true })
     .click();
   await expect(tool(page)).toContainText("BMW 320i");
+  const feedback = page.getByRole("region", {
+    name: "Feedback on this demo step",
+    exact: true,
+  });
+  await expect(feedback).toContainText("Listing saved locally · not published");
+  await feedback
+    .getByRole("button", { name: "This step could be better", exact: true })
+    .click();
+  await feedback
+    .getByRole("button", { name: "Close feedback", exact: true })
+    .click();
+  await expect(
+    feedback.getByRole("button", {
+      name: "This step could be better",
+      exact: true,
+    }),
+  ).toBeFocused();
   await page.getByRole("button", { name: "Edit listing", exact: true }).click();
   await expect(page.locator(".turn-user").last()).toContainText(
     "Edit BMW 320i",
@@ -260,9 +306,7 @@ test("provider can add, edit and preview a listing from the same chat", async ({
       exact: true,
     })
     .press("Space");
-  await page
-    .getByRole("button", { name: "Storefront preview", exact: true })
-    .click();
+  await chatAction(page, "Storefront preview");
   await expect(tool(page).locator(".store-item")).toContainText("BMW 320i");
   await expect(tool(page)).toContainText("/ hour");
   await expect(page).toHaveURL(/#provider$/);
@@ -273,9 +317,7 @@ test("provider profile fields and unfinished listing drafts resume without being
   page,
 }) => {
   await page.goto("/#provider");
-  await page
-    .getByRole("button", { name: "Business profile", exact: true })
-    .click();
+  await chatAction(page, "Business profile");
   await page
     .getByLabel("Provider or business name", { exact: true })
     .fill("Cape Executive");
@@ -360,12 +402,12 @@ test("new chat requires confirmation and preserves saved trip context", async ({
 }) => {
   await page.goto("/#customer");
   await say(page, "I need an SUV for 3 days");
-  await page.getByRole("button", { name: "New chat", exact: true }).click();
+  await chatAction(page, "New chat");
   await page
     .getByRole("button", { name: "Keep chatting", exact: true })
     .click();
   await expect(page.locator(".turn-user")).toHaveCount(1);
-  await page.getByRole("button", { name: "New chat", exact: true }).click();
+  await chatAction(page, "New chat");
   await page
     .getByRole("button", { name: "Start new chat", exact: true })
     .click();
@@ -483,7 +525,7 @@ test("calendar selection updates the trip and confirmation dialog preserves focu
     page.getByRole("progressbar", { name: "Brief completeness" }),
   ).toHaveAttribute("aria-valuenow", "3");
   await page.getByRole("button", { name: "Update trip", exact: true }).click();
-  await page.getByRole("button", { name: "New chat", exact: true }).click();
+  await chatAction(page, "New chat");
   await expect(
     page.getByRole("dialog", { name: "Start a fresh conversation" }),
   ).toBeVisible();
@@ -493,7 +535,7 @@ test("calendar selection updates the trip and confirmation dialog preserves focu
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
-    page.getByRole("button", { name: "New chat", exact: true }),
+    page.getByRole("button", { name: "Conversation actions", exact: true }),
   ).toBeFocused();
 });
 
@@ -556,6 +598,7 @@ test("visible welcome and journey follow actual review without claiming payment"
 }) => {
   await page.goto("/#customer");
   await page.getByRole("button", { name: "Drive myself", exact: true }).click();
+  await openContext(page);
   await expect(
     page.locator('.journey-stages [aria-current="step"]'),
   ).toContainText("Options");
@@ -563,6 +606,7 @@ test("visible welcome and journey follow actual review without claiming payment"
     .getByRole("button", { name: "View car", exact: true })
     .first()
     .click();
+  await openContext(page);
   await expect(
     page.locator('.journey-stages [aria-current="step"]'),
   ).toContainText("Review");
@@ -584,10 +628,11 @@ test("visible welcome and journey follow actual review without claiming payment"
   );
   await page.getByLabel("Message GOMONO", { exact: true }).fill("new trip");
   await page.getByRole("button", { name: "Send message", exact: true }).click();
+  await openContext(page);
   await expect(
     page.locator('.journey-stages [aria-current="step"]'),
   ).toContainText("Your brief");
-  await expect(page.locator(".brief-pocket summary")).toContainText(
+  await expect(page.locator(".brief-pocket header")).toContainText(
     "Your next journey",
   );
 });
@@ -601,19 +646,21 @@ test("service brief stays editable above the composer and survives reload", asyn
     .getByRole("button", { name: "Book a chauffeur", exact: true })
     .click();
   await page.getByLabel("Pickup location", { exact: true }).fill("Sea Point");
-  await page.locator(".brief-pocket summary").click();
+  await openContext(page);
   await expect(page.locator(".brief-pocket")).toContainText("Sea Point");
   await page
-    .locator(".brief-pocket-body")
-    .getByRole("button", { name: "Sea Point", exact: true })
+    .locator(".chat-detail-grid")
+    .getByRole("button", { name: /Route \/ pickup/ })
+    .click();
+  await page
+    .getByRole("button", { name: "Edit route / pickup in chat →", exact: true })
     .click();
   await expect(page.getByLabel("Pickup location", { exact: true })).toHaveValue(
     "Sea Point",
   );
   await page.reload();
-  await expect(page.locator(".brief-pocket summary")).toContainText(
-    "Sea Point",
-  );
+  await openContext(page);
+  await expect(page.locator(".brief-pocket header")).toContainText("Sea Point");
   const box = await page
     .getByLabel("Message GOMONO", { exact: true })
     .boundingBox();
@@ -821,7 +868,7 @@ test("provider metrics are present without a command and start-here restores wel
   await expect(tool(page).locator(".mono-empty")).toContainText(
     "No live requests yet.",
   );
-  await page.getByRole("button", { name: "Start here", exact: true }).click();
+  await chatAction(page, "Start here");
   await expect(
     page.getByRole("button", { name: "Business overview", exact: true }),
   ).toBeInViewport();
@@ -1063,4 +1110,312 @@ test("phone QR really decodes to the public demo and updates without duplicate g
   ).toBeTruthy();
   await open.click();
   await expect(panel).toHaveCount(0);
+});
+
+for (const role of ["customer", "provider"] as const) {
+  test(`${role} starts with a quiet closed panel and three green suggestions`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto(`/#${role}`);
+    const toggle = page.getByRole("button", {
+      name: role === "customer" ? "Trip details" : "Business details",
+      exact: true,
+    });
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(page.locator(".chat-context-panel")).toHaveCount(0);
+    await expect(page.locator(".chat-suggestion-box button")).toHaveCount(3);
+    await page
+      .getByLabel("Message GOMONO", { exact: true })
+      .fill("Keep my unsent text");
+    await toggle.click();
+    await expect(page.locator(".chat-context-panel")).toBeVisible();
+    const composer = await page
+      .getByLabel("Message GOMONO", { exact: true })
+      .boundingBox();
+    expect(composer!.y + composer!.height).toBeLessThanOrEqual(667);
+    await page.locator(".chat-context-panel button").first().focus();
+    await page.keyboard.press("Escape");
+    await expect(toggle).toBeFocused();
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(
+      page.getByLabel("Message GOMONO", { exact: true }),
+    ).toHaveValue("Keep my unsent text");
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBeLessThanOrEqual(375);
+  });
+}
+
+test("trip cards expand in place and edit through chat without losing the brief", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(page, "An automatic car in Cape Town for 3 days");
+  await openContext(page);
+  await page
+    .locator(".chat-detail-grid")
+    .getByRole("button", { name: /Budget/ })
+    .click();
+  await expect(
+    page.getByRole("region", { name: "Budget details", exact: true }),
+  ).toContainText("security deposits require a full quote");
+  await expect(page.locator(".chat-context-panel")).toBeVisible();
+  await page
+    .getByRole("button", { name: "Edit budget in chat →", exact: true })
+    .click();
+  await expect(page.locator(".chat-context-panel")).toHaveCount(0);
+  await expect(page.getByLabel("Budget (ZAR)", { exact: true })).toBeVisible();
+});
+
+test("saved car toggle persists quietly and shortlist removal updates the real list", async ({
+  page,
+}) => {
+  await page.goto("/#customer");
+  await say(page, "An affordable automatic car for 3 days");
+  const before = await page.locator(".conversation-turn").count();
+  await page
+    .getByRole("button", { name: "Save Toyota Corolla", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", {
+      name: "Remove Toyota Corolla from saved cars",
+      exact: true,
+    }),
+  ).toHaveAttribute("aria-pressed", "true");
+  expect(await page.locator(".conversation-turn").count()).toBe(before);
+  await page.reload();
+  await chatAction(page, "Saved cars");
+  await expect(tool(page)).toContainText("Toyota Corolla");
+  await expect(
+    tool(page).getByRole("button", { name: "Automatic only" }),
+  ).toHaveCount(0);
+  await page
+    .getByRole("button", {
+      name: "Remove Toyota Corolla from saved cars",
+      exact: true,
+    })
+    .click();
+  await expect(tool(page)).toContainText("No saved cars yet");
+  await page.reload();
+  await expect(tool(page)).toContainText("No saved cars yet");
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("mono-requests") || "[]").length,
+    ),
+  ).toBe(0);
+});
+
+test("blocked browser storage labels shortlisted cars as visit-only", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Storage.prototype.setItem = () => {
+      throw new Error("blocked");
+    };
+  });
+  await page.goto("/#customer");
+  await say(page, "An affordable automatic car for 3 days");
+  await page
+    .getByRole("button", { name: "Save Toyota Corolla", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", {
+      name: "Remove Toyota Corolla from saved cars",
+      exact: true,
+    }),
+  ).toContainText("Saved (visit)");
+  await expect(page.locator("#storage-status")).toContainText("session only");
+});
+
+test("provider profile preview expands saved business details with no invented analytics", async ({
+  page,
+}) => {
+  await page.goto("/#provider");
+  await chatAction(page, "Storefront preview");
+  const card = page.getByRole("region", {
+    name: "Business profile preview",
+    exact: true,
+  });
+  await expect(card.getByRole("button")).toHaveAttribute(
+    "aria-expanded",
+    "false",
+  );
+  await card.getByRole("button").click();
+  await expect(card).toContainText("Cape Town");
+  await expect(card).toContainText("Not connected");
+  await expect(card).not.toContainText(
+    /Heat Score|Estimated ARR|Monthly visits/,
+  );
+  await card.getByRole("button").click();
+  await expect(card.getByRole("button")).toHaveAttribute(
+    "aria-expanded",
+    "false",
+  );
+});
+
+test("provider pricing preview compares true annual totals without subscribing or changing listings", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/#provider");
+  await chatAction(page, "Provider plans");
+  const plans = page.getByRole("region", {
+    name: "Proposed provider plans",
+    exact: true,
+  });
+  await expect(plans).toContainText("12% booking commission");
+  await plans.getByRole("button", { name: /Grow/ }).click();
+  await expect(plans).toContainText("10% booking commission");
+  await plans.getByRole("button", { name: "Annual", exact: true }).click();
+  await expect(plans).toContainText(/4[\s,]990/);
+  await expect(plans).toContainText("/ year upfront");
+  await plans.getByRole("button", { name: /Fleet/ }).click();
+  await expect(plans).toContainText("8% booking commission");
+  await expect(
+    plans.getByRole("button", { name: "Billing coming soon" }),
+  ).toBeDisabled();
+  await expect(
+    page.getByLabel("Message GOMONO", { exact: true }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(375);
+  expect(await page.evaluate(() => localStorage.getItem("mono-listings"))).toBe(
+    "[]",
+  );
+  await page.reload();
+  await expect(plans).toContainText("PLAN PREVIEW");
+});
+
+test("car-brand logo loop uses local SVGs and supports pausing and reduced motion", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const band = page.locator(".vehicle-brand-band");
+  await band.scrollIntoViewIfNeeded();
+  await band
+    .getByRole("button", { name: "Pause brand animation", exact: true })
+    .click();
+  await expect(
+    band.getByRole("button", { name: "Resume brand animation", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(band.locator(".static-vehicle-brands img")).toHaveCount(3);
+  for (const name of ["Audi", "BMW", "Toyota"]) {
+    const image = band.getByRole("img", { name, exact: true });
+    await expect(image).toBeVisible();
+    expect(
+      await image.evaluate(
+        (el: HTMLImageElement) => el.complete && el.naturalWidth > 0,
+      ),
+    ).toBeTruthy();
+  }
+  await expect(band.getByRole("button")).toHaveCount(0);
+  await expect(band).toContainText(
+    "availability requires provider confirmation",
+  );
+});
+
+test("TechText paints the loading preview and retains a static reduced-motion fallback", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const preview = page.locator(".product-preview");
+  await preview
+    .getByRole("button", { name: "Preview loading animation", exact: true })
+    .click();
+  await preview.locator(".animated-loading-wordmark").scrollIntoViewIfNeeded();
+  const canvas = preview.locator('canvas[data-tech-ready="true"]');
+  await expect(canvas).toBeVisible();
+  expect(
+    await canvas.evaluate((el: HTMLCanvasElement) =>
+      el
+        .getContext("2d")!
+        .getImageData(0, 0, el.width, el.height)
+        .data.some((value, i) => i % 4 === 3 && value > 0),
+    ),
+  ).toBeTruthy();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(
+    preview.locator(".animated-loading-wordmark canvas"),
+  ).toHaveCount(0);
+  await expect(preview.locator(".brand-static-wordmark")).toBeVisible();
+});
+
+test("optional animation load failures leave the brand and trip details usable", async ({
+  page,
+}) => {
+  await page.route(/TechText[^/]*\.(?:tsx|js)/, (route) => route.abort());
+  await page.route(/(?:gsap|ScrollTrigger)[^/]*\.js/, (route) => route.abort());
+  await page.goto("/");
+  await page
+    .locator(".product-preview")
+    .getByRole("button", { name: "Preview loading animation", exact: true })
+    .click();
+  await expect(
+    page.locator(".product-preview .brand-static-wordmark"),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Book a Car", exact: true }).click();
+  await openContext(page);
+  await expect(page.locator(".chat-context-panel")).toBeVisible();
+  await page
+    .locator(".chat-detail-grid")
+    .getByRole("button", { name: /Budget/ })
+    .click();
+  await page
+    .getByRole("button", { name: "Edit budget in chat →", exact: true })
+    .click();
+  await expect(page.getByLabel("Budget (ZAR)", { exact: true })).toBeVisible();
+});
+
+test("compact car previews recover failed photos without hiding facts or actions", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.route("**/images.unsplash.com/**", (route) => route.abort());
+  await page.goto("/#customer");
+  await say(page, "An affordable automatic car for 3 days");
+  const card = page.locator(".match-card");
+  await expect(card).toContainText("Photo unavailable");
+  await expect(
+    card.getByRole("button", { name: "View car", exact: true }),
+  ).toBeVisible();
+  await expect(card).toContainText("Automatic");
+  await expect(card).toContainText("seats");
+  const box = await card.boundingBox();
+  expect(box!.height).toBeLessThan(390);
+  await card.getByText("Price details & verification", { exact: true }).click();
+  await expect(card).toContainText("Quote pending");
+  await page.unroute("**/images.unsplash.com/**");
+  await page.route("**/images.unsplash.com/**", (route) =>
+    route.fulfill({
+      contentType: "image/svg+xml",
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="60"><rect width="100" height="60" fill="green"/></svg>',
+    }),
+  );
+  await card.getByRole("button", { name: "Retry photo", exact: true }).click();
+  await expect(card.locator(".vehicle-photo-placeholder")).toHaveCount(0);
+  await card.getByRole("button", { name: "View car", exact: true }).click();
+  await expect(tool(page)).toContainText("Toyota Corolla");
+});
+
+test("disclosure actions support keyboard navigation and Escape restores the trigger", async ({
+  page,
+}) => {
+  await page.goto("/#provider");
+  const trigger = page.getByRole("button", {
+    name: "Conversation actions",
+    exact: true,
+  });
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("menu")).toBeVisible();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await expect(
+    page.getByLabel("Message GOMONO", { exact: true }),
+  ).toBeVisible();
 });

@@ -1,3 +1,5 @@
+import { VehiclePhoto } from "../components/ui/VehiclePhoto";
+import { SaveToggle } from "../components/ui/SaveToggle";
 import { EmptyState } from "../components/ui/ConversationElements";
 import { inventory, type Trip, money, duration } from "../demo/marketplace";
 import { ArrowLeft, ArrowRight } from "@untitledui/icons";
@@ -46,7 +48,13 @@ export function VehicleCards({
   trip,
   onSelect,
   onAutomaticChange,
+  savedIds = [],
+  saveScope = "device",
+  onSaveVehicle,
 }: {
+  savedIds?: number[];
+  saveScope?: "device" | "session";
+  onSaveVehicle?: (id: number, saved: boolean) => void;
   onAutomaticChange?: (selected: boolean) => void;
   ids: number[];
   trip: Trip;
@@ -84,23 +92,27 @@ export function VehicleCards({
             >
               <article className="match-card">
                 <div className="match-image">
-                  <img
-                    src={c.img}
-                    alt={`Illustrative ${c.type}`}
-                    loading="lazy"
-                  />
+                  {onSaveVehicle && (
+                    <div className="vehicle-save-control">
+                      <SaveToggle
+                        name={c.name}
+                        isSaved={savedIds.includes(c.id)}
+                        scope={saveScope}
+                        onChange={(saved) => onSaveVehicle(c.id, saved)}
+                      />
+                    </div>
+                  )}
+                  <VehiclePhoto src={c.img} alt={`Illustrative ${c.type}`} />
                   <span>{c.type}</span>
                   <small className="photo-note">Illustrative image</small>
                 </div>
                 <div className="match-content">
-                  <div className="vehicle-trust">
-                    <span>Sample collection</span>
-                    <span>Verification pending</span>
-                  </div>
                   <h3>{c.name}</h3>
-                  <p className="spec-line">
-                    {c.area} · {c.transmission} · {c.seats} seats
-                  </p>
+                  <div className="vehicle-spec-badges">
+                    <span>{c.transmission}</span>
+                    <span>{c.seats} seats</span>
+                  </div>
+                  <p className="spec-line">{c.area} · Sample collection</p>
                   <div className="match-price">
                     <div>
                       <b>{money(days ? c.price * days : c.price)}</b>
@@ -114,16 +126,23 @@ export function VehicleCards({
                       View car
                     </button>
                   </div>
-                  <dl className="vehicle-cost-preview">
-                    <div>
-                      <dt>Daily base</dt>
-                      <dd>{money(c.price)}</dd>
-                    </div>
-                    <div>
-                      <dt>Fees & protection</dt>
-                      <dd>Quote pending</dd>
-                    </div>
-                  </dl>
+                  <details className="vehicle-price-details">
+                    <summary>Price details & verification</summary>
+                    <dl className="vehicle-cost-preview">
+                      <div>
+                        <dt>Daily base</dt>
+                        <dd>{money(c.price)}</dd>
+                      </div>
+                      <div>
+                        <dt>Fees & protection</dt>
+                        <dd>Quote pending</dd>
+                      </div>
+                    </dl>
+                    <p>
+                      Verification pending. Provider confirmation is required
+                      before booking.
+                    </p>
+                  </details>
                   <p className="availability-note">
                     Availability unverified · Fees not yet quoted
                   </p>

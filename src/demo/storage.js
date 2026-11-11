@@ -1,5 +1,9 @@
 // Demo-only browser persistence. No network or production credentials.
 const sessionValues = new Map();
+const sessionOnlyKeys = new Set();
+export function storageScope(key) {
+  return sessionOnlyKeys.has(key) ? "session" : "device";
+}
 export function read(key) {
   if (sessionValues.has(key)) return sessionValues.get(key);
   try {
@@ -12,9 +16,15 @@ export function write(key, value) {
   sessionValues.set(key, value);
   try {
     localStorage.setItem(key, value);
+    sessionOnlyKeys.delete(key);
+    return true;
   } catch {
-    document.getElementById("storage-status").textContent =
-      "Browser storage is unavailable. Changes last for this session only.";
+    sessionOnlyKeys.add(key);
+    const status = document.getElementById("storage-status");
+    if (status)
+      status.textContent =
+        "Browser storage is unavailable. Changes last for this session only.";
+    return false;
   }
 }
 export function loadArray(key) {

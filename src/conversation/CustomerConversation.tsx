@@ -1,3 +1,5 @@
+import { CompletionFeedback } from "../components/ui/CompletionFeedback";
+import { loadSavedCars, saveCars, savedCarsScope } from "../demo/saved-cars";
 import { isISODate } from "../utils/dates";
 import { EmptyState, InlineCTA } from "../components/ui/ConversationElements";
 import { JourneyContext, DecisionHelp } from "./JourneyContext";
@@ -180,6 +182,8 @@ export function CustomerConversation({
       : initial;
   });
   const [trip, setTrip] = useState(() => loadJourney().trip);
+  const [savedIds, setSavedIds] = useState(loadSavedCars);
+  const [saveScope, setSaveScope] = useState(savedCarsScope);
   const [requests, setRequests] = useState(loadRequests);
   const [inquiries, setInquiries] = useState(loadInquiries);
   const initialService = turns.at(-1)?.tool?.service || "chauffeur";
@@ -241,6 +245,14 @@ export function CustomerConversation({
     );
   }
   function send(text: string) {
+    if (/saved cars|shortlist|saved vehicles/i.test(text)) {
+      respond(
+        text,
+        "Your private shortlist on this browser. Saving a car does not reserve it or contact a provider.",
+        { kind: "shortlist" },
+      );
+      return;
+    }
     if (/\b(provider|add a listing|my fleet|business profile)\b/i.test(text)) {
       respond(
         text,
@@ -428,31 +440,62 @@ export function CustomerConversation({
             }}
           />
         );
+      case "shortlist":
+        if (!savedIds.length)
+          return (
+            <EmptyState title="No saved cars yet" illustration="cloud">
+              Save a sample vehicle to compare it later on this browser.
+              <button
+                className="text-button"
+                onClick={() => send("Find a self-drive vehicle")}
+              >
+                Explore sample cars →
+              </button>
+            </EmptyState>
+          );
+      // Both lists use the same vehicle actions; shortlist never applies the search filter.
       case "vehicles":
         return (
           <>
             <VehicleCards
-              ids={tool.ids || []}
-              trip={trip}
-              onAutomaticChange={(selected) => {
-                const next = {
-                  ...trip,
-                  transmission: selected ? "Automatic" : "",
-                };
-                const found = matches(next);
-                setTrip(next);
-                setTurns((all) =>
-                  all.map((t, i) =>
-                    i === all.length - 1 && t.tool?.kind === "vehicles"
-                      ? {
-                          ...t,
-                          text: reply(next, found.length),
-                          tool: { ...t.tool, ids: found.map((c) => c.id) },
-                        }
-                      : t,
-                  ),
-                );
+              ids={tool.kind === "shortlist" ? savedIds : tool.ids || []}
+              savedIds={savedIds}
+              saveScope={saveScope}
+              onSaveVehicle={(id, saved) => {
+                const next = saved
+                  ? [...new Set([...savedIds, id])]
+                  : savedIds.filter((n) => n !== id);
+                saveCars(next);
+                setSaveScope(savedCarsScope());
+                setSavedIds(next);
               }}
+              trip={trip}
+              onAutomaticChange={
+                tool.kind === "shortlist"
+                  ? undefined
+                  : (selected) => {
+                      const next = {
+                        ...trip,
+                        transmission: selected ? "Automatic" : "",
+                      };
+                      const found = matches(next);
+                      setTrip(next);
+                      setTurns((all) =>
+                        all.map((t, i) =>
+                          i === all.length - 1 && t.tool?.kind === "vehicles"
+                            ? {
+                                ...t,
+                                text: reply(next, found.length),
+                                tool: {
+                                  ...t.tool,
+                                  ids: found.map((c) => c.id),
+                                },
+                              }
+                            : t,
+                        ),
+                      );
+                    }
+              }
               onSelect={(id) =>
                 send(`Show me ${inventory.find((c) => c.id === id)!.name}`)
               }
@@ -496,7 +539,7 @@ export function CustomerConversation({
               respond(
                 "Save my demo rental request",
                 `Your ${r.car} request is saved locally: ${r.start} to ${r.end}, ${money(r.total)} estimated base rental. No provider has been contacted.`,
-                { kind: "requests" },
+                { kind: "requests", feedbackId: String(r.id) },
               );
             }}
           />
@@ -522,7 +565,7 @@ export function CustomerConversation({
               respond(
                 "Save my demo service enquiry",
                 `Your ${serviceLabel(service).toLowerCase()} enquiry is saved on this device. It is not sent or confirmed.`,
-                { kind: "requests" },
+                { kind: "requests", feedbackId: enquiry.id },
               );
             }}
           />
@@ -634,7 +677,18 @@ export function CustomerConversation({
       }}
       turns={turns}
       onSend={send}
-      renderTool={renderTool}
+      renderTool={(tool) => (
+        <>
+          {tool.feedbackId && (
+            <CompletionFeedback
+              key={tool.feedbackId}
+              recordId={tool.feedbackId}
+              role="customer"
+            />
+          )}
+          {renderTool(tool)}
+        </>
+      )}
       onReset={() =>
         setTurns([
           turn(

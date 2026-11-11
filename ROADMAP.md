@@ -45,3 +45,10 @@ The dashboard-first milestone has been superseded. The active customer and provi
 ### Visible journey refinement — delivered
 
 Role-specific conversation welcome, persistent editable brief, honest journey strip, richer vehicle comparison, deposit/protection explanations, contextual terms, request records with continuation actions, and provider launch-readiness cards are implemented. Live availability calendars, verified provider badges, selectable financial quotes, confirmed booking fulfilment cards and real support delivery remain dependent on production services; local presentation does not imply those integrations exist.
+
+## Next conversation and monetization milestones
+
+- Delivered: closed-by-default context, three green suggestions, command disclosure, branded optional motion, compact vehicle preview/photo recovery, local saved cars, saved-provider identity preview and local completion feedback.
+- Proposed, visible but not billable: Starter/Grow/Fleet provider subscriptions with continuing transaction commissions. Validate economics and deliver useful paid tools before activating sales. See PROVIDER_SUBSCRIPTIONS.md.
+- Next UX work: consistent private composer/editor draft autosave, reading-aware scrolling, contextual suggestions and truthful async processing states. See UX_FEEDBACK_AUDIT.md.
+- Production prerequisite: server-authoritative availability/booking, Clerk ownership/RLS, verified Paystack checkout/webhooks/ledger and subscription entitlements, reconciliation, policy and real feedback collection.

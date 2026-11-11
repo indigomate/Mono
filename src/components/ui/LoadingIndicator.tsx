@@ -1,3 +1,4 @@
+import { AnimatedBrandMark } from "./AnimatedBrandMark";
 /** Used for real workspace loading and an explicitly labelled animation preview. */
 export function LoadingIndicator({
   label = "Opening your GOMONO conversation…",
@@ -6,9 +7,7 @@ export function LoadingIndicator({
 }) {
   return (
     <div className="gomono-loader" role="status">
-      <span className="mono-loading-mark" aria-hidden="true">
-        ✧
-      </span>
+      <AnimatedBrandMark />
       <span>{label}</span>
     </div>
   );

@@ -115,3 +115,9 @@ The attachment is documentation for the MIT Untitled UI visual card. Use one eme
 - Users can reach secure payment and real support without losing the conversation context; no payment or agent presence is simulated.
 
 Test the design with both renters and providers using realistic tasks. Measure completion rate, time to first useful option, repeated questions, correction success and recovery from interruption. Product usability must be demonstrated with users rather than claimed from copying another product's appearance.
+
+## Delivered interaction foundation — 2026-11-11
+
+Trip/business context now starts closed and opens from a small header control; it retracts on explicit edit/send and Escape. Three existing role-specific shortcuts sit in the green suggestion box. Start here, new chat, profile, storefront and plan comparison live in an accessible disclosure menu. This is the shell for the proposed contextual suggestion engine; the current three shortcuts are still fixed.
+
+Expandable trip detail tiles, a saved-business profile preview, compact vehicle product cards, an actual local shortlist, photo loading/failure recovery and optional completion feedback are visible in chat. Optional branded animation is lazy-loaded and respects reduced motion. Provider pricing is a proposed non-billable comparison, not an entitlement system. Broader composer/editor autosave, cloud sync, reading-aware scrolling and asynchronous assistant feedback remain planned. See UX_FEEDBACK_AUDIT.md for measured findings and acceptance criteria.

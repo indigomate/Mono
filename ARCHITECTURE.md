@@ -44,3 +44,11 @@ npm run build performs TypeScript checking and Vite bundling. npm test covers wh
 ### Landing-to-conversation entry
 
 App holds an optional transient role/text entry from an explicit landing action or form submission. Workspace passes it only to the matching role; the conversation consumes it using its existing command handler and acknowledges consumption back to App. It is not a new stored transcript format or an authorization boundary. Existing history is appended to, never replaced. Reload resumes the resulting transcript without resubmitting the entry. ProductPreview reads current local listing counts when returning to the landing page and never reads customer records into the provider preview.
+
+## Optional interaction layer
+
+ChatSurface owns only ephemeral panel/menu/composer presentation; typed customer/provider tools still own operations. New `shortlist` and `plans` tool types survive transcript validation. Shortlist IDs use versioned demo storage independently of request records. Storage writes return actual device/session persistence status without breaking existing callers. Provider plan definitions are isolated proposal data; comparison state grants no entitlement.
+
+Completion IDs attach optional feedback to an explicit local save. Feedback is role-scoped browser data, not an API submission. Live booking-completion feedback must originate from an authoritative booking event. Product imagery has isolated loading/error/retry presentation and leaves metadata/actions intact. Animation modules load only on demand and do not gate the business flow.
+
+Production subscription/commission architecture and launch sequencing are specified in PROVIDER_SUBSCRIPTIONS.md. Private draft sync, conversational processing and reading-position improvements remain future work described in UX_FEEDBACK_AUDIT.md.

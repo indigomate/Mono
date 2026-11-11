@@ -1,3 +1,4 @@
+import { ProviderIdentityCard } from "../components/ui/ProviderIdentityCard";
 import { Toggle } from "../components/base/toggle/toggle";
 import {
   BriefProgress,
@@ -358,11 +359,7 @@ export function StorefrontCard({
     <div className="inline-storefront">
       <div className="storefront-hero">
         <span className="eyebrow">LOCAL PREVIEW / NOT PUBLICLY PUBLISHED</span>
-        <h3>{profile.name || "Your rental & transport collection"}</h3>
-        <p>
-          {profile.area} · {profile.services.map(serviceLabel).join(" · ")}
-        </p>
-        {profile.description && <p>{profile.description}</p>}
+        <ProviderIdentityCard profile={profile} />
       </div>
       {visible.length ? (
         visible.map((d) => (

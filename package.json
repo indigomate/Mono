@@ -16,6 +16,7 @@
     "@supabase/supabase-js": "2.119.0",
     "@untitledui/icons": "0.0.23",
     "embla-carousel-react": "8.6.0",
+    "gsap": "3.15.1",
     "qr-code-styling": "1.9.2",
     "react": "^19.0.0",
     "react-aria-components": "1.22.1",

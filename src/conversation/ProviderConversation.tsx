@@ -1,3 +1,5 @@
+import { CompletionFeedback } from "../components/ui/CompletionFeedback";
+import { ProviderPlans } from "./ProviderPlans";
 import { ProviderContext } from "./JourneyContext";
 import {
   EmptyState,
@@ -297,6 +299,18 @@ export function ProviderConversation({
     );
   }
   function send(text: string) {
+    if (
+      /provider plans|subscription plans|compare plans|upgrade|freemium|paid plan|pricing plans/i.test(
+        text,
+      )
+    ) {
+      respond(
+        text,
+        "Here’s the proposed provider membership model. Compare capacity and business tools here; subscriptions and payment collection are not connected.",
+        { kind: "plans" },
+      );
+      return;
+    }
     if (/publish|confirm booking|charge|pay out/i.test(text)) {
       respond(
         text,
@@ -461,7 +475,7 @@ export function ProviderConversation({
               respond(
                 "Save my listing draft",
                 `${next.name} is saved locally. No live listing was published.`,
-                { kind: "fleet" },
+                { kind: "fleet", feedbackId: next.id },
               );
             }}
           />
@@ -551,6 +565,8 @@ export function ProviderConversation({
             </button>
           </div>
         );
+      case "plans":
+        return <ProviderPlans />;
       case "summary":
         return (
           <div className="chat-business-summary">
@@ -674,7 +690,18 @@ export function ProviderConversation({
       }}
       turns={turns}
       onSend={handleSend}
-      renderTool={renderTool}
+      renderTool={(tool) => (
+        <>
+          {tool.feedbackId && (
+            <CompletionFeedback
+              key={tool.feedbackId}
+              recordId={tool.feedbackId}
+              role="provider"
+            />
+          )}
+          {renderTool(tool)}
+        </>
+      )}
       onReset={() =>
         setTurns([
           turn(

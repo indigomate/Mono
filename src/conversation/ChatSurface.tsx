@@ -1,11 +1,19 @@
-import { ArrowUpRight } from "@untitledui/icons";
+import { FamilyConfirmDialog } from "../components/ui/FamilyConfirmDialog";
+import { InlineDisclosureMenu } from "../components/ui/InlineDisclosureMenu";
+import AnimatedContent from "../components/react-bits/AnimatedContent/AnimatedContent";
 import {
-  Modal,
-  ModalOverlay,
-  Dialog,
-  Heading,
-  Button,
-} from "react-aria-components";
+  ArrowUpRight,
+  ArrowUp,
+  Plus,
+  Compass01,
+  Edit03,
+  FileCheck02,
+  Car01,
+  Building02,
+  Inbox01,
+  Eye,
+  Bookmark,
+} from "@untitledui/icons";
 import { FieldInput } from "../components/ui/FieldInput";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { type ChatTool, type Turn, toolTitles } from "./model";
@@ -31,6 +39,15 @@ export function ChatSurface({
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [resetConfirm, setResetConfirm] = useState(false);
+  const [contextOpen, setContextOpen] = useState(false);
+  const contextToggle = useRef<HTMLButtonElement>(null);
+  const contextLabel =
+    role === "customer" ? "Trip details" : "Business details";
+  const contextId = `${role}-context-panel`;
+  function send(text: string) {
+    setContextOpen(false);
+    onSend(text);
+  }
   useEffect(() => {
     if (turns.length === 1) scrollRef.current?.scrollTo({ top: 0 });
     else if (turns.length > 1)
@@ -39,13 +56,7 @@ export function ChatSurface({
   const shortcuts =
     role === "customer"
       ? ["Explore services", "Edit my trip", "My requests"]
-      : [
-          "Add a listing",
-          "My fleet",
-          "Business profile",
-          "Incoming requests",
-          "Storefront preview",
-        ];
+      : ["Add a listing", "My fleet", "Incoming requests"];
   return (
     <section
       className="chat-surface"
@@ -53,7 +64,135 @@ export function ChatSurface({
         role === "customer" ? "Customer conversation" : "Provider conversation"
       }
     >
-      <div className="chat-scroll" ref={scrollRef}>
+      <div className="chat-context-controls">
+        {context && (
+          <button
+            type="button"
+            ref={contextToggle}
+            className="context-toggle"
+            aria-expanded={contextOpen}
+            aria-controls={contextId}
+            onClick={() => setContextOpen((open) => !open)}
+          >
+            {contextLabel}
+            <span aria-hidden="true">{contextOpen ? "−" : "+"}</span>
+          </button>
+        )}
+        <InlineDisclosureMenu
+          items={[
+            {
+              id: "start-here",
+              label: "Start here",
+              icon: <ArrowUp width={18} height={18} />,
+            },
+            {
+              id: "new-chat",
+              label: "New chat",
+              icon: <Plus width={18} height={18} />,
+            },
+            ...(role === "customer"
+              ? [
+                  {
+                    id: "Explore services",
+                    label: "Explore services",
+                    icon: <Compass01 width={18} height={18} />,
+                  },
+                  {
+                    id: "Edit my trip",
+                    label: "Edit my trip",
+                    icon: <Edit03 width={18} height={18} />,
+                  },
+                  {
+                    id: "Saved cars",
+                    label: "Saved cars",
+                    icon: <Bookmark width={18} height={18} />,
+                  },
+                  {
+                    id: "My requests",
+                    label: "My requests",
+                    icon: <FileCheck02 width={18} height={18} />,
+                  },
+                ]
+              : [
+                  {
+                    id: "Add a listing",
+                    label: "Add a listing",
+                    icon: <Plus width={18} height={18} />,
+                  },
+                  {
+                    id: "My fleet",
+                    label: "My fleet",
+                    icon: <Car01 width={18} height={18} />,
+                  },
+                  {
+                    id: "Business profile",
+                    label: "Business profile",
+                    icon: <Building02 width={18} height={18} />,
+                  },
+                  {
+                    id: "Incoming requests",
+                    label: "Incoming requests",
+                    icon: <Inbox01 width={18} height={18} />,
+                  },
+                  {
+                    id: "Provider plans",
+                    label: "Provider plans",
+                    icon: <Building02 width={18} height={18} />,
+                  },
+                  {
+                    id: "Storefront preview",
+                    label: "Storefront preview",
+                    icon: <Eye width={18} height={18} />,
+                  },
+                ]),
+          ]}
+          onAction={(key) => {
+            setContextOpen(false);
+            if (key === "new-chat") setResetConfirm(true);
+            else if (key === "start-here")
+              scrollRef.current?.scrollTo({ top: 0, behavior: "instant" });
+            else send(key);
+          }}
+        />
+      </div>
+      {contextOpen && (
+        <section
+          id={contextId}
+          className="chat-context-panel"
+          aria-label={`${contextLabel} panel`}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              e.preventDefault();
+              setContextOpen(false);
+              contextToggle.current?.focus();
+            }
+          }}
+          onClick={(e) => {
+            if ((e.target as HTMLElement).closest("[data-context-action]")) {
+              setContextOpen(false);
+              contextToggle.current?.focus({ preventScroll: true });
+            }
+          }}
+        >
+          <AnimatedContent
+            className="context-reveal"
+            trigger="mount"
+            distance={8}
+            duration={0.18}
+            initialOpacity={1}
+            delay={0}
+          >
+            {context}
+          </AnimatedContent>
+        </section>
+      )}
+      <div
+        className="chat-scroll"
+        ref={scrollRef}
+        onClick={() => {
+          if (contextOpen) setContextOpen(false);
+        }}
+      >
         <div className="chat-thread">
           <div className="chat-introduction">
             <span className="eyebrow">
@@ -131,7 +270,7 @@ export function ChatSurface({
                 <button
                   key={label}
                   aria-label={label}
-                  onClick={() => onSend(command)}
+                  onClick={() => send(command)}
                 >
                   <span aria-hidden="true">
                     <ArrowUpRight width={16} height={16} />
@@ -181,7 +320,10 @@ export function ChatSurface({
                         </span>
                         <button
                           className="text-button"
-                          onClick={() => onReopen(message.tool!)}
+                          onClick={() => {
+                            setContextOpen(false);
+                            onReopen(message.tool!);
+                          }}
                         >
                           Reopen in chat →
                         </button>
@@ -195,63 +337,36 @@ export function ChatSurface({
       </div>
       <div className="composer-dock">
         <div className="composer-inner">
-          {context}
-          <div className="chat-shortcuts" aria-label="Conversation shortcuts">
-            <button
-              onClick={() =>
-                scrollRef.current?.scrollTo({ top: 0, behavior: "instant" })
-              }
+          <div className="chat-suggestion-box">
+            <div
+              className="chat-shortcuts"
+              aria-label="Conversation suggestions"
             >
-              Start here
-            </button>
-            {shortcuts.map((s) => (
-              <button key={s} onClick={() => onSend(s)}>
-                {s}
-              </button>
-            ))}
-            <button
-              className="new-chat-action"
-              onClick={() => setResetConfirm(true)}
-            >
-              New chat
-            </button>
+              {shortcuts.map((s) => (
+                <button key={s} type="button" onClick={() => send(s)}>
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
-          <ModalOverlay
+          <FamilyConfirmDialog
             isOpen={resetConfirm}
             onOpenChange={setResetConfirm}
-            isDismissable
-            className="mono-modal-overlay"
-          >
-            <Modal className="mono-modal">
-              <Dialog aria-label="Start a fresh conversation">
-                <Heading slot="title">Start a fresh conversation?</Heading>
-                <div className="reset-confirm">
-                  <span>
-                    Start a fresh conversation? Saved requests, provider records
-                    and trip preferences will stay.
-                  </span>
-                  <button
-                    onClick={() => {
-                      onReset();
-                      setResetConfirm(false);
-                      inputRef.current?.focus();
-                    }}
-                  >
-                    Start new chat
-                  </button>
-                  <Button autoFocus onPress={() => setResetConfirm(false)}>
-                    Keep chatting
-                  </Button>
-                </div>
-              </Dialog>
-            </Modal>
-          </ModalOverlay>
+            title="Start a fresh conversation?"
+            description="Start a fresh conversation? Saved requests, provider records and trip preferences will stay."
+            confirmLabel="Start new chat"
+            cancelLabel="Keep chatting"
+            onConfirm={() => {
+              onReset();
+              inputRef.current?.focus();
+            }}
+          />
           <form
             className="chat-composer"
             onSubmit={(e) => {
               e.preventDefault();
               if (input.trim()) {
-                onSend(input.trim());
+                send(input.trim());
                 setInput("");
               }
             }}

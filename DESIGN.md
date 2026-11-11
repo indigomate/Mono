@@ -57,3 +57,11 @@ The landing experience section is an interactive entry into the product, not a s
 ### Contextual shared assets
 
 Small cloud/document illustrations replace the generic star in empty results and histories. Utility buttons keep carousel and close controls compact, with accessible names, tooltips and touch targets. Preference switches represent real local state changes, including automatic transmission and storefront-preview inclusion. Vehicle comparisons use the upstream manual Embla carousel. A single optional QR utility in the landing preview opens the public experience on a phone, with its real URL and device-local-data limitation stated beside it. QR sharing is not placed in the main conversation or used as an invented booking/payment credential. The broader fluid-chat redesign remains a proposal in CONVERSATION_EXPERIENCE_PLAN.md.
+
+## Progressive conversation controls
+
+Start with chat and a green three-suggestion area. Put context behind Trip details / Business details, closed initially, with a bounded scroll area that leaves the composer available. Put low-frequency commands in Conversation actions. Expanded trip tiles show current values and return editing to chat. Provider identity uses a collapsed card in storefront preview, with saved fields and explicit local/unverified status rather than decorative analytics.
+
+Vehicle product cards use a fixed image frame, concise specification badges, a price with its basis, one View car action and an independent saved-car overlay. Extra costs/verification expand on demand. A real image request controls its placeholder/error/retry state. Save success follows persistence, with a visit-only label when browser storage fails.
+
+Use small, purposeful entrances; no decorative delays. TechText belongs in workspace loading and its labelled preview; LogoLoop belongs in the landing sample-brand band with Pause and reduced-motion static marks. Confirmation, pricing and completion feedback share rounded emerald surfaces. Financial activation is unavailable until the real services exist. See UX_FEEDBACK_AUDIT.md and PROVIDER_SUBSCRIPTIONS.md.

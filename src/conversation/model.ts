@@ -3,6 +3,7 @@ import { isService, type ServiceType } from "../demo/services";
 export type ToolKind =
   | "services"
   | "trip"
+  | "shortlist"
   | "vehicles"
   | "vehicle"
   | "enquiry"
@@ -12,9 +13,11 @@ export type ToolKind =
   | "fleet"
   | "inbox"
   | "storefront"
+  | "plans"
   | "summary";
 export type ChatTool = {
   kind: ToolKind;
+  feedbackId?: string;
   stage?: "details" | "quote";
   service?: Exclude<ServiceType, "self-drive">;
   vehicleId?: number;
@@ -29,6 +32,7 @@ export type Turn = {
 const kinds: ToolKind[] = [
   "services",
   "trip",
+  "shortlist",
   "vehicles",
   "vehicle",
   "enquiry",
@@ -38,6 +42,7 @@ const kinds: ToolKind[] = [
   "fleet",
   "inbox",
   "storefront",
+  "plans",
   "summary",
 ];
 export function turn(role: Turn["role"], text: string, tool?: ChatTool): Turn {
@@ -62,6 +67,10 @@ export function loadTurns(role: "customer" | "provider"): Turn[] {
             raw && kinds.includes(raw.kind)
               ? {
                   kind: raw.kind,
+                  feedbackId:
+                    typeof raw.feedbackId === "string"
+                      ? raw.feedbackId.slice(0, 100)
+                      : undefined,
                   stage:
                     raw.stage === "quote"
                       ? "quote"
@@ -140,6 +149,7 @@ export function detectService(text: string): ServiceType | null {
 export const toolTitles: Record<ToolKind, string> = {
   services: "Service choices",
   trip: "Trip details",
+  shortlist: "Saved cars",
   vehicles: "Vehicle matches",
   vehicle: "Vehicle review",
   enquiry: "Service brief",
@@ -149,5 +159,6 @@ export const toolTitles: Record<ToolKind, string> = {
   fleet: "Vehicles & services",
   inbox: "Provider inbox",
   storefront: "Storefront preview",
+  plans: "Provider plans",
   summary: "Business summary",
 };

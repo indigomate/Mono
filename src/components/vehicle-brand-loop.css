@@ -1,0 +1,86 @@
+.vehicle-brand-band {
+  background: #0b2920;
+  color: #dcebd4;
+  padding: 36px 6% 26px;
+  overflow: hidden;
+}
+.vehicle-brand-band > header {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1100px;
+  margin: auto;
+}
+.vehicle-brand-band header p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #a9c4a8;
+  margin: 10px 0 0;
+}
+.vehicle-brand-band header .eyebrow {
+  font-size: 10px;
+}
+.vehicle-brand-band button {
+  border: 1px solid #769479;
+  border-radius: 20px;
+  padding: 9px 16px;
+  min-height: 40px;
+  background: transparent;
+  color: #dcebd4;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.vehicle-brand-loop {
+  min-height: 100px;
+  max-width: 1100px;
+  margin: 24px auto 12px;
+}
+.vehicle-brand-loop img {
+  filter: invert(1);
+}
+.vehicle-brand-loop .logoloop__label {
+  font:
+    500 11px/1.5 Manrope,
+    sans-serif;
+  letter-spacing: 1px;
+  color: #bed5b6;
+}
+.vehicle-brand-band .brand-availability-note {
+  max-width: 1100px;
+  margin: auto;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #9eb99e;
+}
+.static-vehicle-brands {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+.static-vehicle-brands li {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: #bed5b6;
+}
+@media (max-width: 600px) {
+  .vehicle-brand-band {
+    padding: 28px 5% 22px;
+  }
+  .vehicle-brand-loop {
+    min-height: 92px;
+    margin-top: 20px;
+  }
+  .vehicle-brand-band header p {
+    font-size: 11px;
+  }
+  .static-vehicle-brands {
+    gap: 20px;
+  }
+}

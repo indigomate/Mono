@@ -28,6 +28,7 @@ export type Turn = {
   role: "user" | "assistant";
   text: string;
   tool?: ChatTool;
+  toolArchived?: boolean;
 };
 const kinds: ToolKind[] = [
   "services",
@@ -91,9 +92,15 @@ export function loadTurns(role: "customer" | "provider"): Turn[] {
                     : undefined,
                 }
               : undefined;
-          return { id: t.id, role: t.role, text: t.text.slice(0, 5000), tool };
+          return {
+            id: t.id,
+            role: t.role,
+            text: t.text.slice(0, 5000),
+            tool,
+            toolArchived: t.toolArchived === true,
+          };
         });
-      if (rows.length) return rows;
+      if (rows.length || v.length === 0) return rows;
     }
   } catch {
     /* Recover invalid browser transcripts. */
@@ -162,3 +169,17 @@ export const toolTitles: Record<ToolKind, string> = {
   plans: "Provider plans",
   summary: "Business summary",
 };
+
+/** Removing a message must never reactivate an earlier, superseded form. */
+export function deleteTurn(turns: Turn[], id: string): Turn[] {
+  const previousLast = turns.at(-1)?.id;
+  return turns
+    .filter((message) => message.id !== id)
+    .map((message, index, remaining) =>
+      index === remaining.length - 1 &&
+      message.id !== previousLast &&
+      message.tool
+        ? { ...message, toolArchived: true }
+        : message,
+    );
+}

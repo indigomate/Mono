@@ -79,3 +79,7 @@ The landing page keeps its cinematic hero, the two primary role actions and the 
 Both workspaces use one header with a home logo, active role and workspace switch. Keep two welcome choices, three green suggestions and the composer. Secondary operations belong in Conversation actions; business readiness belongs behind an explicit disclosure. The welcome disappears when a user sends a message, and Start here can reveal it again. A provider business summary is requested explicitly rather than injected into first entry. The existing emerald/ivory tokens, vehicle cards, actual loading state and accessible form components remain.
 
 See MINIMALISM_AUDIT.md for the removal/preservation mapping and 12ui generation limitation.
+
+## Conversation feedback
+
+Keep delete controls small but accessible on every message, with a 44px touch target on coarse pointers. Confirmation identifies the message and explains that business records remain. New replies use a three-dot preparation indicator, followed by readable text and then the relevant inline card. Stagger only small sets of vehicle/service options; do not trickle individual form fields into view. Indicators stop when ready and must not imply live search, AI streaming or account synchronization. Respect reduced motion and never replay the entire stored transcript as fresh output.

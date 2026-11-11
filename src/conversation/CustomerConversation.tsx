@@ -35,7 +35,13 @@ import {
 } from "../workspace/ServiceEnquiry";
 import { ChatSurface } from "./ChatSurface";
 import { VehicleCards } from "./VehicleCards";
-import { loadTurns, turn, detectService, type ChatTool } from "./model";
+import {
+  deleteTurn,
+  loadTurns,
+  turn,
+  detectService,
+  type ChatTool,
+} from "./model";
 type EnquiryService = Exclude<ServiceType, "self-drive">;
 function routeTool(view: CustomerView): ChatTool | undefined {
   return view === "bookings"
@@ -192,7 +198,7 @@ export function CustomerConversation({
     fields: EnquiryFields;
   }>(() => ({ service: initialService, fields: loadFields(initialService) }));
   const previousView = useRef(view);
-  const active = turns.at(-1)?.tool;
+  const active = turns.at(-1)?.toolArchived ? undefined : turns.at(-1)?.tool;
   useEffect(() => saveDemo("mono-customer-chat-v1", turns), [turns]);
   useEffect(
     () =>
@@ -689,6 +695,11 @@ export function CustomerConversation({
           {renderTool(tool)}
         </>
       )}
+      onDelete={(id) => {
+        const remaining = deleteTurn(turns, id);
+        saveDemo("mono-customer-chat-v1", remaining);
+        setTurns(remaining);
+      }}
       onReset={() => {
         const fresh = [
           turn(

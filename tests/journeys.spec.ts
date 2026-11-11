@@ -3,6 +3,9 @@ import { test, expect, type Page } from "@playwright/test";
 async function say(page: Page, text: string) {
   await page.getByLabel("Message GOMONO", { exact: true }).fill(text);
   await page.getByRole("button", { name: "Send message", exact: true }).click();
+  await expect(
+    page.getByRole("status", { name: "Preparing reply", exact: true }),
+  ).toHaveCount(0);
 }
 async function chatAction(page: Page, label: string) {
   await page

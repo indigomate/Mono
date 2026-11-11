@@ -1,3 +1,5 @@
+import "./message-experience.css";
+import { useReplySequence } from "./useReplySequence";
 import { FamilyConfirmDialog } from "../components/ui/FamilyConfirmDialog";
 import { InlineDisclosureMenu } from "../components/ui/InlineDisclosureMenu";
 import AnimatedContent from "../components/react-bits/AnimatedContent/AnimatedContent";
@@ -23,6 +25,7 @@ export function ChatSurface({
   turns,
   onSend,
   onReset,
+  onDelete,
   renderTool,
   onReopen,
   context,
@@ -32,9 +35,16 @@ export function ChatSurface({
   turns: Turn[];
   onSend: (text: string) => void;
   onReset: () => void;
+  onDelete: (id: string) => void;
   renderTool: (tool: ChatTool) => ReactNode;
   onReopen: (tool: ChatTool) => void;
 }) {
+  const sequence = useReplySequence(turns);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [notice, setNotice] = useState("");
+  const pendingRef = useRef<HTMLDivElement>(null);
+  const restored = useRef(turns.length > 1);
+  const displayed = turns.filter((turn) => sequence.visible.has(turn.id));
   const [input, setInput] = useState("");
   const [welcomeOpen, setWelcomeOpen] = useState(turns.length === 1);
   const last = useRef<HTMLElement>(null);
@@ -81,13 +91,16 @@ export function ChatSurface({
       setResetConfirm(true);
       return;
     }
+    setNotice("");
     setWelcomeOpen(false);
     requestFollow();
     onSend(text);
   }
   useLayoutEffect(() => {
     const scroll = scrollRef.current;
-    const message = last.current;
+    const message = sequence.pending
+      ? pendingRef.current || last.current
+      : last.current;
     if (!scroll || !message) return;
     const shouldFollow =
       !initialized.current ||
@@ -108,7 +121,7 @@ export function ChatSurface({
     }
     followRequested.current = false;
     updateReadingPosition();
-  }, [latestId, latestUserId]);
+  }, [latestId, latestUserId, sequence.frame, sequence.pending]);
   const shortcuts =
     role === "customer"
       ? ["Explore services", "Edit my trip", "My requests"]
@@ -301,11 +314,17 @@ export function ChatSurface({
             role="log"
             aria-label="Conversation messages"
           >
-            {turns.map((message, index) => (
+            {restored.current && displayed.length > 0 && (
+              <p className="chat-history-note">
+                Previous conversation · Saved on this device
+              </p>
+            )}
+            {displayed.map((message) => (
               <article
                 key={message.id}
-                ref={index === turns.length - 1 ? last : undefined}
-                className={`conversation-turn turn-${message.role}`}
+                ref={message.id === displayed.at(-1)?.id ? last : undefined}
+                className={`conversation-turn turn-${message.role}${sequence.fresh.has(message.id) ? " turn-reveal" : ""}`}
+                data-message-id={message.id}
               >
                 <div className="turn-marker" aria-hidden="true">
                   {message.role === "assistant" ? "✧" : "You"}
@@ -318,11 +337,22 @@ export function ChatSurface({
                         ? "YOU"
                         : "YOU / PROVIDER"}
                   </span>
+                  <button
+                    className="message-delete"
+                    type="button"
+                    aria-label={`Delete ${message.role === "user" ? "your" : "GOMONO"} message`}
+                    title="Delete this message"
+                    onClick={() => setDeleteId(message.id)}
+                  >
+                    <Trash01 width={15} height={15} aria-hidden="true" />
+                  </button>
                   <p className="turn-text">{message.text}</p>
                   {message.tool &&
-                    (index === turns.length - 1 ? (
+                    sequence.tools.has(message.id) &&
+                    (message.id === turns.at(-1)?.id &&
+                    !message.toolArchived ? (
                       <section
-                        className="chat-tool"
+                        className={`chat-tool${sequence.fresh.has(message.id) ? " tool-reveal" : ""}`}
                         aria-label={toolTitles[message.tool.kind]}
                         key={message.id}
                       >
@@ -348,6 +378,30 @@ export function ChatSurface({
                 </div>
               </article>
             ))}
+            {sequence.pending && (
+              <div
+                ref={pendingRef}
+                className="chat-reply-pending"
+                role="status"
+                aria-label="Preparing reply"
+              >
+                <span className="reply-dots" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span>
+                  Preparing reply
+                  <span className="sr-only"> · Demo response presentation</span>
+                </span>
+              </div>
+            )}
+            {turns.length === 0 && (
+              <p className="chat-history-note">
+                No messages. Start a new conversation below. Your saved records
+                are still available.
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -378,12 +432,37 @@ export function ChatSurface({
               aria-label="Conversation suggestions"
             >
               {shortcuts.map((s) => (
-                <button key={s} type="button" onClick={() => send(s)}>
+                <button
+                  key={s}
+                  type="button"
+                  disabled={sequence.pending}
+                  onClick={() => send(s)}
+                >
                   {s}
                 </button>
               ))}
             </div>
           </div>
+          <FamilyConfirmDialog
+            isOpen={Boolean(deleteId)}
+            onOpenChange={(open) => {
+              if (!open) setDeleteId(null);
+            }}
+            title="Delete this message?"
+            description={`“${turns.find((message) => message.id === deleteId)?.text.slice(0, 100) || "This message"}” — Only this message and its attached card will be removed. Saved requests, listings, preferences and unfinished drafts stay on this device.`}
+            confirmLabel="Delete message"
+            cancelLabel="Keep message"
+            icon={<Trash01 width={22} height={22} />}
+            onConfirm={() => {
+              if (turns.length === 1) restored.current = false;
+              if (deleteId) onDelete(deleteId);
+              setDeleteId(null);
+              setNotice("Message deleted. Saved records kept.");
+              requestAnimationFrame(() =>
+                inputRef.current?.focus({ preventScroll: true }),
+              );
+            }}
+          />
           <FamilyConfirmDialog
             isOpen={resetConfirm}
             onOpenChange={setResetConfirm}
@@ -398,6 +477,8 @@ export function ChatSurface({
             onConfirm={() => {
               setInput("");
               setContextOpen(false);
+              restored.current = false;
+              setWelcomeOpen(true);
               onReset();
               inputRef.current?.focus({ preventScroll: true });
             }}
@@ -406,7 +487,7 @@ export function ChatSurface({
             className="chat-composer"
             onSubmit={(e) => {
               e.preventDefault();
-              if (input.trim()) {
+              if (input.trim() && !sequence.pending) {
                 send(input.trim());
                 setInput("");
               }
@@ -425,10 +506,16 @@ export function ChatSurface({
                   : "“Add my BMW for self-drive and chauffeur trips…”"
               }
             />
-            <button aria-label="Send message" disabled={!input.trim()}>
+            <button
+              aria-label="Send message"
+              disabled={!input.trim() || sequence.pending}
+            >
               ↑
             </button>
           </form>
+          <span className="sr-only" role="status">
+            {notice}
+          </span>
           <p className="chat-footnote">
             Guided demo · Saved on this device · No live availability, payments
             or provider delivery

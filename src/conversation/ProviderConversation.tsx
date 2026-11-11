@@ -22,7 +22,7 @@ import {
   FleetCards,
   StorefrontCard,
 } from "./ProviderCards";
-import { loadTurns, turn, type ChatTool } from "./model";
+import { deleteTurn, loadTurns, turn, type ChatTool } from "./model";
 function initialTool(view: ProviderView): ChatTool | undefined {
   return (
     {
@@ -260,7 +260,7 @@ export function ProviderConversation({
         ]
       : history;
   });
-  const active = turns.at(-1)?.tool;
+  const active = turns.at(-1)?.toolArchived ? undefined : turns.at(-1)?.tool;
   const previousView = useRef(view);
   useEffect(() => saveDemo("mono-provider-chat-v1", turns), [turns]);
   useEffect(() => saveDemo("mono-provider-profile-v1", profile), [profile]);
@@ -710,6 +710,11 @@ export function ProviderConversation({
           {renderTool(tool)}
         </>
       )}
+      onDelete={(id) => {
+        const remaining = deleteTurn(turns, id);
+        saveDemo("mono-provider-chat-v1", remaining);
+        setTurns(remaining);
+      }}
       onReset={() => {
         const fresh = [
           turn(

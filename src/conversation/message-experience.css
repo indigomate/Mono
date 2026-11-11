@@ -1,0 +1,168 @@
+.app-root .turn-body {
+  position: relative;
+  min-width: 0;
+}
+.app-root .message-delete {
+  position: absolute;
+  right: 0;
+  top: -6px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #60796b;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+.app-root .turn-role {
+  padding-right: 40px;
+}
+.app-root .message-delete:hover,
+.app-root .message-delete:focus-visible {
+  opacity: 1;
+  background: #e4ede5;
+  color: #174d39;
+}
+.app-root .message-delete:focus-visible {
+  outline: 2px solid #178466;
+  outline-offset: 2px;
+}
+.app-root .chat-history-note {
+  font-size: 11px;
+  color: #60796b;
+  margin: 0 0 24px;
+  line-height: 1.7;
+}
+.app-root .chat-reply-pending {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  margin: 12px 0 24px 48px;
+  width: fit-content;
+  border-radius: 16px;
+  background: #eaf3e8;
+  color: #3c6652;
+  font-size: 12px;
+  min-height: 48px;
+}
+.reply-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.reply-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #178466;
+  animation: reply-dot 900ms ease-in-out infinite;
+}
+.reply-dots i:nth-child(2) {
+  animation-delay: 120ms;
+}
+.reply-dots i:nth-child(3) {
+  animation-delay: 240ms;
+}
+.app-root .turn-reveal {
+  animation: reply-reveal 180ms ease-out both;
+}
+.app-root .tool-reveal {
+  animation: reply-reveal 180ms ease-out both;
+}
+.app-root .chat-shortcuts button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+@keyframes reply-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+@keyframes reply-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-root .turn-reveal,
+  .app-root .tool-reveal,
+  .reply-dots i {
+    animation: none;
+  }
+}
+@media (pointer: coarse) {
+  .app-root .message-delete {
+    width: 44px;
+    height: 44px;
+    top: -12px;
+    opacity: 0.8;
+  }
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button) {
+  animation: reply-reveal 180ms ease-out both;
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button):nth-child(2) {
+  animation-delay: 40ms;
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button):nth-child(3) {
+  animation-delay: 80ms;
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button):nth-child(4) {
+  animation-delay: 120ms;
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button):nth-child(5) {
+  animation-delay: 160ms;
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button):nth-child(6) {
+  animation-delay: 200ms;
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button):nth-child(7) {
+  animation-delay: 240ms;
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button):nth-child(8) {
+  animation-delay: 280ms;
+}
+.app-root
+  .tool-reveal
+  :is(.vehicle-carousel-item, .chat-service-options > button):focus-within {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-root
+    .tool-reveal
+    :is(.vehicle-carousel-item, .chat-service-options > button) {
+    animation: none;
+  }
+}

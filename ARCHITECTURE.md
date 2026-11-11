@@ -66,3 +66,9 @@ Clear chat confirms before replacing only the active role transcript. Domain rec
 ## Minimal entry and shell
 
 `ProductPreview` now provides only role selection, typed conversation handoff and optional QR entry; its historical name remains to avoid unnecessary routing churn. It no longer loads sample inventory, progress previews or local provider metrics. `WorkspaceShell` exposes one header rather than duplicated sidebar/mobile navigation. `ChatSurface` owns a welcome disclosure independent of business records. Business overview remains a typed provider tool available through chat and its action menu. A legacy single welcome turn with an automatically injected summary is normalized without changing its text or domain records. Multi-turn history is retained.
+
+## Per-message controls
+
+`ChatSurface` exposes a message deletion callback for each role, with a shared confirmation modal, excerpt and focus restoration. `deleteTurn` preserves transcript order and marks newly exposed older tools as archived. Both role containers save only their own revised transcript; domain state is untouched. The transcript loader recognizes an empty saved array as intentional.
+
+`useReplySequence` owns cancellable text/tool reveal timers and reduced-motion behavior. It never delays domain saves or invents service progress. Existing loaded history bypasses replay; new output uses a brief preparation indicator and staged card reveal. Reading-aware container scrolling follows each reveal without moving the outer page.

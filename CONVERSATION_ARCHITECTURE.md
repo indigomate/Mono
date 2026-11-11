@@ -74,3 +74,9 @@ The current release does not add a live LLM, booking engine, payment flow or pro
 ## Persistence and recovery
 
 Customer/provider transcripts use separate versioned keys and retain up to 60 turns. Existing trip messages, self-drive requests and provider listings are preserved. Structured service drafts, listing drafts, profile drafts and estimate dates persist independently of message text. Earlier forms become inactive when a new step opens; reopening creates a fresh interactive tool in the same thread. New chat requires confirmation and clears only that transcript, not business records or saved requests.
+
+## Message deletion and reply presentation
+
+Each customer/provider transcript message has a confirmation-based delete action. Deleting a message removes its text and attached conversation card only. Domain requests, service enquiries, shortlist, profile, listings and unfinished drafts remain separate. An explicitly empty transcript is authoritative and must not fall back to legacy history. Removing the latest turn archives any older form that becomes the new tail; it can be reopened explicitly but must not become active automatically. `toolArchived` is a backward-compatible persisted transcript flag, not a domain permission.
+
+`useReplySequence` is a presentation layer: user text appears immediately, new assistant text follows a brief preparing indicator, and its inline tool appears next. Vehicle/service choices have short staggered entrances. Demo state and records persist independently of those timers. The status is preparation feedback, not a claim of live AI generation, inventory lookup or payment activity. Stored history is rendered immediately and labelled as a previous conversation. Clear, delete, role changes and unmount cancel obsolete timers. Reduced motion retains the sequence with shorter pacing and no moving animations. The composer stays available for drafting while Send and suggestions wait for the current reveal to finish.

@@ -14,7 +14,7 @@ export const cars = [
     type: "Premium sedan",
     price: 1550,
     area: "Sea Point",
-    img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=700&q=80",
+    img: "/design/bmw-3-series.webp",
     tags: ["luxury", "sedan", "business", "wedding", "bmw"],
   },
   {
@@ -23,7 +23,7 @@ export const cars = [
     type: "Economy sedan",
     price: 650,
     area: "Claremont",
-    img: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=700&q=80",
+    img: "/design/toyota-corolla.webp",
     tags: ["affordable", "economy", "budget", "sedan"],
   },
   {

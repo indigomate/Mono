@@ -1,0 +1,22 @@
+/* Proposed tokens from recurring target deltas. Review names in the owning design system. */
+/* Font: Inter (weights 500, 600, 700, 800, 900). Declared as a token only — this patch loads nothing over the network. Load the family the way this repository already loads fonts: self-host it, or add it to the existing loader. */
+
+:root {
+  --font-inter: "Inter", sans-serif;
+  /* selectors: #landing>header>nav>a:nth-child(1), #landing>header>nav>a:nth-child(2), #landing>header>nav>a:nth-child(3), #landing>section:nth-child(2)>div>div:nth-child(1), .experience-link, .hero-dot */
+  --ui-text-text-align-left: left;
+  /* selectors: #landing>header>nav>a:nth-child(1), #landing>header>nav>a:nth-child(2), #landing>header>nav>a:nth-child(3), #landing>section:nth-child(2)>div>div:nth-child(1), .experience-link, .hero-dot */
+  --ui-text-font-family-inter: var(--font-inter);
+  /* selectors: .outline, .primary, .secondary */
+  --ui-button-font-family-inter: var(--font-inter);
+  /* selectors: #landing>header>nav>a:nth-child(1), #landing>header>nav>a:nth-child(2), #landing>header>nav>a:nth-child(3) */
+  --ui-text-font-size-12: 12px;
+  /* selectors: #landing>header>nav>a:nth-child(1), #landing>header>nav>a:nth-child(2), #landing>header>nav>a:nth-child(3) */
+  --ui-text-font-weight-500: 500;
+  /* selectors: .outline, .primary, .secondary */
+  --ui-button-text-align-left: left;
+  /* selectors: .primary, .secondary */
+  --ui-button-border-radius-28px: 28px;
+  /* selectors: .primary, .secondary */
+  --ui-button-font-size-15: 15px;
+}

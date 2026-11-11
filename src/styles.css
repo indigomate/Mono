@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap");
 :root {
   font-family: "DM Sans", sans-serif;
   color: #171719;
@@ -584,16 +584,16 @@ a {
 }
 
 .landing {
-  background: #03130f !important;
+  background: #03130f;
 }
 .nav {
-  background: #03130f !important;
+  background: #03130f;
 }
 .hero {
-  min-height: 760px !important;
+  min-height: 760px;
   background:
     radial-gradient(ellipse at 0% 45%, #087e67 0%, transparent 55%),
-    radial-gradient(ellipse at 83% 100%, #00a184 0%, transparent 55%), #03130f !important;
+    radial-gradient(ellipse at 83% 100%, #00a184 0%, transparent 55%), #03130f;
   isolation: isolate;
 }
 .hero:before {
@@ -611,39 +611,39 @@ a {
   box-shadow: 0 30px 100px #0006;
 }
 .hero:after {
-  background: none !important;
+  background: none;
 }
 .hero-content {
   max-width: 1200px !important;
 }
 .hero h1 {
   font-family: Manrope, sans-serif;
-  font-size: clamp(70px, 11vw, 160px) !important;
-  line-height: 0.9 !important;
-  letter-spacing: -0.085em !important;
+  font-size: clamp(70px, 11vw, 160px);
+  line-height: 0.9;
+  letter-spacing: -0.085em;
   max-width: 1150px;
   text-transform: uppercase;
   text-shadow: 0 5px 25px #0003;
 }
 .hero p {
-  color: #f0fff7 !important;
-  max-width: 360px !important;
+  color: #f0fff7;
+  max-width: 360px;
 }
 .primary {
-  background: #00a98a !important;
-  color: #fff !important;
+  background: #00a98a;
+  color: #fff;
 }
 .secondary {
-  border-color: #f1fff7 !important;
+  border-color: #f1fff7;
 }
 .eyebrow {
-  color: #c4ffdf !important;
+  color: #c4ffdf;
 }
 @media (max-width: 700px) {
   .hero {
-    min-height: 740px !important;
-    align-items: flex-end !important;
-    padding: 80px 6% 80px !important;
+    min-height: 740px;
+    align-items: flex-end;
+    padding: 80px 6% 80px;
   }
   .hero:before {
     width: 76%;
@@ -653,11 +653,11 @@ a {
     border-radius: 24px;
   }
   .hero h1 {
-    font-size: clamp(58px, 13vw, 100px) !important;
-    letter-spacing: -0.075em !important;
+    font-size: clamp(58px, 13vw, 100px);
+    letter-spacing: -0.075em;
   }
   .hero p {
-    font-size: 14px !important;
+    font-size: 14px;
   }
 }
 :root {
@@ -678,7 +678,7 @@ input:focus-visible {
   outline-offset: 4px;
 }
 .hero h1 {
-  max-width: 900px !important;
+  max-width: 900px;
   font-weight: 800;
   position: relative;
 }
@@ -697,11 +697,11 @@ input:focus-visible {
   transform: rotate(-3deg);
 }
 .hero p {
-  max-width: 400px !important;
+  max-width: 400px;
 }
 .hero {
-  padding-top: 70px !important;
-  min-height: 700px !important;
+  padding-top: 70px;
+  min-height: 700px;
 }
 .hero-content {
   width: 100%;
@@ -772,14 +772,14 @@ input:focus-visible {
   letter-spacing: 2px;
 }
 .hero:after {
-  background: linear-gradient(0deg, #03130f, transparent 20%) !important;
+  background: linear-gradient(0deg, #03130f, transparent 20%);
 }
 @media (min-width: 1500px) {
   .hero {
-    min-height: 800px !important;
+    min-height: 800px;
   }
   .hero h1 {
-    font-size: 168px !important;
+    font-size: 168px;
   }
 }
 @media (max-width: 800px) {
@@ -788,7 +788,7 @@ input:focus-visible {
     width: 60%;
   }
   .hero h1 {
-    font-size: clamp(72px, 13vw, 112px) !important;
+    font-size: clamp(72px, 13vw, 112px);
   }
   .sidebar .logo {
     margin-bottom: 24px;
@@ -840,9 +840,9 @@ input:focus-visible {
     gap: 10px;
   }
   .hero {
-    min-height: 710px !important;
-    padding-bottom: 55px !important;
-    align-items: flex-end !important;
+    min-height: 710px;
+    padding-bottom: 55px;
+    align-items: flex-end;
   }
   .hero:before {
     width: 85%;
@@ -851,7 +851,7 @@ input:focus-visible {
     top: 2%;
   }
   .hero h1 {
-    font-size: clamp(60px, 18vw, 94px) !important;
+    font-size: clamp(60px, 18vw, 94px);
     margin: 20px 0;
   }
   .hero p {
@@ -917,7 +917,7 @@ input:focus-visible {
 
 .features .eyebrow,
 .panel .eyebrow {
-  color: #075340 !important;
+  color: #075340;
 }
 .actions svg,
 .navlinks svg {

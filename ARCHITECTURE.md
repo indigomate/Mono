@@ -52,3 +52,7 @@ ChatSurface owns only ephemeral panel/menu/composer presentation; typed customer
 Completion IDs attach optional feedback to an explicit local save. Feedback is role-scoped browser data, not an API submission. Live booking-completion feedback must originate from an authoritative booking event. Product imagery has isolated loading/error/retry presentation and leaves metadata/actions intact. Animation modules load only on demand and do not gate the business flow.
 
 Production subscription/commission architecture and launch sequencing are specified in PROVIDER_SUBSCRIPTIONS.md. Private draft sync, conversational processing and reading-position improvements remain future work described in UX_FEEDBACK_AUDIT.md.
+
+## 12ui design integration
+
+12ui is a design-time tool installed outside the app, not a new runtime dependency. Generated HTML/prototype outputs supplied visual references and extracted image layers. The application still runs the same React components, hash routing, typed chat tools and demo persistence. New token/refinement styles load through main.tsx; the legacy landing override priorities were relaxed so this layer can own presentation. No generated prototype routing, checkout, verification, uploads or mocked business records replaced domain behavior. See 12UI_UPGRADE.md.

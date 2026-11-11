@@ -1,0 +1,1164 @@
+/* 12ui selected landing A: source conversion b71797ef-efd0-4425-bc8c-3bf813938e85.
+   Keep real components, text and handlers; adapt exported geometry to intrinsic content. */
+:root {
+  --gomono-night: #001813;
+  --gomono-forest: #003e31;
+  --gomono-mint: #00bd9e;
+  --gomono-canvas: #f8f9f4;
+  --gomono-border: #d5e3db;
+  --gomono-text: #103e33;
+  --gomono-muted: #536e64;
+  --gomono-radius: 18px;
+}
+.app-root {
+  font-family: var(--font-inter);
+}
+.landing {
+  position: relative;
+  background: var(--gomono-night);
+  color: #e8f5ee;
+}
+.landing .nav {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 80px;
+  padding: 20px 6.3%;
+  z-index: 3;
+  background: transparent;
+  border: 0;
+}
+.landing .logo {
+  font-family: var(--font-inter);
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -1.6px;
+}
+.landing .navlinks {
+  gap: 30px;
+}
+.landing .navlinks a {
+  font-size: 12px;
+  font-weight: 500;
+  color: #e0eeea;
+}
+.landing .nav .outline {
+  min-height: 44px;
+  padding: 11px 20px;
+  border-color: #c4d6d1;
+  background: #002c2520;
+  color: #f5fff9;
+  border-radius: 28px;
+  font: 600 13px var(--font-inter);
+  box-shadow: 0 1px 22px #0002;
+}
+.landing .hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 620px;
+  height: auto;
+  padding: 108px 6.3% 38px;
+  display: block;
+  background: url("/design/gomono-hero.webp") center / cover no-repeat;
+  overflow: hidden;
+}
+.landing .hero::before,
+.landing .hero::after {
+  content: none;
+}
+.landing .hero-content {
+  position: relative;
+  width: 46%;
+  max-width: 610px;
+  z-index: 1;
+  padding: 0;
+}
+.landing .hero .eyebrow {
+  margin: 0 0 20px;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: #a4e9cf;
+}
+.landing .hero h1 {
+  font: 900 clamp(76px, 7.15vw, 112px)/0.86 var(--font-inter);
+  letter-spacing: -0.065em;
+  margin: 0 0 24px;
+  color: #f4fbf7;
+  text-wrap: initial;
+}
+.landing .hero-dot {
+  color: #58f0be;
+}
+.landing .hero p {
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+  max-width: 430px;
+  margin: 0 0 24px;
+  color: #e0eeea;
+}
+.landing .hero .actions {
+  display: flex;
+  gap: 22px;
+  margin: 0;
+  align-items: center;
+}
+.landing .hero .primary,
+.landing .hero .secondary {
+  min-height: 52px;
+  padding: 15px 24px;
+  border-radius: 28px;
+  font-family: var(--font-inter);
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  box-shadow: none;
+}
+.landing .hero .primary {
+  color: white;
+  background: #00ab90;
+}
+.landing .hero .primary:hover {
+  background: #008d76;
+}
+.landing .hero .secondary {
+  color: #f1fff8;
+  background: transparent;
+  border: 1px solid #d6e4de;
+}
+.landing .hero .experience-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 23px;
+  color: #b3e5d3;
+  font-size: 12px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #7ab29d;
+}
+.landing .landing-bottom {
+  padding: 14px 6.3%;
+  background: #002118;
+  border-top: 1px solid #124639;
+  border-bottom: 1px solid #124639;
+  color: #a6c9bc;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.landing .vehicle-brand-band {
+  background: #001b14;
+  padding: 22px 6.3% 18px;
+  border-bottom: 1px solid #175345;
+}
+.landing .vehicle-brand-loop {
+  margin: 18px auto 8px;
+  min-height: 78px;
+}
+.landing .vehicle-brand-band > header,
+.landing .vehicle-brand-loop,
+.landing .brand-availability-note {
+  max-width: 1280px;
+}
+.landing .product-preview {
+  padding: 76px 6.3%;
+  background: #f5f8f2;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 6%;
+}
+.landing .preview-copy h2 {
+  font-family: var(--font-inter);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+}
+.landing .preview-copy h2 em {
+  color: #1b8268;
+}
+.landing .preview-copy > p {
+  color: var(--gomono-muted);
+}
+.landing .preview-window {
+  border-color: var(--gomono-border);
+  box-shadow: 0 18px 60px #003b2c0b;
+  border-radius: 22px;
+}
+.landing .features {
+  padding: 72px 6.3% 82px;
+  background: #001e16;
+  color: #e8f5ef;
+}
+.landing .features > .eyebrow {
+  color: #91ccba !important;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+.landing .features h2 {
+  max-width: 860px;
+  color: #f0faf5;
+  font: 600 clamp(28px, 3.4vw, 48px)/1.16 var(--font-inter);
+  letter-spacing: -0.045em;
+  margin: 20px 0 36px;
+}
+.landing .feature-grid {
+  gap: 18px;
+}
+.landing .feature {
+  background: #002b21;
+  border: 1px solid #125244;
+  border-radius: 14px;
+  padding: 26px;
+  box-shadow: none;
+}
+.landing .feature b {
+  color: #eef8f2;
+  font-size: 16px;
+}
+.landing .feature p {
+  color: #b8d4c8;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.landing .footer {
+  background: #00150f;
+  color: #a2c0b3;
+  border-top: 1px solid #123c2e;
+  padding: 28px 6.3%;
+  font-size: 11px;
+}
+.landing :is(button, a):focus-visible {
+  outline: 3px solid #7af7d4;
+  outline-offset: 5px;
+}
+@media (min-width: 1600px) {
+  .landing .hero {
+    min-height: 680px;
+    padding-top: 130px;
+  }
+}
+@media (max-width: 1000px) {
+  .landing .hero {
+    min-height: 600px;
+    background-position: 60% center;
+  }
+  .landing .hero-content {
+    width: 54%;
+  }
+  .landing .hero h1 {
+    font-size: clamp(72px, 8.8vw, 92px);
+  }
+  .landing .hero p {
+    font-size: 14px;
+    max-width: 360px;
+  }
+  .landing .navlinks {
+    gap: 18px;
+  }
+}
+@media (max-width: 700px) {
+  .landing .nav {
+    height: 72px;
+    padding: 18px 6%;
+  }
+  .landing .navlinks a {
+    display: none;
+  }
+  .landing .nav .outline {
+    min-height: 40px;
+    font-size: 11px;
+    padding: 9px 14px;
+  }
+  .landing .hero {
+    min-height: 760px;
+    padding: 102px 6% 275px;
+    background-size: auto 410px;
+    background-position: right bottom;
+    background-color: #002a20;
+  }
+  .landing .hero-content {
+    width: 100%;
+    max-width: none;
+  }
+  .landing .hero .eyebrow {
+    font-size: 9px;
+    letter-spacing: 1.4px;
+    margin-bottom: 18px;
+  }
+  .landing .hero h1 {
+    font-size: clamp(63px, 15vw, 100px);
+    letter-spacing: -0.065em;
+    margin-bottom: 23px;
+  }
+  .landing .hero p {
+    font-size: 13px;
+    line-height: 1.75;
+    max-width: 44ch;
+    margin-bottom: 20px;
+  }
+  .landing .hero .actions {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .landing .hero .primary,
+  .landing .hero .secondary {
+    min-height: 46px;
+    padding: 12px 18px;
+    font-size: 12px;
+    gap: 13px;
+  }
+  .landing .hero .experience-link {
+    font-size: 11px;
+    margin-top: 20px;
+  }
+  .landing .landing-bottom {
+    padding: 14px 6%;
+    line-height: 1.9;
+  }
+  .landing .product-preview {
+    grid-template-columns: 1fr;
+    padding: 52px 6%;
+    gap: 28px;
+  }
+  .landing .preview-copy {
+    position: static;
+  }
+  .landing .preview-copy h2 {
+    font-size: 35px;
+  }
+  .landing .features {
+    padding: 52px 6%;
+  }
+  .landing .feature-grid {
+    grid-template-columns: 1fr;
+  }
+  .landing .feature {
+    padding: 24px;
+  }
+}
+
+/* 12ui corrected chat B and its sibling exports: retain the existing conversation
+   state machine and DOM controls, using their exported ivory/mint/forest system. */
+.app-root.app-conversation-root .workspace {
+  background: #f7f8f0;
+  color: #123c30;
+  font-family: var(--font-inter);
+}
+.app-root.app-conversation-root .workspace-sidebar {
+  width: 138px;
+  background: #002b20;
+  padding: 28px 16px;
+  border-right: 1px solid #ffffff08;
+}
+.app-root.app-conversation-root .workspace-sidebar .home-brand {
+  font: 800 18px var(--font-inter);
+  letter-spacing: -1.1px;
+  padding: 0 3px;
+  margin-bottom: 48px;
+}
+.app-root.app-conversation-root .workspace-sidebar .workspace-identity {
+  display: none;
+}
+.app-root.app-conversation-root .workspace-sidebar .ws-nav {
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 14px;
+  margin: 0 auto;
+  background: #007b60;
+  color: #cbffec;
+}
+.app-root.app-conversation-root .workspace-sidebar .ws-nav > span:first-child {
+  width: auto;
+  font-size: 26px;
+}
+.app-root.app-conversation-root .workspace-sidebar .ws-nav > span:last-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.app-root.app-conversation-root .workspace-sidebar-foot {
+  padding: 0 4px;
+}
+.app-root.app-conversation-root .workspace-sidebar-foot button {
+  color: #c0ded1;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.app-root.app-conversation-root .workspace-sidebar-foot p {
+  font-size: 9px;
+  line-height: 1.9;
+  color: #91b5a6;
+}
+.app-root.app-conversation-root .workspace-main {
+  background: #f7f8f0;
+}
+.app-root.app-conversation-root .workspace-topbar {
+  height: 72px;
+  min-height: 72px;
+  padding: 16px 28px;
+  background: #fafbf7;
+  color: #123c30;
+  border-bottom: 1px solid #dce8df;
+}
+.app-root.app-conversation-root .workspace-topbar strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.app-root.app-conversation-root .workspace-topbar .workspace-breadcrumb {
+  color: #567e6d;
+  font-size: 8px;
+  letter-spacing: 1.7px;
+}
+.app-root.app-conversation-root .workspace-topbar .workspace-switch {
+  color: #176c54;
+  font-size: 12px;
+}
+.app-root.app-conversation-root .workspace-topbar .demo-pill {
+  background: #edf5ed;
+  border-color: #bbd8ca;
+  color: #306a53;
+  font-size: 10px;
+}
+.app-root.app-conversation-root .chat-context-controls {
+  background: #f7f8f0;
+  border-bottom: 1px solid #e2eae1;
+  padding: 5px 26px;
+  min-height: 44px;
+}
+.app-root.app-conversation-root .context-toggle {
+  border: 1px solid #a4cfc0;
+  border-radius: 24px;
+  background: transparent;
+  min-height: 32px;
+  padding: 6px 13px;
+  color: #247b68;
+  font-size: 11px;
+  gap: 14px;
+}
+.app-root.app-conversation-root .context-toggle:hover {
+  background: #e7f2eb;
+}
+.app-root.app-conversation-root .conversation-menu-trigger {
+  color: #0a3e31;
+  border-radius: 50%;
+}
+.app-root.app-conversation-root .chat-context-panel {
+  background: #f0f6ed;
+  border-color: #d5e5da;
+}
+.app-root.app-conversation-root .chat-scroll {
+  background: #f7f8f0;
+  scrollbar-color: #b8cfc0 transparent;
+}
+.app-root.app-conversation-root .chat-thread {
+  max-width: 1000px;
+  padding: 30px 40px 50px;
+}
+.app-root.app-conversation-root .chat-introduction {
+  background: #eef5ec;
+  border: 1px solid #d4e4d8;
+  border-radius: 20px;
+  padding: 24px 26px;
+  color: #103e33;
+  box-shadow: none;
+  margin-bottom: 28px;
+}
+.app-root.app-conversation-root .chat-introduction h2 {
+  font-family: var(--font-inter);
+  font-size: clamp(25px, 2.6vw, 36px);
+  line-height: 1.2;
+  letter-spacing: -1.4px;
+  margin: 13px 0 10px;
+}
+.app-root.app-conversation-root .chat-introduction .eyebrow {
+  color: #527e67;
+  font-size: 8px;
+  letter-spacing: 1.8px;
+}
+.app-root.app-conversation-root .chat-introduction > p {
+  color: #4a6e5c;
+  font-size: 12px;
+  margin: 0;
+}
+.app-root.app-conversation-root .welcome-paths {
+  margin-top: 18px;
+  gap: 9px;
+}
+.app-root.app-conversation-root .welcome-paths button {
+  background: #fbfcf8;
+  border: 1px solid #d0e1d6;
+  border-radius: 12px;
+  color: #123c30;
+  padding: 13px 15px;
+}
+.app-root.app-conversation-root .welcome-paths button:hover {
+  background: #e1f1e7;
+  border-color: #80b99e;
+}
+.app-root.app-conversation-root .welcome-paths button b {
+  font-size: 12px;
+}
+.app-root.app-conversation-root .welcome-paths button small {
+  color: #4a715c;
+  font-size: 10px;
+}
+.app-root.app-conversation-root .welcome-paths button > span {
+  color: #287e62;
+}
+.app-root.app-conversation-root .conversation-turn {
+  gap: 14px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+.app-root.app-conversation-root .turn-marker {
+  background: #004837;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  color: #e2fff2;
+}
+.app-root.app-conversation-root .turn-role {
+  color: #527b68;
+  font-size: 8px;
+  letter-spacing: 1.4px;
+}
+.app-root.app-conversation-root .turn-text {
+  color: #123c30;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.app-root.app-conversation-root .turn-assistant > .turn-body > .turn-text {
+  display: table;
+  max-width: 650px;
+  padding: 14px 18px;
+  border-radius: 4px 18px 18px;
+  background: #eaf3e9;
+  margin-top: 8px;
+}
+.app-root.app-conversation-root .turn-user {
+  margin-left: 48px;
+  background: #fffefb;
+  border-color: #d8e7dd;
+  border-radius: 18px 4px 18px 18px;
+  padding: 13px 18px;
+}
+.app-root.app-conversation-root .chat-tool {
+  padding: 20px;
+  background: #fdfdfa;
+  border: 1px solid #d6e5dc;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px #003c2c03;
+}
+.app-root.app-conversation-root .composer-dock {
+  background: #f7f8f0;
+  border-top: 1px solid #dce8df;
+  padding-top: 12px;
+}
+.app-root.app-conversation-root .composer-inner {
+  max-width: 920px;
+}
+.app-root.app-conversation-root .chat-suggestion-box {
+  background: #eaf3e9;
+  border: 1px solid #d2e8d8;
+  border-radius: 30px;
+  padding: 4px;
+  margin-bottom: 12px;
+}
+.app-root.app-conversation-root .chat-suggestion-box .chat-shortcuts {
+  gap: 0;
+}
+.app-root.app-conversation-root .chat-suggestion-box .chat-shortcuts > button {
+  position: relative;
+  color: #13543d;
+  font-size: 12px;
+  min-height: 42px;
+  border-radius: 24px;
+}
+.app-root.app-conversation-root
+  .chat-suggestion-box
+  .chat-shortcuts
+  > button
+  + button::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  bottom: 11px;
+  border-left: 1px solid #b7d2bf;
+}
+.app-root.app-conversation-root
+  .chat-suggestion-box
+  .chat-shortcuts
+  > button:hover {
+  background: #d6eade;
+}
+.app-root.app-conversation-root .chat-composer {
+  background: #fffefb;
+  border: 1px solid #b8d5c7;
+  border-radius: 32px;
+  box-shadow: none;
+  padding: 9px 12px 9px 18px;
+}
+.app-root.app-conversation-root .chat-composer:focus-within {
+  border-color: #138766;
+  box-shadow: 0 0 0 3px #b7e5d359;
+}
+.app-root.app-conversation-root .chat-composer > span {
+  color: #297b62;
+  font-size: 25px;
+}
+.app-root.app-conversation-root .chat-composer > button {
+  border-radius: 50%;
+  background: #00886a;
+  color: white;
+  width: 40px;
+  height: 40px;
+}
+.app-root.app-conversation-root .chat-composer > button:disabled {
+  background: #91b0a0;
+  color: #fff;
+}
+.app-root.app-conversation-root .chat-footnote {
+  font-size: 9px;
+  color: #607b69;
+  line-height: 1.7;
+}
+.app-root.app-conversation-root .chat-composer > .mono-field input {
+  font-family: var(--font-inter);
+  color: #154c39;
+  font-size: 14px;
+}
+.app-root.app-conversation-root .chat-service-options button {
+  border: 1px solid #cfe3d7;
+  border-radius: 14px;
+  background: #f5f9f1;
+  color: #123c30;
+  padding: 16px;
+}
+.app-root.app-conversation-root .chat-service-options button:hover {
+  background: #e5f3e9;
+  border-color: #96c9ae;
+}
+.app-root.app-conversation-root .chat-service-options b {
+  color: #194f3d;
+  font-size: 13px;
+}
+.app-root.app-conversation-root .chat-service-options span {
+  font-size: 11px;
+  color: #557360;
+}
+.app-root.app-conversation-root .mono-inline-cta {
+  background: #eaf4e9;
+  border-color: #cfe1cf;
+  border-radius: 16px;
+}
+.app-root.app-conversation-root .mono-empty-state {
+  border-radius: 18px;
+  background: #f3f8ef;
+  border-color: #d6e4d7;
+}
+.app-root.app-conversation-root .chat-tool :is(h2, h3, h4) {
+  font-family: var(--font-inter);
+  color: #123c30;
+  letter-spacing: -0.025em;
+}
+.app-root.app-conversation-root .chat-tool .smallbtn {
+  background: #00654e;
+  color: #fff;
+  border-radius: 24px;
+  min-height: 40px;
+}
+.app-root.app-conversation-root .chat-tool .smallbtn:hover:not(:disabled) {
+  background: #004d3b;
+}
+.app-root.app-conversation-root .chat-tool .smallbtn:disabled {
+  background: #e4ece4;
+  color: #5b7866;
+  cursor: not-allowed;
+}
+.app-root.app-conversation-root
+  .chat-tool
+  :is(.fields-grid, .service-checkboxes) {
+  gap: 16px;
+}
+.app-root.app-conversation-root .chat-tool .mono-field [data-label],
+.app-root.app-conversation-root .chat-tool .mono-select [data-label],
+.app-root.app-conversation-root .chat-tool .mono-textarea > label {
+  color: #285d46;
+  font-size: 12px;
+  font-weight: 600;
+}
+.app-root.app-conversation-root .chat-tool .mono-field [slot="description"] {
+  color: #5a7663;
+}
+.app-root.app-conversation-root .chat-tool .mono-field input,
+.app-root.app-conversation-root .chat-tool .mono-select select {
+  color: #174b37;
+}
+.app-root.app-conversation-root
+  .chat-tool
+  .mono-calendar-picker
+  .react-aria-Calendar {
+  border-color: #cee3d6;
+  border-radius: 16px;
+  background: #fbfdf8;
+}
+.app-root.app-conversation-root
+  .chat-tool
+  .mono-calendar-picker
+  [data-selected] {
+  background: #006b51;
+}
+.app-root.app-conversation-root .chat-tool .quote-lines,
+.app-root.app-conversation-root .chat-tool .payment-method-preview {
+  border-color: #d1e4d7;
+  border-radius: 16px;
+}
+.app-root.app-conversation-root .chat-tool .mono-metrics {
+  gap: 10px;
+}
+.app-root.app-conversation-root .chat-tool .mono-metrics > div {
+  background: #edf5eb;
+  border-color: #d0e3d4;
+  border-radius: 14px;
+}
+.app-root.app-conversation-root .mono-carousel .match-card {
+  border: 1px solid #cee3dc;
+  background: #fdfdfa;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px #002c2010;
+  overflow: hidden;
+}
+.app-root.app-conversation-root .mono-carousel .match-image {
+  margin: 12px 12px 0;
+  height: 155px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.app-root.app-conversation-root .mono-carousel .match-content {
+  padding: 15px;
+}
+.app-root.app-conversation-root .mono-carousel .match-content h3 {
+  color: #0c4032;
+  font-size: 21px;
+  letter-spacing: -0.6px;
+}
+.app-root.app-conversation-root .vehicle-spec-badges span {
+  border-color: #d2e5d9;
+  background: #edf6ed;
+  color: #296148;
+}
+.app-root.app-conversation-root .mono-carousel .match-price b {
+  color: #00634a;
+  font-size: 21px;
+}
+.app-root.app-conversation-root .mono-carousel .match-price .smallbtn {
+  padding: 9px 17px;
+  font-size: 11px;
+}
+.app-root.app-conversation-root .mono-carousel .availability-note {
+  color: #466e57;
+}
+.app-root.app-conversation-root .vehicle-price-details {
+  border-color: #dae8dd;
+}
+.app-root.app-conversation-root .vehicle-save-control .save-toggle {
+  border-color: #9fcdb7;
+  color: #00644b;
+  background: #fffffff2;
+  min-height: 36px;
+}
+.app-root.app-conversation-root
+  .vehicle-save-control
+  .save-toggle[data-saved="true"] {
+  background: #007d5e;
+  color: white;
+}
+.app-root.app-conversation-root .provider-plans {
+  max-width: 620px;
+  border-radius: 20px;
+  background: #eef5ea;
+  border-color: #cde1d1;
+  padding: 20px;
+}
+.app-root.app-conversation-root .plan-option {
+  background: #fdfef9;
+  border-color: #cee1d5;
+  border-radius: 16px;
+}
+.app-root.app-conversation-root .plan-option[data-selected="true"] {
+  border-color: #008569;
+  box-shadow: 0 0 0 1px #00856922;
+}
+.app-root.app-conversation-root .plan-cycle {
+  background: #e0ede1;
+}
+.app-root.app-conversation-root .plan-cycle-indicator {
+  background: #006e51;
+}
+.app-root.app-conversation-root .plan-billing-note {
+  color: #456a52;
+}
+.app-root.app-conversation-root .provider-identity-card {
+  background: #f6faf2;
+  border-color: #cfe1d3;
+  border-radius: 16px;
+}
+.app-root.app-conversation-root .completion-feedback {
+  background: #eaf4e8;
+  border-color: #cde1cf;
+  border-radius: 18px;
+}
+.app-root.app-conversation-root .chat-detail-grid > button {
+  background: #eaf4e9;
+  border-color: #c6dfce;
+  color: #1e5940;
+  border-radius: 14px;
+}
+.app-root.app-conversation-root
+  .chat-detail-grid
+  > button[aria-expanded="true"] {
+  border-color: #008563;
+  background: #dcefe1;
+}
+.app-root.app-conversation-root
+  .workspace
+  :is(button, a, summary):focus-visible,
+.inline-disclosure-popover [data-focused] {
+  outline: 2px solid #178c68;
+  outline-offset: 3px;
+}
+.app-root.app-conversation-root
+  .workspace
+  :is(input, select, textarea):focus-visible {
+  outline: none;
+}
+@media (max-width: 1000px) {
+  .app-root.app-conversation-root .workspace-sidebar {
+    width: 100px;
+    padding: 24px 10px;
+  }
+  .app-root.app-conversation-root .workspace-sidebar .home-brand {
+    font-size: 15px;
+    letter-spacing: -1px;
+    padding: 0;
+  }
+  .app-root.app-conversation-root .chat-thread {
+    padding: 28px 28px 45px;
+  }
+}
+@media (max-width: 700px) {
+  .app-root.app-conversation-root .workspace-sidebar {
+    display: none;
+  }
+  .app-root.app-conversation-root .workspace-topbar {
+    min-height: 64px;
+    height: 64px;
+    padding: 11px 15px;
+  }
+  .app-root.app-conversation-root .workspace-topbar strong {
+    font-size: 12px;
+  }
+  .app-root.app-conversation-root .workspace-topbar .workspace-breadcrumb {
+    font-size: 7px;
+    letter-spacing: 1.3px;
+  }
+  .app-root.app-conversation-root .workspace-topbar .workspace-switch {
+    font-size: 10px;
+  }
+  .app-root.app-conversation-root .workspace-topbar .demo-pill {
+    font-size: 8px;
+    padding: 7px 9px;
+  }
+  .app-root.app-conversation-root .chat-context-controls {
+    padding: 5px 14px;
+    min-height: 41px;
+  }
+  .app-root.app-conversation-root .context-toggle {
+    font-size: 10px;
+    min-height: 30px;
+    padding: 5px 12px;
+  }
+  .app-root.app-conversation-root .chat-thread {
+    padding: 20px 12px 32px;
+  }
+  .app-root.app-conversation-root .chat-introduction {
+    padding: 20px;
+    margin-bottom: 22px;
+    border-radius: 18px;
+  }
+  .app-root.app-conversation-root .chat-introduction h2 {
+    font-size: 26px;
+    letter-spacing: -1px;
+    margin: 12px 0 10px;
+  }
+  .app-root.app-conversation-root .chat-introduction > p {
+    font-size: 11px;
+  }
+  .app-root.app-conversation-root .welcome-paths {
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .app-root.app-conversation-root .welcome-paths button {
+    padding: 11px;
+  }
+  .app-root.app-conversation-root .welcome-paths button b {
+    font-size: 11px;
+  }
+  .app-root.app-conversation-root .welcome-paths button small {
+    font-size: 9px;
+  }
+  .app-root.app-conversation-root .turn-text {
+    font-size: 13px;
+  }
+  .app-root.app-conversation-root .turn-assistant > .turn-body > .turn-text {
+    padding: 12px 14px;
+    border-radius: 4px 16px 16px;
+  }
+  .app-root.app-conversation-root .turn-marker {
+    width: 27px;
+    height: 27px;
+    font-size: 18px;
+  }
+  .app-root.app-conversation-root .conversation-turn {
+    gap: 9px;
+  }
+  .app-root.app-conversation-root .turn-user {
+    margin-left: 36px;
+    padding: 12px 14px;
+  }
+  .app-root.app-conversation-root .chat-tool {
+    padding: 14px;
+    border-radius: 16px;
+  }
+  .app-root.app-conversation-root .chat-suggestion-box {
+    border-radius: 24px;
+    margin-bottom: 9px;
+    padding: 3px;
+  }
+  .app-root.app-conversation-root
+    .chat-suggestion-box
+    .chat-shortcuts
+    > button {
+    min-height: 36px;
+    padding: 6px;
+    font-size: 9px;
+  }
+  .app-root.app-conversation-root .chat-composer {
+    padding: 7px 10px 7px 12px;
+  }
+  .app-root.app-conversation-root .chat-composer > .mono-field input {
+    font-size: 16px;
+  }
+  .app-root.app-conversation-root .chat-composer > button {
+    width: 36px;
+    height: 36px;
+  }
+  .app-root.app-conversation-root .chat-footnote {
+    font-size: 8px;
+  }
+  .app-root.app-conversation-root .mono-carousel .match-image {
+    height: 115px;
+    margin: 9px 9px 0;
+  }
+  .app-root.app-conversation-root .mono-carousel .match-content {
+    padding: 12px;
+  }
+  .app-root.app-conversation-root .mono-carousel .match-content h3 {
+    font-size: 18px;
+  }
+  .app-root.app-conversation-root .mono-carousel .match-price b {
+    font-size: 19px;
+  }
+  .app-root.app-conversation-root .mono-carousel .match-price .smallbtn {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+  .app-root.app-conversation-root .provider-plans {
+    padding: 13px;
+  }
+  .app-root.app-conversation-root .chat-tool .mono-field input,
+  .app-root.app-conversation-root .chat-tool .mono-select select {
+    font-size: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-root :is(button, a) {
+    scroll-behavior: auto;
+    transition-duration: 0s;
+  }
+}
+
+.app-root.app-conversation-root .conversation-chooser {
+  background: #001c15 url("/design/gomono-chooser.webp") top center / 100% auto
+    no-repeat;
+  padding: 32px 6.3% 60px;
+  color: #e6f7ee;
+  font-family: var(--font-inter);
+}
+.app-root.app-conversation-root .conversation-chooser > .logo {
+  font: 800 23px var(--font-inter);
+  letter-spacing: -1.3px;
+  margin-bottom: 55px;
+}
+.app-root.app-conversation-root .chooser-chat {
+  max-width: 1100px;
+}
+.app-root.app-conversation-root .chooser-chat > h1 {
+  font-family: var(--font-inter);
+  font-size: clamp(38px, 5vw, 66px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+  margin: 20px 0;
+}
+.app-root.app-conversation-root .chooser-chat > .eyebrow {
+  font-size: 10px;
+  color: #a5e7cf !important;
+}
+.app-root.app-conversation-root .chooser-message {
+  margin-top: 32px;
+  padding: 26px;
+  background: #00291ff2;
+  border: 1px solid #277d68;
+  border-radius: 20px;
+}
+.app-root.app-conversation-root .chooser-message > p {
+  font-size: 14px;
+  max-width: 760px;
+  color: #d9eee2;
+}
+.app-root.app-conversation-root .chooser-message .inline-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 24px;
+}
+.app-root.app-conversation-root .chooser-message .inline-actions > button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid #388872;
+  background: #003f30;
+  border-radius: 16px;
+  min-height: 170px;
+  color: #f2fff9;
+}
+.app-root.app-conversation-root
+  .chooser-message
+  .inline-actions
+  > button:hover {
+  border-color: #8de7c5;
+  background: #00543e;
+}
+.app-root.app-conversation-root .chooser-message .inline-actions b {
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+}
+.app-root.app-conversation-root .chooser-message .inline-actions small {
+  font-size: 12px;
+  color: #b3d9c4;
+  line-height: 1.7;
+}
+.app-root.app-conversation-root .chooser-message .inline-actions span {
+  font-size: 11px;
+  color: #7df3cd;
+  margin-top: auto;
+}
+.app-root.app-conversation-root .chooser-chat > .chat-composer {
+  max-width: 760px;
+  background: #f7fbf4;
+}
+.app-root.app-conversation-root .chooser-chat > .chooser-note {
+  color: #b9dac8;
+  font-size: 11px;
+}
+@media (max-width: 700px) {
+  .app-root.app-conversation-root .conversation-chooser {
+    padding: 24px 6% 40px;
+    background-size: auto 450px;
+    background-position: 65% top;
+  }
+  .app-root.app-conversation-root .conversation-chooser > .logo {
+    margin-bottom: 38px;
+  }
+  .app-root.app-conversation-root .chooser-message {
+    padding: 18px;
+  }
+  .app-root.app-conversation-root .chooser-message .inline-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .app-root.app-conversation-root .chooser-message .inline-actions > button {
+    min-height: 140px;
+    padding: 18px;
+  }
+  .app-root.app-conversation-root .chooser-message .inline-actions b {
+    font-size: 16px;
+  }
+  .app-root.app-conversation-root .chat-introduction h2 {
+    font-size: 24px;
+  }
+  .app-root.app-conversation-root .welcome-paths button {
+    min-height: 44px;
+    gap: 3px;
+  }
+  .app-root.app-conversation-root .welcome-paths button small {
+    display: none;
+  }
+}
+
+/* Apply safe findings from the target alignment; real policies/actions stay intact. */
+.landing .hero .primary {
+  font-weight: 600;
+}
+.landing .hero .secondary {
+  font-weight: 500;
+}
+.app-root.app-conversation-root .plan-cycle {
+  border: 1px solid #a3d8ca;
+}
+.app-root.app-conversation-root .plan-option-name strong {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #dcf4e6;
+  color: #075644;
+  border-radius: 16px;
+  font-size: 13px;
+}
+.app-root.app-conversation-root .plan-option-trigger {
+  align-items: center;
+}
+.app-root.app-conversation-root .plan-expanded li {
+  font-size: 12px;
+}
+
+/* Preserve readable small-label contrast and mobile touch area. */
+.landing .hero .primary {
+  background: #00bd9e;
+  color: #003329;
+}
+.landing .hero .primary:hover {
+  background: #20d2b0;
+  color: #003329;
+}
+@media (max-width: 700px) {
+  .app-root.app-conversation-root
+    .chat-suggestion-box
+    .chat-shortcuts
+    > button {
+    min-height: 44px;
+    font-size: 10px;
+  }
+}

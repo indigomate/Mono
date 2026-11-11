@@ -4,6 +4,8 @@ import { Authentication } from "./auth/Authentication";
 import "./styles/untitled.css";
 import "./styles.css";
 import "./styles/fields.css";
+import "./styles/12ui-tokens.css";
+import "./styles/12ui-refinement.css";
 createRoot(document.getElementById("root")!).render(
   <Authentication>
     <App />

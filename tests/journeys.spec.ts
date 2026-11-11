@@ -1373,7 +1373,10 @@ test("compact car previews recover failed photos without hiding facts or actions
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 667 });
-  await page.route("**/images.unsplash.com/**", (route) => route.abort());
+  await page.route(
+    /images\.unsplash\.com|\/design\/(?:toyota-corolla|bmw-3-series)\.webp/,
+    (route) => route.abort(),
+  );
   await page.goto("/#customer");
   await say(page, "An affordable automatic car for 3 days");
   const card = page.locator(".match-card");
@@ -1387,12 +1390,16 @@ test("compact car previews recover failed photos without hiding facts or actions
   expect(box!.height).toBeLessThan(390);
   await card.getByText("Price details & verification", { exact: true }).click();
   await expect(card).toContainText("Quote pending");
-  await page.unroute("**/images.unsplash.com/**");
-  await page.route("**/images.unsplash.com/**", (route) =>
-    route.fulfill({
-      contentType: "image/svg+xml",
-      body: '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="60"><rect width="100" height="60" fill="green"/></svg>',
-    }),
+  await page.unroute(
+    /images\.unsplash\.com|\/design\/(?:toyota-corolla|bmw-3-series)\.webp/,
+  );
+  await page.route(
+    /images\.unsplash\.com|\/design\/(?:toyota-corolla|bmw-3-series)\.webp/,
+    (route) =>
+      route.fulfill({
+        contentType: "image/svg+xml",
+        body: '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="60"><rect width="100" height="60" fill="green"/></svg>',
+      }),
   );
   await card.getByRole("button", { name: "Retry photo", exact: true }).click();
   await expect(card.locator(".vehicle-photo-placeholder")).toHaveCount(0);

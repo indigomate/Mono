@@ -65,3 +65,9 @@ Start with chat and a green three-suggestion area. Put context behind Trip detai
 Vehicle product cards use a fixed image frame, concise specification badges, a price with its basis, one View car action and an independent saved-car overlay. Extra costs/verification expand on demand. A real image request controls its placeholder/error/retry state. Save success follows persistence, with a visit-only label when browser storage fails.
 
 Use small, purposeful entrances; no decorative delays. TechText belongs in workspace loading and its labelled preview; LogoLoop belongs in the landing sample-brand band with Pause and reduced-motion static marks. Confirmation, pricing and completion feedback share rounded emerald surfaces. Financial activation is unavailable until the real services exist. See UX_FEEDBACK_AUDIT.md and PROVIDER_SUBSCRIPTIONS.md.
+
+## Current 12ui Design refinement
+
+The current visual layer is based on 12ui’s selected landing A and corrected chat B, with a site branch covering forms, provider states and pricing. Inter is the primary refined UI/display family; the existing optional loading wordmark retains its Manrope setting. Cinematic emerald imagery remains on the landing/role chooser, while the workspace uses ivory, white and pale mint for reading. The narrow rail keeps its one real conversation action; secondary commands stay in the disclosure menu. Local illustrative vehicle art improves model consistency without asserting verified photos or inventory.
+
+See 12UI_UPGRADE.md for source IDs, alignment results, intentional functional/content deviations and validation. Earlier milestone descriptions above are historical; active tasks remain in conversation.

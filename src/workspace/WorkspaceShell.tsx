@@ -49,6 +49,7 @@ export function WorkspaceShell({
               id={`nav-${l.view}`}
               aria-current="page"
               className="ws-nav active"
+              title={l.label}
               onClick={() => navigate(l.view)}
             >
               <span aria-hidden="true">{l.icon}</span>
@@ -153,11 +154,25 @@ export function WorkspaceChooser({ navigate }: { navigate: Navigate }) {
           <span className="turn-role">GOMONO</span>
           <p>{reply}</p>
           <div className="inline-actions">
-            <button onClick={() => navigate("customer")}>
-              I want to rent or ride
+            <button
+              aria-label="I want to rent or ride"
+              onClick={() => navigate("customer")}
+            >
+              <b>I want to rent or ride</b>
+              <small>
+                Plan rentals and transport in your customer conversation.
+              </small>
+              <span aria-hidden="true">Start planning →</span>
             </button>
-            <button onClick={() => navigate("provider")}>
-              I provide vehicles or services
+            <button
+              aria-label="I provide vehicles or services"
+              onClick={() => navigate("provider")}
+            >
+              <b>I provide vehicles or services</b>
+              <small>
+                Prepare your business, vehicles and service listings.
+              </small>
+              <span aria-hidden="true">Open provider chat →</span>
             </button>
           </div>
         </div>

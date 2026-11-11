@@ -56,3 +56,9 @@ The final local suite passes all 55 tests. Added coverage includes closed initia
 TypeScript/Vite build, formatting and dependency audit pass (zero reported vulnerabilities). Optional TechText, LogoLoop, GSAP and QR bundles remain split from the landing entry. Screenshots at 375×667 and desktop were inspected, and a browser smoke journey reported zero runtime errors. The mobile dock measured about 162px versus the 231px baseline; a collapsed sample card measured about 351px versus 457px. A whole reply plus filters can still require scrolling on a small screen.
 
 Pricing/paid features are explicitly proposals; subscription checkout and entitlements are unavailable. Feedback and saved cars are browser-local; live booking completion, remote feedback delivery, cloud draft sync and asynchronous AI search are not claimed. See UX_FEEDBACK_AUDIT.md for remaining usability work and PROVIDER_SUBSCRIPTIONS.md for the commercial/backend plan.
+
+## 12ui Design refinement
+
+The selected design was expanded with 12ui, integrated into existing components and compared with unchanged source LayerDocs for seven surfaces. Automatic mapping had low overlap and false semantic matches; those are documented in 12UI_UPGRADE.md rather than reported as a pixel-perfect pass. Rendered home/chooser/chat screenshots at 375, 768 and 1440px show no horizontal overflow and an available chat composer. Source image layers are served as local WebP assets, with existing illustrative/unverified labels. All 55 journey checks remain required, including failed-photo retry on the new local paths, role choice, draft persistence and inline review/save behavior.
+
+One run during the 12ui integration hit an intermittent panel-opening assertion while optional animation requests were blocked; its cause was not established. Ten isolated repeats passed, followed by a final complete 55/55 local run. No artificial retry or timing delay was added to hide the failure.

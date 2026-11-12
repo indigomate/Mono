@@ -89,3 +89,9 @@ Keep delete controls small but accessible on every message, with a 44px touch ta
 The landing page extends the approved 12ui emerald/ivory system with editorial section numbers, deeper cinematic overlays, an illuminated conversation console and a numbered journey rail. Full-size primary actions use a shared React Aria button with explicit hover, pressed, focus and disabled states. A two-pixel progress line follows native document scrolling, and sections reveal once as they enter the viewport. Reduced motion removes the gloss sweep and reveals content immediately.
 
 The conversation keeps its light reading canvas but enters through a midnight header. Assistant replies use pale glass surfaces; user replies use deep emerald, making authorship clear before reading labels. Tool sheets and the persistent composer use restrained elevation. See VISUAL_AUDIT.md for the finding-to-change map and the current 12ui generation limitation.
+
+## Branded loading system
+
+`public/design/gomono-loader.png` is a transparent GOMONO asset created for the product: an original obsidian/emerald sports car, route halo and location pin with no third-party vehicle mark. CSS animates the still PNG so the browser can reuse one cached image without shipping video or a sprite library.
+
+Each wait communicates the work actually happening. Workspace code loading floats the car inside a rotating route halo; conversation presentation moves a compact car beside context-aware copy; remote vehicle photos use a light pass while decoding; the optional QR module uses a scanning line; a future asynchronous save callback uses a compact CSS wheel because the detailed car would lose clarity at button size. Immediate local operations do not add artificial delays. All animations stop under reduced motion while labels and the static asset remain visible.

@@ -1,6 +1,7 @@
 import "./message-experience.css";
 import { useReplySequence } from "./useReplySequence";
 import { FamilyConfirmDialog } from "../components/ui/FamilyConfirmDialog";
+import { LoadingExperience } from "../components/ui/LoadingExperience";
 import { InlineDisclosureMenu } from "../components/ui/InlineDisclosureMenu";
 import AnimatedContent from "../components/react-bits/AnimatedContent/AnimatedContent";
 import {
@@ -62,6 +63,24 @@ export function ChatSurface({
   const previousUser = useRef<string | undefined>(undefined);
   const [showLatest, setShowLatest] = useState(false);
   const latestId = turns.at(-1)?.id;
+  const pendingTool = turns.at(-1)?.tool?.kind;
+  const pendingLabel =
+    pendingTool === "vehicles" || pendingTool === "vehicle"
+      ? "Preparing vehicle options"
+      : pendingTool === "trip" ||
+          pendingTool === "services" ||
+          pendingTool === "enquiry"
+        ? "Shaping your journey"
+        : pendingTool === "listing" ||
+            pendingTool === "profile" ||
+            pendingTool === "fleet" ||
+            pendingTool === "storefront" ||
+            pendingTool === "plans" ||
+            pendingTool === "summary"
+          ? "Preparing your workspace"
+          : pendingTool === "requests" || pendingTool === "inbox"
+            ? "Opening your records"
+            : "Preparing your reply";
   const latestUserId = turns.filter((turn) => turn.role === "user").at(-1)?.id;
   function updateReadingPosition() {
     const scroll = scrollRef.current;
@@ -385,15 +404,12 @@ export function ChatSurface({
                 role="status"
                 aria-label="Preparing reply"
               >
-                <span className="reply-dots" aria-hidden="true">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                <span>
-                  Preparing reply
-                  <span className="sr-only"> · Demo response presentation</span>
-                </span>
+                <LoadingExperience
+                  variant="reply"
+                  label={pendingLabel}
+                  announce={false}
+                />
+                <span className="sr-only">Demo response presentation</span>
               </div>
             )}
             {turns.length === 0 && (

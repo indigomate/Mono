@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Bookmark, CheckCircle } from "@untitledui/icons";
+import { LoadingExperience } from "./LoadingExperience";
 
 /** Acknowledges the actual save callback; never simulates completion with timers. */
 export function SaveToggle({
@@ -46,16 +47,24 @@ export function SaveToggle({
         disabled={pending}
         onClick={() => void toggle()}
       >
-        <Icon aria-hidden="true" width={17} height={17} />
-        <span>
-          {pending
-            ? "Saving…"
-            : isSaved
-              ? scope === "session"
-                ? "Saved (visit)"
-                : "Saved"
-              : "Save car"}
-        </span>
+        {pending ? (
+          <LoadingExperience
+            variant="action"
+            label="Saving…"
+            announce={false}
+          />
+        ) : (
+          <>
+            <Icon aria-hidden="true" width={17} height={17} />
+            <span>
+              {isSaved
+                ? scope === "session"
+                  ? "Saved (visit)"
+                  : "Saved"
+                : "Save car"}
+            </span>
+          </>
+        )}
       </button>
       {error && <small role="alert">{error}</small>}
     </div>

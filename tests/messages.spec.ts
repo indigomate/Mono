@@ -190,10 +190,9 @@ test("reduced motion preserves the reply sequence without moving animations", as
   await expect(pending).toBeVisible();
   expect(
     await pending
-      .locator("i")
-      .first()
-      .evaluate((el) => getComputedStyle(el).animationName),
-  ).toBe("none");
+      .locator(".gomono-load")
+      .evaluate((el) => el.getAnimations({ subtree: true }).length),
+  ).toBe(0);
   await page.clock.runFor(120);
   await expect(page.locator(".chat-tool")).toBeVisible();
   expect(

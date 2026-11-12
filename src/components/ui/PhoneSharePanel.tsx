@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { QRCode as QRComponent } from "../shared-assets/qr-code";
+import { LoadingExperience } from "./LoadingExperience";
 
 export const PUBLIC_DEMO_URL = "https://mono-ochre-psi.vercel.app/";
 const QR_OPTIONS = {
@@ -61,7 +62,7 @@ export function PhoneSharePanel({
         ) : failed ? (
           <p role="alert">QR unavailable. Use the link instead.</p>
         ) : (
-          <p role="status">Preparing QR code…</p>
+          <LoadingExperience variant="qr" label="Preparing QR code…" />
         )}
       </div>
     </aside>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LoadingExperience } from "./LoadingExperience";
 /** Fixed space while the actual image loads, with a usable failure/retry state. */
 export function VehiclePhoto({ src, alt }: { src: string; alt: string }) {
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
@@ -17,7 +18,7 @@ export function VehiclePhoto({ src, alt }: { src: string; alt: string }) {
       {state !== "ready" && (
         <div className="vehicle-photo-placeholder" data-state={state}>
           {state === "loading" ? (
-            <span aria-hidden="true">Loading photo…</span>
+            <LoadingExperience variant="media" label="Loading vehicle photo" />
           ) : (
             <>
               <span>Photo unavailable</span>

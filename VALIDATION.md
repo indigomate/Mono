@@ -10,6 +10,13 @@
 - WebKit smoke: workspace scroll ownership and composer visibility passed at 2048×828, 768×700, 375×667 and 375×400; clear/reload and landing scroll passed with no page errors.
 - Reduced motion: reply sequence, landing reveals, loading transition and logo loop remain static and usable.
 
+## Branded loading states — 12 November 2026
+
+- The transparent 640×640 loading PNG was inspected in workspace, reply, vehicle-media and QR states at 390×844.
+- Delayed workspace, image and QR requests were used to verify that each state remains visible for visual review instead of depending on a fast local response.
+- Conversation loading copy changes with the pending tool without claiming live search, availability or provider activity.
+- Reduced-motion validation checks the complete loading subtree for running animations.
+
 ## Completed local checks
 
 - TypeScript validation and Vite production build pass. Conversation code loads separately from the landing entry point.

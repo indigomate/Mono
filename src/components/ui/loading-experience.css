@@ -1,0 +1,255 @@
+.gomono-load {
+  --load-accent: #58f0be;
+  --load-ink: #00251c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 0;
+  color: inherit;
+}
+.gomono-load-visual {
+  position: relative;
+  isolation: isolate;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.gomono-load-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  filter: drop-shadow(0 10px 18px rgba(0, 18, 13, 0.2));
+}
+.gomono-load-label {
+  min-width: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Opening a workspace: the route halo turns while the car floats in place. */
+.gomono-load-workspace {
+  flex-direction: column;
+  gap: 6px;
+}
+.gomono-load-workspace .gomono-load-visual {
+  width: clamp(136px, 18vw, 190px);
+  height: clamp(136px, 18vw, 190px);
+}
+.gomono-load-workspace .gomono-load-visual::before,
+.gomono-load-workspace .gomono-load-visual::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.gomono-load-workspace .gomono-load-visual::before {
+  inset: 8%;
+  border: 1px solid rgba(88, 240, 190, 0.2);
+  border-top-color: var(--load-accent);
+  animation: gomono-orbit 2.8s linear infinite;
+}
+.gomono-load-workspace .gomono-load-visual::after {
+  inset: 20%;
+  background: radial-gradient(circle, rgba(0, 212, 165, 0.14), transparent 66%);
+  animation: gomono-breathe 1.8s ease-in-out infinite;
+}
+.gomono-load-workspace img {
+  animation: gomono-float 2.2s ease-in-out infinite;
+}
+
+/* Conversation pacing: a small car advances while three route points answer. */
+.gomono-load-reply {
+  gap: 10px;
+}
+.gomono-load-reply .gomono-load-visual {
+  width: 48px;
+  height: 36px;
+}
+.gomono-load-reply img {
+  width: 44px;
+  height: 44px;
+  animation: gomono-drive 1.45s cubic-bezier(0.45, 0, 0.35, 1) infinite;
+}
+.gomono-route-pips {
+  position: absolute;
+  right: -10px;
+  bottom: -1px;
+  padding: 3px 5px;
+  border: 1px solid rgba(31, 125, 94, 0.13);
+  border-radius: 10px;
+  background: rgba(246, 250, 244, 0.88);
+  animation: gomono-pips 900ms ease-in-out infinite;
+}
+.gomono-route-pips i {
+  width: 4px;
+  height: 4px;
+  animation: none !important;
+}
+
+/* Vehicle media: a horizontal light pass reads as image decoding, not search. */
+.gomono-load-media {
+  flex-direction: column;
+  gap: 4px;
+}
+.gomono-load-media .gomono-load-visual {
+  width: 92px;
+  height: 70px;
+  overflow: hidden;
+}
+.gomono-load-media .gomono-load-visual::after {
+  content: "";
+  position: absolute;
+  inset: 12% -35%;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(113, 255, 210, 0.58) 49%,
+    transparent 62%
+  );
+  animation: gomono-media-scan 1.6s ease-in-out infinite;
+}
+.gomono-load-media img {
+  animation: gomono-breathe 1.8s ease-in-out infinite;
+}
+.gomono-load-media .gomono-load-label {
+  font-size: 10px;
+}
+
+/* QR import: the car stays calm while the familiar scan line does the work. */
+.gomono-load-qr {
+  flex-direction: column;
+  gap: 6px;
+  min-height: 152px;
+}
+.gomono-load-qr .gomono-load-visual {
+  width: 78px;
+  height: 78px;
+  overflow: hidden;
+  border: 1px solid rgba(31, 112, 84, 0.16);
+  border-radius: 16px;
+  background: #f8fbf6;
+}
+.gomono-load-qr img {
+  width: 66px;
+  height: 66px;
+  animation: gomono-breathe 1.8s ease-in-out infinite;
+}
+.gomono-qr-scan {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background: var(--load-accent);
+  box-shadow: 0 0 12px rgba(88, 240, 190, 0.75);
+  animation: gomono-qr-line 1.35s ease-in-out infinite alternate;
+}
+.gomono-load-qr .gomono-load-label {
+  color: #42695a;
+  font-size: 10px;
+}
+
+/* Actual asynchronous button work uses a tiny wheel; the detailed PNG would
+   lose clarity at this size. */
+.gomono-load-action {
+  gap: 7px;
+}
+.gomono-load-action .gomono-load-visual {
+  width: 16px;
+  height: 16px;
+}
+.gomono-action-wheel {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: gomono-orbit 700ms linear infinite;
+}
+.gomono-load-action .gomono-load-label {
+  font-size: inherit;
+}
+
+@keyframes gomono-orbit {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes gomono-breathe {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+@keyframes gomono-float {
+  0%,
+  100% {
+    transform: translateY(2px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes gomono-drive {
+  0%,
+  100% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  50% {
+    transform: translateX(3px) rotate(1deg);
+  }
+}
+@keyframes gomono-pips {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: translateY(1px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+@keyframes gomono-media-scan {
+  0% {
+    opacity: 0;
+    transform: translateX(-60%);
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+}
+@keyframes gomono-qr-line {
+  from {
+    top: 12px;
+  }
+  to {
+    top: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gomono-load *,
+  .gomono-load-visual::before,
+  .gomono-load-visual::after {
+    animation: none !important;
+  }
+  .gomono-load-workspace .gomono-load-visual::before {
+    border-color: rgba(88, 240, 190, 0.34);
+  }
+  .gomono-qr-scan {
+    top: 38px;
+  }
+}

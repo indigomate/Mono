@@ -83,3 +83,9 @@ See MINIMALISM_AUDIT.md for the removal/preservation mapping and 12ui generation
 ## Conversation feedback
 
 Keep delete controls small but accessible on every message, with a 44px touch target on coarse pointers. Confirmation identifies the message and explains that business records remain. New replies use a three-dot preparation indicator, followed by readable text and then the relevant inline card. Stagger only small sets of vehicle/service options; do not trickle individual form fields into view. Indicators stop when ready and must not imply live search, AI streaming or account synchronization. Respect reduced motion and never replay the entire stored transcript as fresh output.
+
+## Midnight mobility interaction layer
+
+The landing page extends the approved 12ui emerald/ivory system with editorial section numbers, deeper cinematic overlays, an illuminated conversation console and a numbered journey rail. Full-size primary actions use a shared React Aria button with explicit hover, pressed, focus and disabled states. A two-pixel progress line follows native document scrolling, and sections reveal once as they enter the viewport. Reduced motion removes the gloss sweep and reveals content immediately.
+
+The conversation keeps its light reading canvas but enters through a midnight header. Assistant replies use pale glass surfaces; user replies use deep emerald, making authorship clear before reading labels. Tool sheets and the persistent composer use restrained elevation. See VISUAL_AUDIT.md for the finding-to-change map and the current 12ui generation limitation.

@@ -3,6 +3,9 @@ import { VehicleBrandLoop } from "./components/VehicleBrandLoop";
 import { WorkspaceBoundary } from "./components/WorkspaceBoundary";
 import { ProductPreview } from "./components/ProductPreview";
 import { LoadingIndicator } from "./components/ui/LoadingIndicator";
+import { Button } from "./components/base/buttons/button";
+import { ArrowUpRight } from "@untitledui/icons";
+import { useLandingReveal } from "./hooks/useLandingReveal";
 import { useEffect, useState, lazy, Suspense } from "react";
 import type { View } from "./workspace/navigation";
 const Workspace = lazy(() =>
@@ -26,6 +29,7 @@ export default function App() {
   } | null>(null);
   const [view, setView] = useState<View | "home">(currentView);
   useWorkspaceViewport(view !== "home");
+  useLandingReveal(view === "home");
   useEffect(() => {
     const sync = () => setView(currentView());
     window.addEventListener("hashchange", sync);
@@ -50,28 +54,18 @@ export default function App() {
           </a>
           <nav className="navlinks">
             <a href="#how">How it works</a>
-            <button className="outline" onClick={() => navigate("provider")}>
-              List Your Car{" "}
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M5 19 19 5M5 5h14v14"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+            <Button
+              color="ghost"
+              className="outline"
+              iconTrailing={<ArrowUpRight width={15} height={15} />}
+              onPress={() => navigate("provider")}
+            >
+              List Your Car
+            </Button>
           </nav>
         </header>
         <section className="hero">
-          <div className="hero-content">
+          <div className="hero-content" data-reveal="hero">
             <div className="eyebrow">A new way to move · Cape Town</div>
             <h1>
               RENT
@@ -83,49 +77,28 @@ export default function App() {
               help you explore the options.
             </p>
             <div className="actions">
-              <button className="primary" onClick={() => navigate("customer")}>
-                Book a Car{" "}
-                <span className="arrow">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M5 19 19 5M5 5h14v14"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-              <button
-                className="secondary"
-                onClick={() => navigate("provider")}
+              <Button
+                size="lg"
+                className="primary"
+                iconTrailing={<ArrowUpRight width={15} height={15} />}
+                onPress={() => navigate("customer")}
               >
-                List Your Car{" "}
-                <span className="arrow">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M5 19 19 5M5 5h14v14"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
+                Book a Car
+              </Button>
+              <Button
+                size="lg"
+                color="ghost"
+                className="secondary"
+                iconTrailing={<ArrowUpRight width={15} height={15} />}
+                onPress={() => navigate("provider")}
+              >
+                List Your Car
+              </Button>
+            </div>
+            <div className="hero-service-line" aria-label="Ways to move">
+              <span>Self-drive</span>
+              <span>With a driver</span>
+              <span>Group transport</span>
             </div>
           </div>
         </section>
@@ -139,18 +112,20 @@ export default function App() {
           />
         </div>
         <section id="how" className="features">
-          <div className="eyebrow">HOW IT WORKS</div>
-          <h2>Your plans. One conversation.</h2>
+          <div className="eyebrow" data-reveal="fade-up">
+            HOW IT WORKS
+          </div>
+          <h2 data-reveal="fade-up">Your plans. One conversation.</h2>
           <div className="feature-grid">
-            <div className="feature">
+            <div className="feature" data-reveal="fade-up">
               <b>01 — Tell us your plans</b>
               <p>Where, when and how you want to travel.</p>
             </div>
-            <div className="feature">
+            <div className="feature" data-reveal="fade-up">
               <b>02 — Explore the options</b>
               <p>Compare vehicles or find a service with a driver.</p>
             </div>
-            <div className="feature">
+            <div className="feature" data-reveal="fade-up">
               <b>03 — Review your request</b>
               <p>
                 Check the details and save your request. Live booking is coming
@@ -158,7 +133,11 @@ export default function App() {
               </p>
             </div>
           </div>
-          <div id="for-owners" className="minimal-owner-entry">
+          <div
+            id="for-owners"
+            className="minimal-owner-entry"
+            data-reveal="fade-up"
+          >
             <div>
               <h3>Have a car or transport business?</h3>
               <p>Prepare your listings and services in your own workspace.</p>
@@ -169,8 +148,10 @@ export default function App() {
           </div>
         </section>
         <footer className="footer">
-          GOMONO.  ·  Concept MVP · Demonstration listings and booking requests
-          only.
+          <strong>GOMONO.</strong>
+          <span>
+            Concept MVP · Demonstration listings and booking requests only.
+          </span>
         </footer>
       </div>
       {view !== "home" && (

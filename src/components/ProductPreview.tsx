@@ -3,6 +3,8 @@ import { PhoneSharePanel } from "./ui/PhoneSharePanel";
 import { QrCode01 } from "@untitledui/icons";
 import { useId, useState } from "react";
 import { FieldInput } from "./ui/FieldInput";
+import { Button } from "./base/buttons/button";
+import { ArrowUpRight } from "@untitledui/icons";
 import "./product-preview.css";
 
 export function ProductPreview({
@@ -18,6 +20,7 @@ export function ProductPreview({
     <section
       className="product-preview minimal-chat-entry"
       aria-labelledby="product-preview-title"
+      data-reveal="fade-up"
     >
       <div className="preview-copy">
         <span className="eyebrow">START HERE</span>
@@ -80,9 +83,14 @@ export function ProductPreview({
                 : "Add my vehicle for chauffeur trips…"
             }
           />
-          <button type="submit" disabled={!message.trim()}>
-            Continue in chat →
-          </button>
+          <Button
+            type="submit"
+            aria-label="Continue in chat →"
+            isDisabled={!message.trim()}
+            iconTrailing={<ArrowUpRight width={15} height={15} />}
+          >
+            Continue in chat
+          </Button>
         </form>
         <p className="preview-demo-note">
           Demo · Saved on this device · No live bookings or charges.

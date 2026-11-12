@@ -1,5 +1,15 @@
 # Validation: chat-first UI release
 
+## Visual audit and interaction pass — 12 November 2026
+
+- `npm run build`: passed.
+- `npm run format:check`: passed.
+- `npm test -- --workers=2`: 63 passed.
+- Chromium visual smoke: landing/customer/provider at 1440×900 and 390×844, no page errors or horizontal overflow.
+- React Aria state smoke: primary CTA reported hover and pressed states; native landing scroll updated progress and reveal state.
+- WebKit smoke: workspace scroll ownership and composer visibility passed at 2048×828, 768×700, 375×667 and 375×400; clear/reload and landing scroll passed with no page errors.
+- Reduced motion: reply sequence, landing reveals, loading transition and logo loop remain static and usable.
+
 ## Completed local checks
 
 - TypeScript validation and Vite production build pass. Conversation code loads separately from the landing entry point.

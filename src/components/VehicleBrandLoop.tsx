@@ -62,6 +62,7 @@ export function VehicleBrandLoop() {
       ref={root}
       className="vehicle-brand-band"
       aria-labelledby="vehicle-brand-title"
+      data-reveal="fade-up"
     >
       <header>
         <div>

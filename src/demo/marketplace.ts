@@ -22,6 +22,31 @@ export type Trip = {
   passengers: number;
 };
 export type Message = { role: "user" | "assistant"; text: string };
+export type ListingActivation = {
+  make: string;
+  model: string;
+  year: number;
+  colour: string;
+  registrationLast6: string;
+  ownership: "" | "owned" | "authorised";
+  photoNames: string[];
+  documentNames: string[];
+  driverDocumentNames: string[];
+  insuranceConfirmed: boolean;
+  roadworthyConfirmed: boolean;
+  availabilityMode: "" | "on-request" | "calendar";
+  minimumDays: number;
+  noticeHours: number;
+  pickupInstructions: string;
+  deliveryRadiusKm: number;
+  securityDeposit: number;
+  mileagePerDay: number;
+  serviceRates: Partial<Record<ServiceType, number>>;
+  fuelPolicy: "" | "same-to-same" | "full-to-full" | "included";
+  cancellationPolicy: "" | "flexible" | "moderate" | "strict";
+  reviewAccepted: boolean;
+  verificationStatus: "draft" | "ready";
+};
 export type Draft = {
   id: string;
   name: string;
@@ -34,6 +59,7 @@ export type Draft = {
   vehicleType: string;
   services: ServiceType[];
   rateUnit: "day" | "hour" | "trip" | "month" | "quote";
+  activation: ListingActivation;
 };
 export type Request = {
   id: string | number;
@@ -68,6 +94,126 @@ export const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
+export const emptyListingActivation = (): ListingActivation => ({
+  make: "",
+  model: "",
+  year: 0,
+  colour: "",
+  registrationLast6: "",
+  ownership: "",
+  photoNames: [],
+  documentNames: [],
+  driverDocumentNames: [],
+  insuranceConfirmed: false,
+  roadworthyConfirmed: false,
+  availabilityMode: "",
+  minimumDays: 1,
+  noticeHours: 24,
+  pickupInstructions: "",
+  deliveryRadiusKm: 0,
+  securityDeposit: 0,
+  mileagePerDay: 200,
+  serviceRates: {},
+  fuelPolicy: "",
+  cancellationPolicy: "",
+  reviewAccepted: false,
+  verificationStatus: "draft",
+});
+
+export function normalizeListingActivation(value: unknown): ListingActivation {
+  const base = emptyListingActivation();
+  if (!value || typeof value !== "object") return base;
+  const v = value as Partial<ListingActivation>;
+  return {
+    ...base,
+    make: typeof v.make === "string" ? v.make.slice(0, 80) : "",
+    model: typeof v.model === "string" ? v.model.slice(0, 80) : "",
+    year:
+      typeof v.year === "number" && v.year >= 1950 && v.year <= 2100
+        ? v.year
+        : 0,
+    colour: typeof v.colour === "string" ? v.colour.slice(0, 50) : "",
+    registrationLast6:
+      typeof v.registrationLast6 === "string"
+        ? v.registrationLast6.replace(/[^a-z0-9]/gi, "").slice(-6)
+        : "",
+    ownership: ["owned", "authorised"].includes(v.ownership || "")
+      ? (v.ownership as ListingActivation["ownership"])
+      : "",
+    photoNames: Array.isArray(v.photoNames)
+      ? v.photoNames
+          .filter((name): name is string => typeof name === "string")
+          .slice(0, 12)
+      : [],
+    documentNames: Array.isArray(v.documentNames)
+      ? v.documentNames
+          .filter((name): name is string => typeof name === "string")
+          .slice(0, 8)
+      : [],
+    driverDocumentNames: Array.isArray(v.driverDocumentNames)
+      ? v.driverDocumentNames
+          .filter((name): name is string => typeof name === "string")
+          .slice(0, 8)
+      : [],
+    insuranceConfirmed: v.insuranceConfirmed === true,
+    roadworthyConfirmed: v.roadworthyConfirmed === true,
+    availabilityMode: ["on-request", "calendar"].includes(
+      v.availabilityMode || "",
+    )
+      ? (v.availabilityMode as ListingActivation["availabilityMode"])
+      : "",
+    minimumDays:
+      typeof v.minimumDays === "number" && v.minimumDays >= 1
+        ? Math.min(v.minimumDays, 365)
+        : 1,
+    noticeHours:
+      typeof v.noticeHours === "number" && v.noticeHours >= 0
+        ? Math.min(v.noticeHours, 8760)
+        : 24,
+    pickupInstructions:
+      typeof v.pickupInstructions === "string"
+        ? v.pickupInstructions.slice(0, 500)
+        : "",
+    deliveryRadiusKm:
+      typeof v.deliveryRadiusKm === "number" && v.deliveryRadiusKm >= 0
+        ? Math.min(v.deliveryRadiusKm, 1000)
+        : 0,
+    securityDeposit:
+      typeof v.securityDeposit === "number" && v.securityDeposit >= 0
+        ? Math.min(v.securityDeposit, 10000000)
+        : 0,
+    mileagePerDay:
+      typeof v.mileagePerDay === "number" && v.mileagePerDay >= 0
+        ? Math.min(v.mileagePerDay, 10000)
+        : 200,
+    serviceRates:
+      v.serviceRates && typeof v.serviceRates === "object"
+        ? Object.fromEntries(
+            Object.entries(v.serviceRates)
+              .filter(
+                ([id, amount]) =>
+                  isService(id) &&
+                  typeof amount === "number" &&
+                  amount >= 0 &&
+                  amount <= 10000000,
+              )
+              .slice(0, 8),
+          )
+        : {},
+    fuelPolicy: ["same-to-same", "full-to-full", "included"].includes(
+      v.fuelPolicy || "",
+    )
+      ? (v.fuelPolicy as ListingActivation["fuelPolicy"])
+      : "",
+    cancellationPolicy: ["flexible", "moderate", "strict"].includes(
+      v.cancellationPolicy || "",
+    )
+      ? (v.cancellationPolicy as ListingActivation["cancellationPolicy"])
+      : "",
+    reviewAccepted: v.reviewAccepted === true,
+    verificationStatus: v.verificationStatus === "ready" ? "ready" : "draft",
+  };
+}
 export const duration = (trip: Trip) =>
   trip.start && trip.end
     ? Math.max(
@@ -145,6 +291,7 @@ export function loadDrafts(): Draft[] {
     )
       ? v.rateUnit!
       : "day",
+    activation: normalizeListingActivation(v.activation),
   }));
 }
 export function loadRequests(): Request[] {

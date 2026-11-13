@@ -46,6 +46,10 @@ The dashboard-first milestone has been superseded. The active customer and provi
 
 Role-specific conversation welcome, persistent editable brief, honest journey strip, richer vehicle comparison, deposit/protection explanations, contextual terms, request records with continuation actions, and provider launch-readiness cards are implemented. Live availability calendars, verified provider badges, selectable financial quotes, confirmed booking fulfilment cards and real support delivery remain dependent on production services; local presentation does not imply those integrations exist.
 
+## Delivered: provider activation journey
+
+Provider listing onboarding now progresses through provider identity, vehicle basics, photo preparation, ownership/safety evidence, availability and fulfilment, service-specific pricing and rental terms, then a gated review. The fleet view shows derived readiness and the next unfinished stage instead of generic “documents pending” labels. Local photo/document selections retain filenames only; the application clearly separates a verification-ready draft from live submission, approval, Paystack payout setup and publication.
+
 ## Next conversation and monetization milestones
 
 - Delivered: closed-by-default context, three green suggestions, command disclosure, branded optional motion, compact vehicle preview/photo recovery, local saved cars, saved-provider identity preview and local completion feedback.

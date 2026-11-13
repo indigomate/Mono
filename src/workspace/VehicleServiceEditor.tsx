@@ -2,7 +2,7 @@ import { FieldSelect } from "../components/ui/FieldSelect";
 import { FieldTextarea } from "../components/ui/FieldTextarea";
 import { FieldInput } from "../components/ui/FieldInput";
 import { useState } from "react";
-import { type Draft } from "../demo/marketplace";
+import { emptyListingActivation, type Draft } from "../demo/marketplace";
 import { services, vehicleTypes, type ServiceType } from "../demo/services";
 export function VehicleServiceEditor({
   draft,
@@ -48,6 +48,7 @@ export function VehicleServiceEditor({
           vehicleType: String(f.get("vehicleType")),
           services: selected,
           rateUnit,
+          activation: draft?.activation || emptyListingActivation(),
         });
       }}
     >

@@ -51,7 +51,7 @@ Service briefs can be filled through follow-up messages and edited with precise 
 | Inbox            | Only addressed provider requests once live delivery exists |
 | Storefront       | Embedded local showroom preview                            |
 
-Natural-language edits update a draft, not the saved listing. Save buttons explicitly commit local changes. An unfinished draft can be resumed after reload. Quote-only listings display “Quote on request,” not a zero-priced rental. Publishing and payments are never represented as completed without real services.
+Natural-language edits update a draft, not the saved listing. Save buttons explicitly commit local changes. An unfinished draft can be resumed after reload. Quote-only listings display “Quote on request,” not a zero-priced rental. The listing tool owns a seven-stage activation path and opens one stage at a time without replacing the composer. Its readiness is derived from structured provider, vehicle, photo, verification, availability, terms and review fields. File selections store filename metadata only in the demo. A verification-ready draft is still neither submitted nor approved; publishing and payments are never represented as completed without real services.
 
 ## UI foundation
 

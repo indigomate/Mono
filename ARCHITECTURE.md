@@ -12,7 +12,8 @@ The enduring product contract is in CONVERSATION_ARCHITECTURE.md and enforced by
 - src/conversation/ChatSurface.tsx: transcript, inline tools, quick commands, new-chat confirmation and persistent composer.
 - src/conversation/model.ts: typed tool/turn descriptors, transcript validation and recovery.
 - src/conversation/CustomerConversation.tsx: customer intent/slot handling, trips, service briefs, estimates and request tools.
-- src/conversation/ProviderConversation.tsx: provider intent handling, profile/listing drafts, fleet, preview and inbox tools.
+- src/conversation/ProviderConversation.tsx: provider intent handling, profile/listing drafts, activation handoff, fleet, preview and inbox tools.
+- src/conversation/providerReadiness.ts: pure seven-stage provider/listing readiness rules shared by the active editor and fleet summaries.
 - src/conversation/ProviderCards.tsx and VehicleCards.tsx: typed inline presentation and review actions.
 - src/components/base: pinned MIT-licensed Untitled UI input primitives built on React Aria and Tailwind.
 - src/components/ui: GOMONO field adapters; domain handlers do not depend on upstream component implementation details.
@@ -38,6 +39,8 @@ npm run build performs TypeScript checking and Vite bundling. npm test covers wh
 ### Visible experience state
 
 `JourneyContext` reads existing customer domain state and typed tool context; it does not infer bookings from assistant prose. The latest service/vehicle/trip/service-choice tool establishes the active brief. `ProviderContext` reads saved provider records and the independent unfinished listing draft. Both are optional ChatSurface context slots beside the always-available composer. Welcome, readiness and comparison actions call the existing conversation handlers.
+
+Provider listing activation is structured domain state, not transcript text. `Draft.activation` stores prepared vehicle metadata, filename-only upload selections, operating rules and review acknowledgement. `providerReadiness` derives completion; no persisted progress number can drift from the underlying fields. The demo may mark a draft `ready` only for a future secure verification handoff. It never marks verification submitted, approved, paid or published. Production file contents belong in private object storage, and Paystack beneficiary setup must stay in a hosted secure handoff.
 
 `RequestRecord` presents local requests without trusting arbitrary legacy status text as a booking confirmation. Service history review creates an editable copy and preserves the original record. `PaymentChoices` is an explanatory, unavailable state: it persists no financial election and moves no money. Future quote/booking integrations must replace it with server-authorized prices, option eligibility, accepted terms, payment state and confirmed fulfilment details. A local request or viewed quote cannot advance the journey to paid or confirmed.
 

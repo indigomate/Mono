@@ -362,6 +362,103 @@ test("provider profile fields and unfinished listing drafts resume without being
     "Unfinished Mercedes",
   );
 });
+test("provider activation guides one listing from basics to a verification-ready local draft", async ({
+  page,
+}) => {
+  await page.goto("/#provider");
+  await chatAction(page, "Business profile");
+  await page
+    .getByLabel("Provider or business name", { exact: true })
+    .fill("Cape Drive Collective");
+  await page
+    .getByRole("button", { name: "Save provider profile", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Add a listing", exact: true })
+    .click();
+  await page
+    .getByLabel("Listing name", { exact: true })
+    .fill("Toyota Corolla Automatic");
+  await page.getByLabel("Reference rate (ZAR)", { exact: true }).fill("950");
+
+  const listing = tool(page).locator(".listing-readiness");
+  await expect(listing).toContainText("2 of 7 stages ready");
+  await listing.getByRole("button", { name: /Photos/ }).click();
+  await listing.locator('input[type="file"]').setInputFiles([
+    { name: "front.jpg", mimeType: "image/jpeg", buffer: Buffer.from("front") },
+    { name: "rear.jpg", mimeType: "image/jpeg", buffer: Buffer.from("rear") },
+    {
+      name: "interior.jpg",
+      mimeType: "image/jpeg",
+      buffer: Buffer.from("interior"),
+    },
+    {
+      name: "condition.jpg",
+      mimeType: "image/jpeg",
+      buffer: Buffer.from("condition"),
+    },
+  ]);
+  await expect(listing).toContainText("3 of 7 stages ready");
+
+  await listing.getByRole("button", { name: /Trust/ }).click();
+  await page
+    .getByRole("combobox", { name: "Your authority to list this vehicle" })
+    .selectOption("owned");
+  await listing.locator('input[type="file"]').setInputFiles([
+    {
+      name: "registration.pdf",
+      mimeType: "application/pdf",
+      buffer: Buffer.from("registration"),
+    },
+    {
+      name: "ownership.pdf",
+      mimeType: "application/pdf",
+      buffer: Buffer.from("ownership"),
+    },
+  ]);
+  await page
+    .getByRole("checkbox", {
+      name: "The vehicle has appropriate current insurance",
+    })
+    .check();
+  await page
+    .getByRole("checkbox", {
+      name: "The vehicle is licensed and roadworthy",
+    })
+    .check();
+
+  await listing.getByRole("button", { name: /Operations/ }).click();
+  await page
+    .getByRole("combobox", { name: "How should availability work?" })
+    .selectOption("on-request");
+  await page
+    .getByLabel("Pickup or handover plan", { exact: true })
+    .fill("Collection in central Cape Town after identity confirmation.");
+
+  await listing.getByRole("button", { name: /Terms/ }).click();
+  await page
+    .getByRole("combobox", { name: "Fuel policy" })
+    .selectOption("full-to-full");
+  await page
+    .getByRole("combobox", { name: "Cancellation approach" })
+    .selectOption("moderate");
+
+  await listing.getByRole("button", { name: /Review/ }).click();
+  await expect(listing).toContainText("Paystack-hosted beneficiary");
+  await page
+    .getByRole("checkbox", { name: /I confirm these prepared details/ })
+    .check();
+  await page
+    .getByRole("button", {
+      name: "Save verification-ready draft",
+      exact: true,
+    })
+    .click();
+  await expect(tool(page)).toContainText("PREPARED FOR VERIFICATION");
+  await expect(tool(page)).toContainText("7/7 stages ready");
+  await page.reload();
+  await expect(tool(page)).toContainText("Toyota Corolla Automatic");
+});
 test("quote-only provider rates remain quotes, and publishing is never simulated", async ({
   page,
 }) => {

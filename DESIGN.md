@@ -48,7 +48,7 @@ Vehicle cards use larger illustrative images, prominent sample/verification labe
 
 Saved-request cards provide a reference, itinerary, payment/confirmation state and a useful continuation action. Service enquiries can be copied into an editable brief without overwriting history. Local records never become confirmed bookings based on their free-text status. Live booking cards will require authoritative provider, pickup, payment and support details from the future booking service.
 
-Provider summaries show concrete readiness actions and local supply counts. Listing/profile editors show entered-detail completeness. Supply cards disclose pending documents and availability; availability planning currently uses listing notes, not a verified calendar. Responsive brief expansion is bounded so the composer remains available; short-height screens simplify the journey strip.
+Provider summaries show concrete readiness actions and local supply counts. Each listing now uses a seven-stage activation rail inside chat: provider, vehicle, photos, trust, operations, terms and review. Only the active stage expands, while a persistent score and one next action prevent the former long-form cluster. Draft filenames and readiness metadata can be prepared locally, but file contents are not uploaded. Secure verification, authoritative availability, Paystack payouts and publication remain explicit integration gates. Responsive brief expansion is bounded so the composer remains available; short-height screens simplify the journey strip.
 
 ### Make the interface discoverable
 

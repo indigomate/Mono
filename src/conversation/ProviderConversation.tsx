@@ -6,7 +6,13 @@ import {
   LocalMetrics,
 } from "../components/ui/ConversationElements";
 import { useEffect, useRef, useState } from "react";
-import { loadDrafts, saveDemo, type Draft } from "../demo/marketplace";
+import {
+  emptyListingActivation,
+  loadDrafts,
+  normalizeListingActivation,
+  saveDemo,
+  type Draft,
+} from "../demo/marketplace";
 import {
   loadProfile,
   isService,
@@ -52,6 +58,7 @@ function newDraft(profile: ProviderProfile): Draft {
         : profile.services.includes("airport")
           ? "trip"
           : "quote",
+    activation: emptyListingActivation(),
   };
 }
 function loadWorking(): Draft | null {
@@ -71,6 +78,7 @@ function loadWorking(): Draft | null {
         ...v,
         services: v.services.filter(isService),
         status: v.status === "preview" ? "preview" : "draft",
+        activation: normalizeListingActivation(v.activation),
       };
   } catch {
     /* Recover unsaved browser draft. */
@@ -176,7 +184,7 @@ function listingQuestion(d: Draft) {
         ? "Where is it based?"
         : d.rateUnit !== "quote" && !d.price
           ? "What reference rate should I use? For example, “R650 per hour” or “quote only”."
-          : "Your draft is ready to review. Check the vehicle category, capacity, services and rate below, then explicitly save it. Nothing is published.";
+          : "Your basic details are complete. Continue through photos, trust checks, availability and terms below. You can finish later at any time; nothing is published.";
 }
 function parseProfile(text: string, profile: ProviderProfile): ProviderProfile {
   const p = { ...profile, services: offeredServices(text, profile.services) };
@@ -440,7 +448,15 @@ export function ProviderConversation({
         return (
           <ListingCard
             draft={draft}
+            profile={profile}
             onChange={setWorking}
+            onOpenProfile={() =>
+              respond(
+                "Complete provider details",
+                "Start with the person or business behind this listing. Your listing draft will stay here while you complete these details.",
+                { kind: "profile" },
+              )
+            }
             onCancel={() =>
               respond(
                 "",
@@ -465,6 +481,12 @@ export function ProviderConversation({
                 ...draft,
                 name: draft.name.trim(),
                 area: draft.area.trim(),
+                activation: {
+                  ...draft.activation,
+                  verificationStatus: draft.activation.reviewAccepted
+                    ? ("ready" as const)
+                    : ("draft" as const),
+                },
               };
               setDrafts((all) =>
                 all.some((d) => d.id === next.id)
@@ -473,8 +495,12 @@ export function ProviderConversation({
               );
               setWorking(next);
               respond(
-                "Save my listing draft",
-                `${next.name} is saved locally. No live listing was published.`,
+                draft.activation.reviewAccepted
+                  ? "Save my verification-ready draft"
+                  : "Save my listing draft",
+                draft.activation.reviewAccepted
+                  ? `${next.name} is prepared locally for verification. It has not been submitted, approved or published. Secure verification and Paystack payout setup still need live integrations.`
+                  : `${next.name} is saved locally. Continue its readiness journey whenever you are ready. No live listing was published.`,
                 { kind: "fleet", feedbackId: next.id },
               );
             }}
@@ -516,6 +542,7 @@ export function ProviderConversation({
         return (
           <FleetCards
             drafts={drafts}
+            profile={profile}
             onAdd={() => send("Add a listing")}
             onEdit={(id) => {
               const item = drafts.find((d) => d.id === id);
